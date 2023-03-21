@@ -1,0 +1,85 @@
+// Global CSS classes
+
+// font settings
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat-VariableFont_wght.ttf");
+}
+@font-face {
+  font-family: "Open Sans";
+  src: url("/fonts/OpenSans-VariableFont_wdth,wght.ttf");
+}
+
+body {
+  font-family: "Open Sans";
+  color:rgb(var(--v-theme-neutral));
+  background-color: rgb(var(--v-theme-bodyBg));
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Montserrat";
+}
+
+// overwrite vuetify classes
+.v-btn {
+  letter-spacing: -0.005em !important;
+}
+.v-application {
+  .text-h1,
+  .text-h2,
+  .text-h3,
+  .text-h4,
+  .text-h5,
+  .text-h6,
+  .text-button,
+  .text-subtitle-1,
+  .text-subtitle-2,
+  .text-body-1,
+  .text-body-2,
+  .text-caption,
+  .text-overline {
+    letter-spacing: -0.005em !important;
+    word-break: break-word;
+  }
+}
+.v-text-field {
+  font-size: small !important;
+}
+
+// new class
+.font-narrow {
+  letter-spacing: -0.025em !important;
+}
+.font-wide {
+  letter-spacing: 0.1em !important;
+}
+.fixed-width {
+  max-width: 1024px;
+}
+.low-height {
+  line-height: 1 !important;
+}
+.wrap {
+  white-space: pre-line;
+}
+.min-height {
+  min-height: 100vh;
+}
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.text-shadow {
+  text-shadow: 1.5px 1.5px 2px #212121;
+}
+
+.main-content {
+  padding: 30px 40px;
+  padding-top: 100px;
+}
