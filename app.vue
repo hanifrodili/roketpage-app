@@ -1,13 +1,19 @@
 <template lang="pug">
 .app
-  //- MainNav
-  //- NuxtPage.main-content
-  //- NuxtSnackbar
-  nuxt-layout
-    nuxt-page
+  MainNav(v-if="!(excludeNav.includes($route.name))")
+  NuxtPage.main-content
+  NuxtSnackbar
+  //- nuxt-layout
+  //-   nuxt-page
 </template>
 
 <script setup>
+const excludeNav = ref([
+  'signin', 
+  'signup', 
+  'forgot', 
+  'reset',
+])
 </script>
 
 <style lang="scss">
