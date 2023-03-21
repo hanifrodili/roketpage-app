@@ -2,7 +2,7 @@
 header.top-header.bg-primary
   .header-wrapper
     a.header-brand-logo(href="/")
-      img(height="48" src="/img/logo.svg" )
+      img(height="48" src="/icon.svg" )
     .header-nav  
       ul.top-menu-list
         router-link(to="/")
@@ -12,7 +12,7 @@ header.top-header.bg-primary
         router-link(to="/store")
           li.top-menu-text Test Pinia
     .header-button
-      v-btn.elevation-0.text-white( @click="toggleTheme" variant="plain" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(-360deg)' : ''") 
+      v-btn.elevation-0.text-neutral( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(-360deg)' : ''") 
       v-btn.pa-2.nav-mobile-btn(icon="mdi-menu" variant="plain" @click="openNav()")
 
   .mobile-nav
@@ -161,7 +161,7 @@ a {
   }
 
   .top-menu-text {
-    color: #fff;
+    color: rgb(var(--v-theme-neutral));
     padding: 16px 12px 18px 12px;
     border-bottom: 2px solid transparent;
     cursor: pointer;
