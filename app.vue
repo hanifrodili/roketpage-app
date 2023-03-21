@@ -9,6 +9,7 @@
 
 <script setup>
 const excludeNav = ref([
+  'index',
   'signin', 
   'signup', 
   'forgot', 
