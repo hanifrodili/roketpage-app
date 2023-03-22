@@ -1,11 +1,10 @@
 {
   "private": true,
   "scripts": {
+    "dev": "yarn && nuxt dev",
     "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "start": "nuxt start",
+    "build--test": "nuxt build && nuxt start"
   },
   "devDependencies": {
     "nuxt": "^3.3.1"

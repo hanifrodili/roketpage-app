@@ -1,6 +1,6 @@
-import { resolve, dirname } from 'node:path'
-import { fileURLToPath } from 'url'
-import VueI18nVitePlugin from '@intlify/unplugin-vue-i18n/vite'
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "url";
+import VueI18nVitePlugin from "@intlify/unplugin-vue-i18n/vite";
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -10,9 +10,7 @@ export default defineNuxtConfig({
       viewport: "width=device-width, initial-scale=1",
       title: "RoketPage",
       titleTemplate: "%s | Help your sales to the moon 🚀",
-      link: [
-        { rel: 'icon', type: 'image/svg', href: '/icon.svg' }
-      ],
+      link: [{ rel: "icon", type: "image/svg", href: "/icon.svg" }],
       meta: [
         { charset: "utf-8" },
         {
@@ -73,14 +71,14 @@ export default defineNuxtConfig({
     },
   },
   buildModules: [],
-  modules: [
-    "@pinia/nuxt",
-    "nuxt-snackbar"
-  ],
+  modules: ["@pinia/nuxt", "nuxt-snackbar"],
   snackbar: {
     top: true,
     right: true,
-    duration: 3000
+    duration: 3000,
+  },
+  routeRules: {
+    "/": { redirect: "/signin" },
   },
   server: {
     port: process.env.PORT,
@@ -99,10 +97,13 @@ export default defineNuxtConfig({
     plugins: [
       VueI18nVitePlugin({
         include: [
-          resolve(dirname(fileURLToPath(import.meta.url)), 'src/locales/*.json')
-        ]
-      })
-    ]
+          resolve(
+            dirname(fileURLToPath(import.meta.url)),
+            "src/locales/*.json"
+          ),
+        ],
+      }),
+    ],
   },
   runtimeConfig: {
     // The private keys which are only available within server-side
