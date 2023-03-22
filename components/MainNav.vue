@@ -1,18 +1,40 @@
 <template lang="pug">
-header.top-header.bg-primary
+header.top-header.elevation-1.bg-neutralDark
   .header-wrapper
-    a.header-brand-logo(href="/")
-      img(height="48" src="/icon.svg" )
-    .header-nav  
-      ul.top-menu-list
-        router-link(to="/")
-          li.top-menu-text Home
-        router-link(to="/about")
-          li.top-menu-text About
-        router-link(to="/store")
-          li.top-menu-text Test Pinia
+    div.d-flex.flex-row(style="gap:20px")
+      a.header-brand-logo(href="/")
+        img(height="48" src="/icon.svg" )
+      .header-nav  
+        ul.top-menu-list
+          router-link(to="/")
+            li.top-menu-text {{ $t('dashboard') }}
+          router-link(to="/#")
+            li.top-menu-text {{ $t('product') }}
+          router-link(to="/#")
+            li.top-menu-text {{ $t('page') }}
+          router-link(to="/#")
+            li.top-menu-text {{ $t('order') }}
+          router-link(to="/setting")
+            li.top-menu-text {{ $t('setting') }}
     .header-button
-      v-btn.elevation-0.text-neutral( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(-360deg)' : ''") 
+      v-btn.elevation-0.text-neutral( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'") 
+      v-menu()
+        template( v-slot:activator="{ props }" )
+          v-btn.elevation-0.text-neutral(height="48" prepend-icon="mdi-translate" rounded="pill" variant="outlined" v-bind="props")
+            .text-capitalize {{ $t('language') }}
+        v-list.pa-0
+          v-list-item(@click="setLanguage('en')" :class="$i18n.locale == 'en' ? 'bg-primary' : ''")
+            v-list-item-title English
+          v-list-item(@click="setLanguage('ms')" :class="$i18n.locale == 'ms' ? 'bg-primary' : ''")
+            v-list-item-title B. Melayu
+      v-menu()
+        template( v-slot:activator="{ props }" )
+          v-btn.elevation-0.text-neutral.bg-primary(icon="mdi-account" variant="outlined" v-bind="props")
+        v-list.pa-0
+          v-list-item(@click="$router.push('signin')")
+            v-list-item-title Sign in
+          v-list-item(@click="$router.push('signup')")
+            v-list-item-title Sign up
       v-btn.pa-2.nav-mobile-btn(icon="mdi-menu" variant="plain" @click="openNav()")
 
   .mobile-nav
@@ -24,7 +46,7 @@ header.top-header.bg-primary
         ul.mobile-menu-list
           router-link(to="/" @click="closeNav()")
             li.mobile-submenu-text
-              |Home
+              |{{ $t('dashboard') }}
           router-link(to="/about" @click="closeNav()")
             li.mobile-submenu-text
               |About
@@ -82,16 +104,24 @@ header.top-header.bg-primary
 <script setup>
 import { onMounted } from 'vue';
 import { useTheme } from 'vuetify'
+import { useI18n } from 'vue-i18n'
 
-const emit = defineEmits(['hasWallet'])
 const theme = useTheme()
+const { locale } = useI18n({ useScope: 'global' })
 
 onMounted(()=>{
-  console.log(theme.global.name.value);
+   locale.value = window.localStorage.getItem('preferredLanguage') || 'en'
+   theme.global.name.value = window.localStorage.getItem('preferredTheme') || 'light'
 })
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+  window.localStorage.setItem('preferredTheme', theme.global.name.value)
+}
+
+function setLanguage(lang) {
+  locale.value = lang
+  window.localStorage.setItem('preferredLanguage', lang)
 }
 
 function openNav() {
@@ -127,7 +157,7 @@ a {
   height: 60px;
   width: 100%;
   transition: transform .15s ease;
-  z-index: 2
+  z-index: 99
 }
 
 .header-wrapper {
@@ -149,7 +179,7 @@ a {
 
 .header-nav {
   display: none;
-  align-items: center;
+  align-items: start;
 
   .top-menu-list {
     font-weight: 500;
@@ -161,14 +191,20 @@ a {
   }
 
   .top-menu-text {
-    color: rgb(var(--v-theme-neutral));
+    color: rgb(var(--v-theme-neutralLight));
     padding: 16px 12px 18px 12px;
     border-bottom: 2px solid transparent;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    height: 60px;
+
   }
 
   .top-menu-text:hover {
-    border-bottom: 2px solid currentColor;
+    background-color: rgb(var(--v-theme-primary));
+    border-bottom: 2px solid rgb(var(--v-theme-secondary));
+    color: rgb(var(--v-theme-secondary));
   }
 }
 
@@ -188,7 +224,7 @@ a {
   width: 100vw;
   height: 100vh;
   position: absolute;
-  z-index: 9;
+  z-index: 100;
   backdrop-filter: blur(0);
   background-color: rgba(0, 0, 0, 0);
   inset: 0;

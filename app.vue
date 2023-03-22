@@ -1,21 +1,9 @@
 <template lang="pug">
-.app
-  MainNav(v-if="!(excludeNav.includes($route.name))")
-  NuxtPage.main-content
-  NuxtSnackbar
-  //- nuxt-layout
-  //-   nuxt-page
+nuxt-layout
+  nuxt-page.main-content
 </template>
 
-<script setup>
-const excludeNav = ref([
-  'index',
-  'signin', 
-  'signup', 
-  'forgot', 
-  'reset',
-])
-</script>
+<script setup></script>
 
 <style lang="scss">
 @use "./public/variables";

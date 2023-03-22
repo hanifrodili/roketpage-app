@@ -23,16 +23,18 @@ export default defineNuxtPlugin((nuxtApp) => {
             primary: "#13ED9A",
             secondary: "#666666",
             accent: "#5099C2",
-            neutral: "#2B2B2B",
+            neutralLight: "#2B2B2B",
+            neutralDark: "#F7F7F7",
             bodyBg: "#F7F7F7"
           },
         },
         dark: {
           colors: {
-            primary: "#666666",
-            secondary: "#13ED9A",
+            primary: "#13ED9A",
+            secondary: "#666666",
             accent: "#5099C2",
-            neutral: "#F7F7F7",
+            neutralLight: "#F7F7F7",
+            neutralDark: "#2B2B2B",
             bodyBg: "#2B2B2B"
           },
         },
