@@ -88,3 +88,13 @@ h6 {
 .cursor-pointer{
   cursor: pointer;
 }
+
+.v-text-field {
+  .v-field__outline__start {
+    border-radius: 4px 0 0 4px !important;
+  }
+
+  .v-field__outline__end {
+    border-radius: 0 4px 4px 0 !important;
+  }
+}

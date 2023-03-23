@@ -1,6 +1,6 @@
 <template lang="pug">
 .app
-  MainNav(v-if="!(excludeNav.includes($route.name))")
+  nav-main-nav(v-if="!(excludeNav.includes($route.name))")
   slot
 </template>
 

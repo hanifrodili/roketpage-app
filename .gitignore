@@ -9,4 +9,5 @@ dist
 .DS_Store
 pagebuilder
 page-builder
+test.vue
 test
