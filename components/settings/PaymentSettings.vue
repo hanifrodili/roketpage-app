@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  general-coming-soon
+  b Payment Settings
 </template>
 
 <script setup></script>

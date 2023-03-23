@@ -1,15 +1,15 @@
 {
-  "language" : "English",
-  "product" : "Product",
-  "dashboard" : "Dashboard",
-  "order" : "Order",
-  "setting" : "Settings",
-  "page" : "Sale Pages",
-  "pagelist" : "Pages List",
-  "lastupdate" : "Last Update",
-  "create" : "Create",
-  "createnewpage" : "Create New Page",
-  "account" : "Account",
-  "company" : "Company",
-  "save" : "Save"
+  "language": "English",
+  "product": "Product",
+  "dashboard": "Dashboard",
+  "order": "Order",
+  "setting": "Settings",
+  "page": "Sale Pages",
+  "pagelist": "Pages List",
+  "lastupdate": "Last Update",
+  "create": "Create",
+  "createnewpage": "Create New Page",
+  "account": "Account",
+  "company": "Company",
+  "save": "Save"
 }

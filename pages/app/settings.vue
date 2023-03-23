@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  general-coming-soon
+  settings-main-settings
 </template>
 
 <script setup></script>

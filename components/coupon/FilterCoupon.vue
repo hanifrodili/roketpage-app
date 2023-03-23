@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  general-coming-soon
+  b Filter Coupon
 </template>
 
 <script setup></script>

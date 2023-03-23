@@ -1,6 +1,7 @@
 <template lang="pug">
 div
-  general-coming-soon
+  v-card(min-height="50" flat color="transparent")
+  sites-builder-main-preview
 </template>
 
 <script setup></script>

@@ -12,7 +12,7 @@
 
 body {
   font-family: "Open Sans";
-  color:rgb(var(--v-theme-neutral));
+  color: rgb(var(--v-theme-neutral));
   background-color: rgb(var(--v-theme-bodyBg));
 }
 
@@ -81,11 +81,10 @@ h6 {
 
 .main-content {
   height: 100vh;
-  padding: 30px 40px;
-  // padding-top: 100px;
+  padding: 5% 5%;
 }
 
-.cursor-pointer{
+.cursor-pointer {
   cursor: pointer;
 }
 

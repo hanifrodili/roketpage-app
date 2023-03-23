@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  general-coming-soon
+  b Coupon
 </template>
 
 <script setup></script>
