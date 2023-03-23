@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  general-coming-soon
+  b Statistic
 </template>
 
 <script setup></script>

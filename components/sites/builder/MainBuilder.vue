@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  general-coming-soon
+  b Main Builder
 </template>
 
 <script setup></script>

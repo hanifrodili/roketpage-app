@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  general-coming-soon
+  b Item Order
 </template>
 
 <script setup></script>

@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  general-coming-soon
+  b Notification Settings
 </template>
 
 <script setup></script>
