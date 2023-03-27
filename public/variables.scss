@@ -82,6 +82,14 @@ h6 {
 .main-content {
   height: 100vh;
   padding: 5% 5%;
+  padding-top: 64px;
+}
+.page-content {
+  padding-top: 95px;
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .cursor-pointer {
@@ -90,10 +98,10 @@ h6 {
 
 .v-text-field {
   .v-field__outline__start {
-    border-radius: 4px 0 0 4px !important;
+    border-radius: 8px 0 0 8px !important;
   }
 
   .v-field__outline__end {
-    border-radius: 0 4px 4px 0 !important;
+    border-radius: 0 8px 8px 0 !important;
   }
 }

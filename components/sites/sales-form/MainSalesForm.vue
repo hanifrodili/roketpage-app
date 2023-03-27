@@ -1,7 +1,0 @@
-<template lang="pug">
-div
-  b Main Sales Form
-</template>
-
-<script setup></script>
-<style lang="scss" scoped></style>

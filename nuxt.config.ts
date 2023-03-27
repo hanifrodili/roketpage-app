@@ -78,7 +78,7 @@ export default defineNuxtConfig({
     duration: 3000,
   },
   routeRules: {
-    "/": { redirect: "/signin" },
+    "/": { redirect: "/signin" }
   },
   server: {
     port: process.env.PORT,

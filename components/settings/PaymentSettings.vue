@@ -1,6 +1,7 @@
 <template lang="pug">
-div
-  b Payment Settings
+v-expansion-panel()
+  v-expansion-panel-title(style="" expand-icon="mdi-chevron-down" collapse-icon="mdi-chevron-up") {{ $t('payment') }}
+  v-expansion-panel-text.panel-body
 </template>
 
 <script setup></script>

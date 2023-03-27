@@ -1,6 +1,5 @@
 <template lang="pug">
-div
-  v-card(min-height="50" flat color="transparent")
+div.page-content
   dashboard-main-dashboard
   dashboard-statistic
 </template>

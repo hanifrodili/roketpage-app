@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  b Statistic
+  //- h2.pa-0.mb-3 {{ $t('dashboard') }}
 </template>
 
 <script setup></script>

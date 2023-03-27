@@ -1,6 +1,7 @@
 <template lang="pug">
-div
-  b Shipping Settings
+v-expansion-panel()
+  v-expansion-panel-title(style="" expand-icon="mdi-chevron-down" collapse-icon="mdi-chevron-up") {{ $t('shipping') }}
+  v-expansion-panel-text.panel-body
 </template>
 
 <script setup></script>
