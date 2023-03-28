@@ -67,5 +67,10 @@ export default <RouterConfig>{
       path: '/index',
       component: () => import('~/pages/index.vue'),
     },
+    {
+      name: 'store',
+      path: '/teststore',
+      component: () => import('~/pages/store.vue'),
+    },
   ],
 }

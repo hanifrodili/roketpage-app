@@ -21,31 +21,31 @@
                   b Welcome
                 .text-body-2.mt-n1 Login to Continue
 
-                v-form.mt-6()
+                v-form.mt-6(ref="form" fast-fail)
                   v-text-field(
                     color='secondary'
-                    v-model='form.email'
+                    v-model='signinForm.email'
                     label='Email'
                     variant="outlined"
-                    :rules='rules.not_empty'
+                    :rules='rules.email'
                     type="email"
                   )
                   v-text-field(
                     color='secondary',
-                    v-model='form.password',
+                    v-model='signinForm.password',
                     label='Password',
                     variant="outlined"
                     :append-inner-icon='showPasword ? "mdi-eye" : "mdi-eye-off"',
                     @click:append-inner='showPasword = !showPasword',
                     :type='showPasword ? "text" : "password"',
-                    :rules='rules.not_empty'
+                    :rules='rules.password'
                   )
                   v-btn.text-capitalize.text--primary.text-body-1.mt-2.elevation-0(
                     width="100%"
                     color='primary',
                     rounded="pill",
                     size="large",
-                    @click='',
+                    @click="signin",
                     :loading='loading'
                   ) 
                     b.mr-2 Login
@@ -62,20 +62,57 @@
 
 <script setup>
 import { useDisplay } from 'vuetify'
+import { useStoreUser } from '~/store/storeMerchant'
+import { storeToRefs } from 'pinia'
 
+const router = useRouter()
 const { lgAndDown, xs } = useDisplay()
+const userStore = useStoreUser()
 
-const form = ref({
-  email: '',
-  password: ''
+onMounted(() => {
+  userStore.getUser()
+  console.log(userStore.user.email);
+  if (userStore.user.email) {
+    router.push('/dashboard')
+  }
+})
+
+const form = ref(null)
+const signinForm = ref({
+  email: "",
+  password: ""
 })
 const showPasword = ref(false)
 const loading = ref(false)
 const rules = ref(
   {
     not_empty: [(val) => (val || '').length > 0 || 'This field is required'],
+    email: [
+      (v) => !!v || 'E-mail address is required',
+      (v) =>
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+          v
+        ) || 'E-mail must be valid',
+    ],
+    password: [
+      (v) => !!v || 'Password is required',
+      (v) => (v || '').length >= 8 || 'Must be 8 characters and above',
+    ],
   }
 )
+
+async function signin() {
+  const validation = await form.value.validate()
+  if (!validation.valid) {
+    return
+  }
+  const usr = {
+    email: signinForm.value.email
+  }
+  userStore.setUser(usr)
+  loading.value = true
+  router.push('/dashboard')
+}
 </script>
 
 <style lang="scss" scoped></style>

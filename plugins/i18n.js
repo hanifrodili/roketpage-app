@@ -10,6 +10,17 @@ export default defineNuxtPlugin((nuxtApp) => {
     messages: {
       en,
       ms
+    },
+    strategy: 'prefix_except_default',
+    defaultLocale: 'en',
+    customRoutes: 'config',
+    pages: {
+      'app/settings': {
+        ms: '/tetapan'
+      },
+      'app/dashboard': {
+        ms: '/utama',
+      }
     }
   })
   nuxtApp.vueApp.use(i18n);

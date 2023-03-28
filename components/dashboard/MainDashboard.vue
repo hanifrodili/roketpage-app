@@ -1,7 +1,7 @@
 <template lang="pug">
-div.mb-10
-  v-select.ml-auto(v-model="statusRange" variant="outlined" hide-details="auto" :items="['Today','This month','This year']" style="width:fit-content")
-  div.d-flex.flex-row.justify-space-between.pt-5(:style="`gap:${width > 500 ? '30px' : '15px'}`" :class="width > 930 ? '' : 'flex-wrap'")
+div.pb-10
+  v-select.ml-auto(v-model="statusRange" variant="outlined" hide-details="auto" :items="['Today','This month','This week','This year']" style="width:fit-content")
+  div.d-flex.flex-row.justify-space-between.pt-5(:style="`gap:${$vuetify.display.width > 500 ? '30px' : '15px'}`" :class="$vuetify.display.width > 930 ? '' : 'flex-wrap'")
     v-card.status-card()
       p.status-number 200
       p.status-name Leads
@@ -26,14 +26,12 @@ div.mb-10
         p.status-compare 
           span.graph-up 10%
           | from yesterday
-    
+  //- dashboard-bar-chart.mt-15
+  v-card.status-card.mt-4(:class="$vuetify.display.width > 930 ? 'pa-10' : 'pa-3'" style="height: 300px")
+    dashboard-line-chart
 </template>
 
 <script setup>
-import { useDisplay } from 'vuetify'
-
-const { width } = useDisplay()
-
 const statusRange = ref('Today')
 </script>
 
@@ -46,7 +44,8 @@ const statusRange = ref('Today')
   align-items: center;
   justify-content: center;
   box-shadow: 0px 2px 4px -1px rgb(172 172 172 / 70%);
-  height: 150px;
+  min-height: 150px;
+  height: 100%;
   border-radius: 16px;
 
   .status-number{

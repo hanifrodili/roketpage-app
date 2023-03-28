@@ -5,13 +5,23 @@
       v-app-bar-nav-icon(variant="text" @click.stop="drawer = !drawer")
       v-toolbar-title.ml-0
         img(height="48" src="/icon.svg" )
+
       v-spacer
-      v-btn.elevation-0.text-neutral.mr-2( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
+
+      v-btn.elevation-0.text-neutral.rounded-lg( @click="openSelectLanguage = true" variant="text")
+        div.d-flex.flex-column.align-center.justify-center
+          v-icon mdi-translate
+          p(style="font-size:7px") {{ $t('language') }}
+
+      v-btn.elevation-0.text-neutral.mr-3( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
+      
       v-menu()
         template( v-slot:activator="{ props }" )
-          v-btn.elevation-0.text-neutral.bg-primary(icon="mdi-account" variant="outlined" v-bind="props")
+          v-btn.elevation-0.text-neutral.bg-transparent(icon="mdi-account" variant="outlined" v-bind="props")
         v-list.pa-0
-          v-list-item(@click="$router.push('logout')")
+          v-list-item(@click="")
+            v-list-item-title {{ userStore.user.email }}
+          v-list-item(@click="logout")
             v-list-item-title {{ $t('logout') }}
 
     v-navigation-drawer.py2(
@@ -98,13 +108,15 @@
 </template>
 
 <script setup>
-
+import { useStoreUser } from '~/store/storeMerchant'
 import { onMounted } from 'vue';
 import { useTheme } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 
 const theme = useTheme()
 const { locale } = useI18n({ useScope: 'global' })
+const userStore = useStoreUser()
+const router = useRouter()
 
 const drawer = ref(false)
 const openSelectLanguage = ref(false)
@@ -113,6 +125,15 @@ const openSelectCompany = ref(false)
 onMounted(() => {
   locale.value = window.localStorage.getItem('preferredLanguage') || 'en'
   theme.global.name.value = window.localStorage.getItem('preferredTheme') || 'light'
+  userStore.getUser()
+})
+
+watch(drawer, (newDrawerVal) => {
+  if (newDrawerVal) {
+    document.querySelector(".app").style.overflow = 'hidden'
+  } else {
+    document.querySelector(".app").style.overflow = 'auto'
+  }
 })
 
 function toggleTheme() {
@@ -124,6 +145,11 @@ function setLanguage(lang) {
   locale.value = lang
   openSelectLanguage.value = false
   window.localStorage.setItem('preferredLanguage', lang)
+}
+
+function logout() {
+  userStore.setUser()
+  router.push("/signin")
 }
 </script>
 

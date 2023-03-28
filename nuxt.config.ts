@@ -1,7 +1,3 @@
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "url";
-import VueI18nVitePlugin from "@intlify/unplugin-vue-i18n/vite";
-
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   app: {
@@ -94,16 +90,6 @@ export default defineNuxtConfig({
     define: {
       "process.env.DEBUG": false,
     },
-    plugins: [
-      VueI18nVitePlugin({
-        include: [
-          resolve(
-            dirname(fileURLToPath(import.meta.url)),
-            "src/locales/*.json"
-          ),
-        ],
-      }),
-    ],
   },
   runtimeConfig: {
     // The private keys which are only available within server-side

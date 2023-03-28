@@ -21,9 +21,9 @@
                   b Register
                 .text-body-2.mt-n1.mb-2 Get Access to Your Dashboard
 
-                v-form.mt-4()
+                v-form.mt-4(ref="form" fast-fail)
                   v-text-field.mb-2(
-                    v-model='form.company_name',
+                    v-model='registerForm.company_name',
                     color='secondary',
                     label='Company Name',
                     :rules='rules.not_empty',
@@ -31,21 +31,21 @@
                     rounded
                   )
                   v-text-field.mb-2(
-                    v-model='form.full_name',
+                    v-model='registerForm.full_name',
                     color='secondary',
                     label='Your Name',
                     :rules='rules.not_empty',
                     variant="outlined"
                   )
                   v-text-field.mb-2(
-                    v-model='form.email',
+                    v-model='registerForm.email',
                     color='secondary',
                     label='E-mail address',
                     variant="outlined",
                     :rules='rules.email'
                   )
                   v-text-field.mb-2(
-                    v-model='form.password',
+                    v-model='registerForm.password',
                     color='secondary',
                     label='Password',
                     variant="outlined",
@@ -55,7 +55,7 @@
                     :rules='rules.password'
                   )
                   v-text-field.mb-2(
-                    v-model='form.repeat_password',
+                    v-model='registerForm.repeat_password',
                     color='secondary',
                     label='Repeat Password',
                     variant="outlined",
@@ -69,7 +69,7 @@
                     color='primary',
                     rounded="pill",
                     size="large",
-                    @click='',
+                    @click='signup',
                     :loading='isLoading'
                   ) 
                     b.mr-2 Create Acount
@@ -105,8 +105,10 @@
 import { useDisplay } from 'vuetify'
 
 const { xs } = useDisplay()
+const router = useRouter()
 
-const form = ref({
+const form = ref(null)
+const registerForm = ref({
   company_name: '',
   full_name: '',
   email: '',
@@ -115,7 +117,7 @@ const form = ref({
 })
 const showDialog = ref(false)
 const showPasword = ref(false)
-const isLoading = ref(false)
+const loading = ref(false)
 const rules = ref(
   {
     not_empty: [(val) => (val || '').length > 0 || 'This field is required'],
@@ -137,6 +139,15 @@ const rules = ref(
     ],
   }
 )
+
+async function signup() {
+  const validation = await form.value.validate()
+  if (!validation.valid) {
+    return
+  }
+  loading.value = true
+  router.push('/dashboard')
+}
 </script>
 
 <style lang="scss" scoped></style>
