@@ -6,7 +6,7 @@ div.py-15
     v-table(style="background-color:transparent")
       tbody
         tr(v-for="n in 5" :key="n")
-          td.order-row
+          td.px-0.order-row
             order-item-order
 </template>
 
@@ -26,6 +26,6 @@ div.py-15
 }
 
 .order-row:not(:last-of-type){
-  border-bottom: 1px solid #cecece;
+  border-bottom: 1px solid #7d7d7d;
 }
 </style>

@@ -1,12 +1,12 @@
 <template lang="pug">
-div.d-flex.align-start.justify-space-between(style="padding: 15px; gap: 20px;" :class="$vuetify.display.width < 1020 ? 'flex-column' : 'flex-row'")
+div.d-flex.align-start.justify-space-between.py-4.px-md-4(style="gap: 20px;" :class="$vuetify.display.width < 1020 ? 'flex-column' : 'flex-row'")
   div.d-flex.flex-column(style="width:100%; heigth:100%; padding:0px; gap:4px;" :style="`max-width:${$vuetify.display.width < 1020 ? '100%' : '350px'}`")
-    div.d-flex.flex-row(style="gap: 10px; font-weight:bold; font-size:14px")
+    div.d-flex.flex-row(style="gap: 10px; font-weight:bold; font-size:14px" )
       p #123
       p Mohd Hanif Bin Mohamod Rodili
-    div.d-flex.flex-row(style="gap:10px; font-size:14px")
+    div.d-flex.flex-row(style="gap:10px; font-size:14px" )
       p +60 13 471 4296
-      img(src="/img/ver-divider.svg")
+      img(src="/img/ver-divider.svg" )
       p hanifrodili@gmail.com
   div.d-flex.flex-column(style="width:100%; heigth:100%; padding:0px; gap:4px; font-size:14px" :style="`max-width:${$vuetify.display.width < 1020 ? '100%' : '290px'}`")
     p.font-weight-bold.text-decoration-underline Item(s)
