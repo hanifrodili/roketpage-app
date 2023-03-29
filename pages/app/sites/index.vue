@@ -1,6 +1,6 @@
 <template lang="pug">
-.builder-home.mx-auto(style="max-width:1240px;")
-  h2.pa-0.mb-3.mt-15 {{ $t('pagelist') }}
+.builder-home.mx-auto.page-content(style="max-width:1240px;")
+  h2.pa-0.mb-3 {{ $t('pagelist') }}
   v-row.ma-0
     v-col.px-1.py-2(cols="6" md="3" sm="4" v-for="page in userPages" :key="page.id")
       v-card.d-flex.flex-column.justify-space-between(flat style="height:100%")

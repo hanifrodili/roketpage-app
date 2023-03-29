@@ -1,8 +1,8 @@
 <template lang="pug">
-div
-  v-card(min-height="50" flat color="transparent")
-  order-main-order
+div.page-content
+ h1 ID {{ `#${$route.params.id}` }}
 </template>
 
 <script setup></script>
+
 <style lang="scss" scoped></style>

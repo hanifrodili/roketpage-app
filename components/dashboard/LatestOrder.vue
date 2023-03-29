@@ -1,5 +1,5 @@
 <template lang="pug">
-div.py-15
+div.py-8
   //- h2.pa-0.mb-3 {{ $t('dashboard') }}
   v-card.card
     h2.pa-0.mb-3(style="font-size:20px") {{ $t('latestorder',{number: 5}) }}

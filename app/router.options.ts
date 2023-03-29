@@ -20,7 +20,12 @@ export default <RouterConfig>{
     {
       name: 'order',
       path: '/order',
-      component: () => import('~/pages/app/order.vue'),
+      component: () => import('~/pages/app/order/index.vue'),
+    },
+    {
+      name: 'orderDetails',
+      path: '/order/:id',
+      component: () => import('~/pages/app/order/[id].vue'),
     },
     {
       name: 'product',

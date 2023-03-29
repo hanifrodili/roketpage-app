@@ -35,7 +35,7 @@ div.d-flex.align-start.justify-space-between.py-4.px-md-4(style="gap: 20px;" :cl
     div.d-flex.flex-row.justify-end()
       v-btn(icon="mdi-trash-can-outline" variant="text" size="small" color="red")
       v-btn(icon="mdi-file-edit-outline" variant="text" size="small")
-      v-btn(icon="mdi-open-in-new" variant="text" size="small")
+      v-btn(icon="mdi-open-in-new" variant="text" size="small" @click="$router.push('/order/123')")
         
 
 

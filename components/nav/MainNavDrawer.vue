@@ -1,7 +1,7 @@
 <template lang="pug">
 .MainNavDrawer
   v-layout
-    v-app-bar.elevation-1(color="neutralDark" prominent style="z-index:1000")
+    v-app-bar.elevation-1.bg-neutralDark( prominent style="z-index:1000")
       v-app-bar-nav-icon(variant="text" @click.stop="drawer = !drawer")
       v-toolbar-title.ml-0
         img(height="48" src="/icon.svg" )

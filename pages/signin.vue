@@ -1,19 +1,19 @@
 <template lang="pug">
 .signin.lighten-4.min-height
-  v-container.d-flex.flex-column.justify-center(style="height:100%")
+  v-container.d-flex.flex-column.justify-center.pa-0()
     v-card.rounded-xl.mx-auto(flat style="max-width:800px; width: 100%;")
       v-row(no-gutter, align='center')
-        v-col(cols='12', sm='6') 
-          v-card.grey.lighten-4(
+        v-col.py-1(cols='12', sm='6') 
+          v-card.grey.lighten-4.pt-5(
             flat,
             :class='xs ? "rounded-t-xl" : "rounded-l-xl"'
           ) 
             v-img(
               src="/icon.svg",
-              :max-height='xs ? 200 : 500'
+              :max-height='xs ? 100 : 500'
             )
 
-        v-col(cols='12', sm='6')
+        v-col.py-1(cols='12', sm='6')
           .ma-4.mx-6.ml-sm-0
             v-card.mt-4(flat) 
               v-card-text.grey--text
