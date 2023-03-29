@@ -21,5 +21,6 @@
   "shipping": "Penghantaran",
   "notification": "Pemberitahuan",
   "subscription": "Langganan",
-  "switchcompany": "Tukar syarikat"
+  "switchcompany": "Tukar syarikat",
+  "latestorder": "{number} Order Terkini"
 }

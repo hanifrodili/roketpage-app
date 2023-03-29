@@ -21,5 +21,6 @@
   "shipping": "Shipping",
   "notification": "Notification",
   "subscription": "Subscription",
-  "switchcompany": "Switch company"
+  "switchcompany": "Switch company",
+  "latestorder": "Latest {number} Orders"
 }

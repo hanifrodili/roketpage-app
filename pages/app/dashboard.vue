@@ -1,7 +1,7 @@
 <template lang="pug">
 div.page-content
   dashboard-main-dashboard
-  dashboard-statistic
+  dashboard-latest-order
 </template>
 
 <script setup></script>
