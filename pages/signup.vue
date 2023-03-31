@@ -70,7 +70,7 @@
                     rounded="pill",
                     size="large",
                     @click='signup',
-                    :loading='isLoading'
+                    :loading='loading'
                   ) 
                     b.mr-2 Create Acount
                     v-icon(right) mdi-account-plus

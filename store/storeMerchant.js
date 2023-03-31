@@ -7,6 +7,8 @@ export const useStoreUser = defineStore('storeUser', () => {
     const userString = window.localStorage.getItem('roketpage_merchant')
     if (userString) {
       user.value = JSON.parse(userString)
+    }else {
+      user.value = {}
     }
   }
 
