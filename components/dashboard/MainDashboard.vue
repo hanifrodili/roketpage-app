@@ -9,7 +9,7 @@ div
         img(src="/img/graph-down.svg" width="15")
         p.status-compare 
           span.graph-down -5%
-          | from yesterday
+          | from {{ previousRange }}
     v-card.status-card()
       p.status-number RM 20,000
       p.status-name Sales
@@ -17,7 +17,7 @@ div
         img(src="/img/graph-up.svg" width="15")
         p.status-compare 
           span.graph-up 20%
-          | from yesterday
+          | from {{ previousRange }}
     v-card.status-card()
       p.status-number 150
       p.status-name Orders
@@ -25,7 +25,7 @@ div
         img(src="/img/graph-up.svg" width="15")
         p.status-compare 
           span.graph-up 10%
-          | from yesterday
+          | from {{ previousRange }}
   //- dashboard-bar-chart.mt-15
   v-card.status-card.mt-4(:class="$vuetify.display.width > 930 ? 'pa-10' : 'pa-3'" style="height: 300px")
     dashboard-line-chart
@@ -33,6 +33,27 @@ div
 
 <script setup>
 const statusRange = ref('Today')
+const previousRange = ref('yesterday')
+
+watch(statusRange, () => {
+  switch (statusRange.value) {
+    case 'Today':
+      previousRange.value = 'yesterday'
+      break;
+    case 'This week':
+      previousRange.value = 'last week'
+      break;
+    case 'This month':
+      previousRange.value = 'last month'
+      break;
+    case 'This year':
+      previousRange.value = 'last year'
+      break;
+  
+    default:
+      break;
+  }
+})
 </script>
 
 <style lang="scss" scoped>

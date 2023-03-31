@@ -75,29 +75,29 @@ onMounted(async () => {
 
 watch(pageProcess, (newValue, oldValue) => {
   if (newValue > oldValue) {
-    startProcess.value += 5
-    endProcess.value += 5 
+    startProcess.value = (5 * newValue) - 5
+    endProcess.value = startProcess.value + 4 
   } else {
-    startProcess.value -= 5
-    endProcess.value -= 5
+    startProcess.value = (5 * newValue) - 5
+    endProcess.value = startProcess.value + 4
   }
 })
 watch(pageShip, (newValue, oldValue) => {
   if (newValue > oldValue) {
-    startShip.value += 5
-    endShip.value += 5
+    startShip.value = (5 * newValue) - 5
+    endShip.value = startShip.value + 4 
   } else {
-    startShip.value -= 5
-    endShip.value -= 5
+    startShip.value = (5 * newValue) - 5
+    endShip.value = startShip.value + 4 
   }
 })
 watch(pageComplete, (newValue, oldValue) => {
   if (newValue > oldValue) {
-    startComplete.value += 5
-    endComplete.value += 5
+    startComplete.value = (5 * newValue) - 5
+    endComplete.value = startComplete.value + 4 
   } else {
-    startComplete.value -= 5
-    endComplete.value -= 5
+    startComplete.value = (5 * newValue) - 5
+    endComplete.value = startComplete.value + 4 
   }
 })
 

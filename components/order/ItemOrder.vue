@@ -27,6 +27,9 @@ div.d-flex.align-start.justify-space-between.py-4.px-md-4(style="gap: 20px;" :cl
         p Status:
         p.font-weight-bold.text-green {{ order.status }}
       div.d-flex.flex-row(style="gap:4px" :class="$vuetify.display.width < 1020 ? 'justify-start' : 'justify-end'")
+        p Delivery Fee:
+        p.font-weight-bold RM10
+      div.d-flex.flex-row(style="gap:4px" :class="$vuetify.display.width < 1020 ? 'justify-start' : 'justify-end'")
         p Total Paid:
         p.font-weight-bold RM{{ totalPrice(order.products) }}
     div.d-flex.flex-row.justify-end()
@@ -51,7 +54,7 @@ function totalPrice(items) {
     sub = item.price * item.quantity
     total += sub
   });
-  return total
+  return total + 10
 }
 </script>
 <style lang="scss" scoped></style>
