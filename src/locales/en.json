@@ -1,10 +1,10 @@
 {
   "language": "English",
   "product": "Product",
-  "order": "Order",
+  "customer": "Customer",
   "dashboard": "Dashboard",
   "settings": "Settings",
-  "sites": "Sites",
+  "pages": "Pages",
   "pagelist": "Pages List",
   "lastupdate": "Last Update",
   "create": "Create",
@@ -16,11 +16,14 @@
   "logout": "Log out",
   "register": "Register",
   "chooselanguage": "Choose your language",
-  "choosecompany": "Choose your company",
+  "chooseaccount": "Choose your account",
   "payment": "Payment",
   "shipping": "Shipping",
   "notification": "Notification",
   "subscription": "Subscription",
-  "switchcompany": "Switch company",
-  "latestorder": "Latest {number} Orders"
+  "switchaccount": "Switch account",
+  "latestorder": "Latest {number} Orders",
+  "status": "Status",
+  "deliveryfee": "Delivery Fee",
+  "totalpaid": "Total Paid"
 }

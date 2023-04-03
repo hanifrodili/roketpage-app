@@ -1,123 +1,102 @@
 <template lang="pug">
 div
+  order-filter-order.mb-5(@search="search" @filter="filter")
   v-card.card
-    v-tabs(v-model='tab', bg-color='secondary', color='primary', grow='')
-      v-tab( value="Processing")
-        | Processing
-      v-tab( value="Shipping")
-        | Shipping
-      v-tab( value="Completed")
-        | Completed
-    v-window(v-model='tab')
-      v-window-item(value="Processing")
-        v-card(color='', flat='')
-          v-card-text
-            v-table(style="background-color:transparent")
-              tbody
-                template(v-for="(order, index) in orderProcessing" :key="order.order_id")
-                  tr.px-0.order-row(v-if="index >= startProcess && index <= endProcess" )
-                    td.px-0
-                      order-item-order(:order="order")
-            general-pagination(v-model="pageProcess" :maxPage="maxPageProcess")
-      
-      v-window-item(value="Shipping")
-        v-card(color='', flat='')
-          v-card-text
-            v-table(style="background-color:transparent")
-              tbody
-                template(v-for="(order, index) in orderShipping" :key="order.order_id")
-                  tr.px-0.order-row(v-if="index >= startShip && index <= endShip" )
-                    td.px-0
-                      order-item-order(:order="order")
-            general-pagination(v-model="pageShip" :maxPage="maxPageShip")
-      
-      v-window-item(value="Completed")
-        v-card(color='', flat='')
-          v-card-text
-            v-table(style="background-color:transparent")
-              tbody
-                template(v-for="(order, index) in orderCompleted" :key="order.order_id")
-                  tr.px-0.order-row(v-if="index >= startComplete && index <= endComplete" )
-                    td.px-0
-                      order-item-order(:order="order")
-            general-pagination(v-model="pageComplete" :maxPage="maxPageComplete")
+    v-card-text.d-flex.flex-column.justify-space-between
+      v-table(style="background-color:transparent")
+        tbody
+          template(v-for="(order, index) in orders" :key="order.id")
+            tr.px-0.order-row()
+              td.px-0
+                order-item-order(:order="order")
+      general-pagination(v-if="maxPage > 1"  v-model="page" :maxPage="maxPage")
 </template>
 
 <script setup>
-const tab = ref(null)
-const pageProcess = ref(1)
-const pageShip = ref(1)
-const pageComplete = ref(1)
+import axios from 'axios'
 
-const maxPageProcess = ref(1)
-const maxPageShip = ref(1)
-const maxPageComplete = ref(1)
-
-const orderProcessing = ref([])
-const orderShipping = ref([])
-const orderCompleted = ref([])
-
-const startProcess = ref(0)
-const endProcess = ref(4)
-
-const startShip = ref(0)
-const endShip = ref(4)
-
-const startComplete = ref(0)
-const endComplete = ref(4)
+const page = ref(1)
+const maxPage = ref(1)
+const orders = ref([])
+const totalOrders = ref(0)
+const searchKeyword = ref(null)
+const filters = ref([])
 
 onMounted(async () => {
-  await getData()
-  maxPageProcess.value = Math.ceil(orderProcessing.value.length / 5)
-  maxPageShip.value = Math.ceil(orderShipping.value.length / 5)
-  maxPageComplete.value = Math.ceil(orderCompleted.value.length / 5)
+  await getData(1)
 })
 
-watch(pageProcess, (newValue, oldValue) => {
-  if (newValue > oldValue) {
-    startProcess.value = (5 * newValue) - 5
-    endProcess.value = startProcess.value + 4 
-  } else {
-    startProcess.value = (5 * newValue) - 5
-    endProcess.value = startProcess.value + 4
-  }
-})
-watch(pageShip, (newValue, oldValue) => {
-  if (newValue > oldValue) {
-    startShip.value = (5 * newValue) - 5
-    endShip.value = startShip.value + 4 
-  } else {
-    startShip.value = (5 * newValue) - 5
-    endShip.value = startShip.value + 4 
-  }
-})
-watch(pageComplete, (newValue, oldValue) => {
-  if (newValue > oldValue) {
-    startComplete.value = (5 * newValue) - 5
-    endComplete.value = startComplete.value + 4 
-  } else {
-    startComplete.value = (5 * newValue) - 5
-    endComplete.value = startComplete.value + 4 
-  }
+watch(page, async (updatedPage) => {
+  await getData(updatedPage, searchKeyword.value, filters.value)
 })
 
-const items = ref([
-  'Processing', 'Shipping', 'Completed',
-])
+async function getData(page, keyword, filters) {
+  let url = `https://api-test.roketpage.com/items/order_test?limit=5&fields[]=*&sort[]=id&page=${page}`
 
-async function getData() {
-  const data = await $fetch('/dummy/orders.json')
-  data.orders.forEach(order => {
-    if (order.status === "processing") {
-      orderProcessing.value.push(order)
+  if (keyword) {
+    url += `&search=${keyword}`
+  }
+
+  if (filters) {
+    filters.forEach(filter => {
+      if (filter.value) {
+        url += `&filter[${filter.field}]=${filter.value}`
+      }
+    });
+  }
+
+  await axios.get(url)
+    .then(response => {
+      // Handle successful response
+      orders.value = response.data.data
+    })
+    .catch(error => {
+      // Handle error
+      console.log(error);
+    });
+  
+  // Get total orders
+  if (page === 1) {
+    await axios.get(url + '&aggregate[countDistinct]=id')
+      .then(response => {
+        // Handle successful response
+        totalOrders.value = response.data.data[0].countDistinct.id
+      })
+      .catch(error => {
+        // Handle error
+        console.log(error);
+      });
+
+    maxPage.value = Math.ceil(totalOrders.value / 5)
+  }
+}
+
+async function search(e) {
+  searchKeyword.value = e
+  page.value = 1
+  await getData(page.value, searchKeyword.value, filters.value)
+}
+
+async function filter(e) {
+  let filterExist = 1
+  filters.value.forEach(filter => {
+    if (filter.field === e.field) {
+      filter.value = e.value
+      filterExist *= 0
     }
-    if (order.status === "shipping") {
-      orderShipping.value.push(order)
-    }
-    if (order.status === "completed") {
-      orderCompleted.value.push(order)
-    }
-  })
+  });
+
+  if(filterExist) {
+    filters.value.push(
+      {
+        field: e.field,
+        value: e.value
+      }
+    )
+  }
+  console.log(filters.value);
+  page.value = 1
+  await getData(page.value, searchKeyword.value ,filters.value)
 }
 </script>
 <style lang="scss" scoped>
@@ -128,7 +107,8 @@ async function getData() {
   // align-items: center;
   // justify-content: center;
   box-shadow: 0px 2px 4px -1px rgb(34 34 34 / 50%);
-  min-height: fit-content;
+  min-height: 400px;
+  height: fit-content;
   height: 100%;
   border-radius: 16px;
 }

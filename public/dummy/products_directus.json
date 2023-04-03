@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "Sneakers",
+    "description": "High-quality and durable",
+    "base_price": 18.55,
+    "base_stock": 0,
+    "image": "https://example.com/hoodie.png",
+    "date_created": 1680497059
+  },
+  {
+    "id": 2,
+    "name": "T-Shirt",
+    "description": "Perfect for any occasion",
+    "base_price": 43.01,
+    "base_stock": 57,
+    "image": "https://example.com/tshirt.png",
+    "date_created": 1680497059
+  },
+  {
+    "id": 3,
+    "name": "Backpack",
+    "description": "High-quality and durable",
+    "base_price": 15.02,
+    "base_stock": 46,
+    "image": "https://example.com/sneakers.png",
+    "date_created": 1680497059
+  },
+  {
+    "id": 4,
+    "name": "T-Shirt",
+    "description": "Protects your phone",
+    "base_price": 35.83,
+    "base_stock": 53,
+    "image": "https://example.com/backpack.png",
+    "date_created": 1680497059
+  },
+  {
+    "id": 5,
+    "name": "Phone Case",
+    "description": "High-quality and durable",
+    "base_price": 26.24,
+    "base_stock": 52,
+    "image": "https://example.com/tshirt.png",
+    "date_created": 1680497059
+  },
+  {
+    "id": 6,
+    "name": "Hoodie",
+    "description": "Perfect for any occasion",
+    "base_price": 28.09,
+    "base_stock": 51,
+    "image": "https://example.com/backpack.png",
+    "date_created": 1680497059
+  },
+  {
+    "id": 7,
+    "name": "T-Shirt",
+    "description": "Perfect for any occasion",
+    "base_price": 37.34,
+    "base_stock": 94,
+    "image": "https://example.com/sneakers.png",
+    "date_created": 1680497059
+  },
+  {
+    "id": 8,
+    "name": "Hoodie",
+    "description": "Great for traveling",
+    "base_price": 28.69,
+    "base_stock": 19,
+    "image": "https://example.com/backpack.png",
+    "date_created": 1680497059
+  },
+  {
+    "id": 9,
+    "name": "Phone Case",
+    "description": "Perfect for any occasion",
+    "base_price": 49.62,
+    "base_stock": 65,
+    "image": "https://example.com/phonecase.png",
+    "date_created": 1680497059
+  },
+  {
+    "id": 10,
+    "name": "Backpack",
+    "description": "High-quality and durable",
+    "base_price": 20.7,
+    "base_stock": 33,
+    "image": "https://example.com/backpack.png",
+    "date_created": 1680497059
+  }
+]

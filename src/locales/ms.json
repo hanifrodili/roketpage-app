@@ -1,10 +1,10 @@
 {
   "language": "B. Melayu",
   "product": "Produk",
-  "order": "Tempahan",
+  "customer": "Pelanggan",
   "dashboard": "Paparan Utama",
   "settings": "Tetapan",
-  "sites": "Laman",
+  "pages": "Laman",
   "pagelist": "Senarai Laman",
   "lastupdate": "Kemaskini Terakhir",
   "create": "Cipta",
@@ -16,11 +16,14 @@
   "logout": "Log keluar",
   "register": "Daftar",
   "chooselanguage": "Pilih bahasa anda",
-  "choosecompany": "Pilih syarikat anda",
+  "chooseaccount": "Pilih akaun anda",
   "payment": "Bayaran",
   "shipping": "Penghantaran",
   "notification": "Pemberitahuan",
   "subscription": "Langganan",
-  "switchcompany": "Tukar syarikat",
-  "latestorder": "{number} Order Terkini"
+  "switchaccount": "Tukar akaun",
+  "latestorder": "{number} Order Terkini",
+  "status": "Status",
+  "deliveryfee": "Penghantaran",
+  "totalpaid": "Jumlah Dibayar"
 }

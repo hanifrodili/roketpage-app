@@ -7,12 +7,28 @@ div.py-8
       v-btn(icon="mdi-open-in-new" variant="text" size="small" @click="$router.push(`/order`)")
     v-table(style="background-color:transparent")
       tbody
-        tr(v-for="n in 5" :key="n")
+        tr(v-for="order in orders" :key="order.id")
           td.px-0.order-row
-            order-item-order-simple
+            order-item-order-simple(:order="order")
 </template>
 
-<script setup></script>
+<script setup>
+import axios from 'axios'
+
+const orders = ref([])
+
+onMounted(async () => {
+  await axios.get('https://api-test.roketpage.com/items/order_test?limit=5&fields[]=*&sort[]=id&filter[status]=new')
+    .then(response => {
+      // Handle successful response
+      orders.value = response.data.data
+    })
+    .catch(error => {
+      // Handle error
+      console.log(error);
+    });
+})
+</script>
 <style lang="scss" scoped>
 .card{
   width: 100%;

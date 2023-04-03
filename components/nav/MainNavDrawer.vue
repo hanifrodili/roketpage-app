@@ -42,37 +42,17 @@
           v-list-item(@click="openSelectCompany = true" style="padding-left:20px !important")
             template(v-slot:prepend)
               v-icon.mr-2.icon-nav mdi-swap-horizontal
-            v-list-item-title.menu-text {{ $t('switchcompany') }}
+            v-list-item-title.menu-text {{ $t('switchaccount') }}
 
         v-divider
 
-        v-list-item.px-5(@click="$router.push('/dashboard'), drawer = false" :class="$route.name == 'dashboard' ? 'activated' : ''")
+        v-list-item.px-5(v-for="(nav, index) in navList" :key="index" @click="$router.push(nav.path), drawer = false" :class="$route.name == nav.name ? 'activated' : ''")
           template(v-slot:prepend)
-            v-icon.mr-2.icon-nav mdi-view-dashboard
-          v-list-item-title.menu-text {{ $t('dashboard') }}
-
-        v-list-item.px-5(@click="$router.push('/order'), drawer = false" :class="$route.name == 'order' ? 'activated' : ''")
-          template(v-slot:prepend)
-            v-icon.mr-2.icon-nav mdi-inbox-arrow-down
+            v-icon.mr-2.icon-nav {{ `mdi-${nav.mdi}` }}
           div.d-flex.flex-row.align-center.justify-space-between
-            v-list-item-title.menu-text {{ $t('order') }}
-            div.rounded-pill.bg-red.d-flex.align-center.justify-center(style="height:25px; padding:5px")
-              p.mb-0(style="font-size:14px") 20
-
-        v-list-item.px-5(@click="$router.push('/product'), drawer = false" :class="$route.name == 'product' ? 'activated' : ''")
-          template(v-slot:prepend)
-            v-icon.mr-2.icon-nav mdi-package
-          v-list-item-title.menu-text {{ $t('product') }}
-
-        v-list-item.px-5(@click="$router.push('/sites'), drawer = false" :class="$route.name == 'sites' ? 'activated' : ''")
-          template(v-slot:prepend)
-            v-icon.mr-2.icon-nav mdi-file-link
-          v-list-item-title.menu-text {{ $t('sites') }}
-
-        v-list-item.px-5(@click="$router.push('/settings'), drawer = false" :class="$route.name == 'settings' ? 'activated' : ''")
-          template(v-slot:prepend)
-            v-icon.mr-2.icon-nav mdi-cogs
-          v-list-item-title.menu-text {{ $t('settings') }}
+            v-list-item-title.menu-text {{ $t(nav.i18n_key) }}
+            div.rounded-pill.bg-red.d-flex.align-center.justify-center(style="height:25px; padding:5px" v-if="nav.notification" )
+              p.mb-0(style="font-size:14px") {{ nav.notification }}
 
         v-divider
 
@@ -97,7 +77,7 @@
   //- Company dialog
   v-dialog( v-model="openSelectCompany" width="100%" max-width="350px")
     v-card(  )
-      v-card-title {{ $t('choosecompany') }}
+      v-card-title {{ $t('chooseaccount') }}
       v-card-text
         v-list.pa-0
           v-list-item.rounded.mb-1(@click="" :class="true ? 'bg-primary' : ''")
@@ -117,6 +97,44 @@ const theme = useTheme()
 const { locale } = useI18n({ useScope: 'global' })
 const userStore = useStoreUser()
 const router = useRouter()
+
+const navList = ref([
+  {
+    path: "/dashboard",
+    name: "dashboard",
+    mdi: "view-dashboard",
+    i18n_key: "dashboard",
+    notification: 0
+  },
+  {
+    path: "/order",
+    name: "order",
+    mdi: "inbox-arrow-down",
+    i18n_key: "customer",
+    notification: 20
+  },
+  {
+    path: "/product",
+    name: "product",
+    mdi: "package",
+    i18n_key: "product",
+    notification: 0
+  },
+  {
+    path: "/sites",
+    name: "sites",
+    mdi: "file-link",
+    i18n_key: "pages",
+    notification: 0
+  },
+  {
+    path: "/settings",
+    name: "settings",
+    mdi: "cogs",
+    i18n_key: "settings",
+    notification: 0
+  },
+])
 
 const drawer = ref(false)
 const openSelectLanguage = ref(false)
