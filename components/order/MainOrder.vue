@@ -31,7 +31,7 @@ async function getData() {
   let url = `https://api-test.roketpage.com/items/order_test?limit=${queryLimit.value}&fields[]=*&sort[]=id&page=${page.value}`
 
   if (searchKeyword.value) {
-    url += `&search=${keyword}`
+    url += `&search=${searchKeyword.value}`
   }
 
   if (filters.value) {
