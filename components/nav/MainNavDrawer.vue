@@ -1,68 +1,67 @@
 <template lang="pug">
-.MainNavDrawer
-  v-layout
-    v-app-bar.elevation-1.bg-neutralDark( prominent style="z-index:1000")
-      v-app-bar-nav-icon(variant="text" @click.stop="drawer = !drawer")
-      v-toolbar-title.ml-0
-        img(height="48" src="/icon.svg" )
+v-app
+  v-navigation-drawer(
+      v-model="drawer"
+    )
 
-      v-spacer
+    v-list.pa-0
+      v-list-group
+        template( v-slot:activator="{ props }" ) 
+          v-list-item.py-3(
+            v-bind="props"
+            prepend-avatar="https://ik.imagekit.io/hanifrodili/HNFRDL.jpg?updatedAt=1671006782759"
+            title="HNFRDL Store"
+            append-icon=""
+          )
+        v-list-item(@click="openSelectCompany = true" style="padding-left:20px !important")
+          template(v-slot:prepend)
+            v-icon.mr-2.icon-nav mdi-swap-horizontal
+          v-list-item-title.menu-text {{ $t('switchaccount') }}
 
-      v-btn.elevation-0.text-neutral.rounded-lg( @click="openSelectLanguage = true" variant="text")
-        div.d-flex.flex-column.align-center.justify-center
-          v-icon mdi-translate
-          p(style="font-size:7px") {{ $t('language') }}
+      v-divider
 
-      v-btn.elevation-0.text-neutral.mr-3( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
-      
-      v-menu()
-        template( v-slot:activator="{ props }" )
-          v-btn.elevation-0.text-neutral.bg-transparent(icon="mdi-account" variant="outlined" v-bind="props")
-        v-list.pa-0
-          v-list-item(@click="")
-            v-list-item-title {{ userStore.user.email }}
-          v-list-item(@click="logout")
-            v-list-item-title {{ $t('logout') }}
+      v-list-item.px-5(v-for="(nav, index) in navList" :key="index" @click="$router.push(nav.path), drawer = false" :class="$route.name == nav.name ? 'activated' : ''")
+        template(v-slot:prepend)
+          v-icon.mr-2.icon-nav {{ `mdi-${nav.mdi}` }}
+        div.d-flex.flex-row.align-center.justify-space-between
+          v-list-item-title.menu-text {{ $t(nav.i18n_key) }}
+          div.rounded-pill.bg-red.d-flex.align-center.justify-center(style="height:25px; padding:5px" v-if="nav.notification" )
+            p.mb-0(style="font-size:14px") {{ nav.notification }}
 
-    v-navigation-drawer.py2(
-        v-model="drawer"
-        temporary
-        style="height:100%; top:0; z-index:1999"
+      v-divider
+
+      v-list-item.px-5(
+        @click="openSelectLanguage = true"
       )
+        template(v-slot:prepend)
+          v-icon.mr-2 mdi-translate
+        v-list-item-title.menu-text {{ $t('language') }}
 
+  v-app-bar.elevation-1.bg-neutralDark()
+    v-app-bar-nav-icon(variant="text" @click.stop="drawer = !drawer")
+    v-toolbar-title.ml-0
+      img(height="48" src="/icon.svg" )
+
+    v-spacer
+
+    v-btn.elevation-0.text-neutral.rounded-lg( @click="openSelectLanguage = true" variant="text")
+      div.d-flex.flex-column.align-center.justify-center
+        v-icon mdi-translate
+        p(style="font-size:7px") {{ $t('language') }}
+
+    v-btn.elevation-0.text-neutral.mr-3( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
+    
+    v-menu()
+      template( v-slot:activator="{ props }" )
+        v-btn.elevation-0.text-neutral.bg-transparent(icon="mdi-account" variant="outlined" v-bind="props")
       v-list.pa-0
-        v-list-group
-          template( v-slot:activator="{ props }" ) 
-            v-list-item.py-3(
-              v-bind="props"
-              prepend-avatar="https://ik.imagekit.io/hanifrodili/HNFRDL.jpg?updatedAt=1671006782759"
-              title="HNFRDL Store"
-              append-icon=""
-            )
-          v-list-item(@click="openSelectCompany = true" style="padding-left:20px !important")
-            template(v-slot:prepend)
-              v-icon.mr-2.icon-nav mdi-swap-horizontal
-            v-list-item-title.menu-text {{ $t('switchaccount') }}
+        v-list-item(@click="")
+          v-list-item-title {{ userStore.user.email }}
+        v-list-item(@click="logout")
+          v-list-item-title {{ $t('logout') }}
 
-        v-divider
-
-        v-list-item.px-5(v-for="(nav, index) in navList" :key="index" @click="$router.push(nav.path), drawer = false" :class="$route.name == nav.name ? 'activated' : ''")
-          template(v-slot:prepend)
-            v-icon.mr-2.icon-nav {{ `mdi-${nav.mdi}` }}
-          div.d-flex.flex-row.align-center.justify-space-between
-            v-list-item-title.menu-text {{ $t(nav.i18n_key) }}
-            div.rounded-pill.bg-red.d-flex.align-center.justify-center(style="height:25px; padding:5px" v-if="nav.notification" )
-              p.mb-0(style="font-size:14px") {{ nav.notification }}
-
-        v-divider
-
-        v-list-item.px-5(
-          @click="openSelectLanguage = true"
-        )
-          template(v-slot:prepend)
-            v-icon.mr-2 mdi-translate
-          v-list-item-title.menu-text {{ $t('language') }}
-  
+  v-main(style="min-height:100vh")
+    slot
   //- Language dialog
   v-dialog( v-model="openSelectLanguage" width="100%" max-width="350px")
     v-card(  )

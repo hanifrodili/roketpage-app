@@ -1,18 +1,32 @@
 <template lang="pug">
-div.d-flex.flex-column.align-end(style="gap:10px" )
-  v-select(
-    v-model="status"
-    color='secondary',
-    variant="outlined"
-    hide-details="auto"
-    density="compact"
-    :items="statusList"
-    item-title="label"
-    item-value="value"
-    @update:modelValue="$emit('filter',{field:'status', value:status})"
-    style="width:fit-content;"
-    )
-
+div.d-flex.flex-column(style="gap:10px" )
+  //- v-select(
+  //-   v-model="status"
+  //-   color='secondary',
+  //-   variant="outlined"
+  //-   hide-details="auto"
+  //-   density="compact"
+  //-   :items="statusList"
+  //-   item-title="label"
+  //-   item-value="value"
+  //-   @update:modelValue="$emit('filter',{field:'status', value:status})"
+  //-   style="width:fit-content;"
+  //-   )
+  
+  v-slide-group.w-100(show-arrows="")
+    v-slide-group-item(
+        v-for="(item, index) in statusList"
+        :key="index"
+      )
+      v-btn(
+          variant="outlined"
+          class="ma-2"
+          size="small"
+          rounded
+          :color="status == item.value ? 'secondary' : undefined"
+          :class="status == item.value ? 'bg-primary' : undefined"
+          @click="status = item.value, $emit('filter',{field:'status', value:status})"
+        ) {{ item.label }}
   v-text-field.w-100(
     v-model="searchInput"
     color='secondary',
@@ -54,4 +68,18 @@ const statusList = ref([
   }
 ])
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.v-slide-group__content){
+  justify-content: flex-end;
+}
+
+:deep(.v-slide-group__next), :deep(.v-slide-group__prev){
+  min-width: 30px !important;
+}
+
+@media(max-width: 650px){
+  :deep(.v-slide-group__content){
+    justify-content: center;
+  }
+}
+</style>

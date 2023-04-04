@@ -2,14 +2,10 @@
 div
   order-filter-order.mb-5(@search="search" @filter="filter")
   v-card.card
-    v-card-text.d-flex.flex-column.justify-space-between
-      v-table(style="background-color:transparent")
-        tbody
-          template(v-for="(order, index) in orders" :key="order.id")
-            tr.px-0.order-row()
-              td.px-0
-                order-item-order(:order="order")
-      general-pagination(v-if="maxPage > 1"  v-model="page" :maxPage="maxPage")
+    v-card-text.d-flex.flex-column.justify-space-between.pa-0
+      template(v-for="(order, index) in orders" :key="order.id")
+        order-item-order-v2(:order="order")
+      general-pagination.mt-5(v-model="page" @limit="limit" :limit="queryLimit" :maxPage="maxPage")
 </template>
 
 <script setup>
@@ -21,24 +17,25 @@ const orders = ref([])
 const totalOrders = ref(0)
 const searchKeyword = ref(null)
 const filters = ref([])
+const queryLimit = ref(5)
 
 onMounted(async () => {
-  await getData(1)
+  await getData()
 })
 
 watch(page, async (updatedPage) => {
-  await getData(updatedPage, searchKeyword.value, filters.value)
+  await getData()
 })
 
-async function getData(page, keyword, filters) {
-  let url = `https://api-test.roketpage.com/items/order_test?limit=5&fields[]=*&sort[]=id&page=${page}`
+async function getData() {
+  let url = `https://api-test.roketpage.com/items/order_test?limit=${queryLimit.value}&fields[]=*&sort[]=id&page=${page.value}`
 
-  if (keyword) {
+  if (searchKeyword.value) {
     url += `&search=${keyword}`
   }
 
-  if (filters) {
-    filters.forEach(filter => {
+  if (filters.value) {
+    filters.value.forEach(filter => {
       if (filter.value) {
         url += `&filter[${filter.field}]=${filter.value}`
       }
@@ -56,7 +53,7 @@ async function getData(page, keyword, filters) {
     });
   
   // Get total orders
-  if (page === 1) {
+  if (page.value === 1) {
     await axios.get(url + '&aggregate[countDistinct]=id')
       .then(response => {
         // Handle successful response
@@ -67,14 +64,14 @@ async function getData(page, keyword, filters) {
         console.log(error);
       });
 
-    maxPage.value = Math.ceil(totalOrders.value / 5)
+    maxPage.value = Math.ceil(totalOrders.value / queryLimit.value)
   }
 }
 
 async function search(e) {
   searchKeyword.value = e
   page.value = 1
-  await getData(page.value, searchKeyword.value, filters.value)
+  await getData()
 }
 
 async function filter(e) {
@@ -94,9 +91,13 @@ async function filter(e) {
       }
     )
   }
-  console.log(filters.value);
   page.value = 1
-  await getData(page.value, searchKeyword.value ,filters.value)
+  await getData()
+}
+
+async function limit(e){
+  queryLimit.value = e
+  await getData()
 }
 </script>
 <style lang="scss" scoped>
@@ -104,13 +105,16 @@ async function filter(e) {
   width: 100%;
   display: flex;
   flex-direction: column;
+  padding: 8px;
   // align-items: center;
   // justify-content: center;
-  box-shadow: 0px 2px 4px -1px rgb(34 34 34 / 50%);
+  // box-shadow: 0px 2px 4px -1px rgb(34 34 34 / 50%);
+  box-shadow: none;
   min-height: 400px;
   height: fit-content;
   height: 100%;
-  border-radius: 16px;
+  border: .5px solid #ababab;
+  border-radius: 8px;
 }
 
 .order-row:not(:last-of-type) > td{

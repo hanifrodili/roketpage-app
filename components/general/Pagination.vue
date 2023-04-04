@@ -1,23 +1,37 @@
 <template lang="pug">
-.Pagination(ref="pagination")
-  v-btn( @click="toFirstPage()" :disabled="currentPage > 1 ? false : true"  rounded variant="text" icon="mdi-chevron-double-left" )
-  v-btn( @click="toPrevious()" :disabled="currentPage > 1 ? false : true" rounded variant="text" icon="mdi-chevron-left" )
-  p.mx-3(style="font-size:15px; user-select: none") Page 
-    strong {{ currentPage }}
-    span  of 
-    strong {{ maxPage }}
-  v-btn( @click="toNextPage()" :disabled="currentPage < maxPage ? false : true"  rounded variant="text" icon="mdi-chevron-right" )
-  v-btn( @click="toLastPage()" :disabled="currentPage < maxPage ? false : true" rounded variant="text" icon="mdi-chevron-double-right" )
+div.d-flex.flex-row.justify-space-between(ref="pagination")
+  div
+    v-select(
+      v-model="limit"
+      color='secondary',
+      variant="outlined"
+      hide-details="auto"
+      density="compact"
+      :items="[5, 10, 20, 50]"
+      @update:modelValue="$emit('limit',limit)"
+      style="width:70px;"
+    )
+      
+  div.pagination
+    v-btn( @click="toFirstPage()" :disabled="currentPage > 1 ? false : true"  rounded variant="text" icon="mdi-chevron-double-left" )
+    v-btn( @click="toPrevious()" :disabled="currentPage > 1 ? false : true" rounded variant="text" icon="mdi-chevron-left" )
+    p(style="font-size:15px; user-select: none")
+      span(v-if="$vuetify.display.width > 650") Page 
+      strong {{ currentPage }} {{ $vuetify.display.width > 650 ? 'of' : '/' }} {{ maxPage }}
+    v-btn( @click="toNextPage()" :disabled="currentPage < maxPage ? false : true"  rounded variant="text" icon="mdi-chevron-right" )
+    v-btn( @click="toLastPage()" :disabled="currentPage < maxPage ? false : true" rounded variant="text" icon="mdi-chevron-double-right" )
 </template>
 
 <script setup>
-const props = defineProps(['modelValue', 'maxPage'])
-const emits = defineEmits(['update:modelValue'])
+const props = defineProps(['modelValue', 'maxPage','limit'])
+const emits = defineEmits(['update:modelValue', 'limit'])
 
 const currentPage = ref(1)
+const limit = ref(5)
 
 onMounted(() => {
   currentPage.value = props.modelValue
+  limit.value = props.limit
 })
 
 
@@ -51,7 +65,7 @@ function toLastPage() {
 </script>
 
 <style lang="scss" scoped>
-.Pagination{
+.pagination{
   display: flex;
   flex-direction: row;
   gap: 1px;

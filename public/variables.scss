@@ -84,12 +84,19 @@ h6 {
   height: 100%;
   padding: 5% 5%;
 }
+
 .page-content {
-  padding-top: 95px;
+  // padding-top: 95px;
   width: 100%;
   max-width: 1080px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.page-title{
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: -0.03em;
 }
 
 .cursor-pointer {

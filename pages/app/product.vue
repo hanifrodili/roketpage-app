@@ -1,6 +1,6 @@
 <template lang="pug">
-div
-  v-card(min-height="50" flat color="transparent")
+div.page-content
+  h2.page-title.pa-0.mb-3 {{ $t('product') }}
   product-main-product
 </template>
 
