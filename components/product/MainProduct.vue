@@ -1,9 +1,11 @@
 <template lang="pug">
 div
+  div.d-flex.flex-row.mb-4
+    product-create-product.ml-auto(@update-product="addProduct")
   v-card.card
     v-card-text.d-flex.flex-column.justify-space-between.pa-0
       template(v-for="(product, index) in products" :key="product.id")
-        product-item-product(:product="product")
+        product-item-product(:product="product" @update-publish="updatePublish")
 </template>
 
 <script setup>
@@ -22,6 +24,26 @@ async function getData() {
     .then(response => {
       // Handle successful response
       products.value = response.data.data
+    })
+    .catch(error => {
+      // Handle error
+      console.log(error);
+    });
+}
+
+function addProduct(e){
+  e.status = 'true'
+  console.log(e);
+  products.value.push(e)
+}
+
+async function updatePublish(e) {
+  let url = `https://api-test.roketpage.com/items/product_test/${e.id}`
+
+  await axios.patch(url, { status: e.value })
+    .then(response => {
+      // Handle successful response
+      console.log(response.status);
     })
     .catch(error => {
       // Handle error

@@ -2,6 +2,8 @@
 .app
   nav-main-nav-drawer(v-if="!(excludeNav.includes($route.name))")
     slot
+  div(v-else)
+    slot
 </template>
 
 <script setup>

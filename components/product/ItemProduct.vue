@@ -2,8 +2,13 @@
 div
   v-card(variant="text")
     v-card-text.pa-1
-      div.d-flex.flex-row 
-        v-img( src="/img/logo.svg" width="100%" max-width="90px" :aspect-ratio="1")
+      div.d-flex.flex-row
+        v-img( :src="product.image === '#' ? '/img/logo.svg' : product.image"
+          aspect-ratio="1"
+          :max-width="90"
+          :width="100"
+          cover
+        )
         div.d-flex.flex-column.pa-2.flex-grow-1
           p.font-weight-bold(style="font-size:14px") {{ product.name }}
           p.flex-wrap.my-2(style="font-size:12px; color:#767676; line-height:16px;") {{ truncateText(product.description) }}
@@ -13,8 +18,9 @@ div
               inset
               hide-details="auto"
               color="primary"
-              value="true"
+              value='true'
               v-model="productPublished"
+              @update:modelValue="$emit('updatePublish',{id:product.id, value: productPublished })"
             )
           div.d-flex.flex-row.justify-end
             v-btn(icon="mdi-trash-can-outline" variant="text" size="small" color="red")
@@ -27,12 +33,13 @@ div
 import { useDisplay } from "vuetify/lib/framework.mjs"
 
 const props = defineProps(['product'])
+const emits = defineEmits(['updatePublish'])
 const display = useDisplay()
-const productPublished = ref(true)
+const productPublished = ref('true')
 
 onMounted(() => {
-  console.log(props.product.status);
   productPublished.value = props.product.status
+  console.log(productPublished.value);
 })
 
 function truncateText(text) {
