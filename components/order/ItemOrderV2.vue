@@ -1,18 +1,18 @@
 <template lang="pug">
 div
-  div.d-flex.py-4.px-md-4.flex-column(style="font-size:13px")
+  div.d-flex.pa-2.pa-md-4.flex-column(style="font-size:13px")
     div.d-flex.flex-row()
       div.d-flex.flex-column.w-100
         div.d-flex.flex-row.font-weight-bold.justify-space-between.mb-2(style="" )
           p {{ `#${order.id}` }} {{ order.name }}
-          v-chip(style="width:fit-content; height: 20px; font-weight:bold; font-size:10px" :ripple="false" :color="statusColor(order.status)") {{ order.status }}
+          v-chip.text-capitalize(style="width:fit-content; height: 20px; font-weight:bold; font-size:10px" :ripple="false" :color="statusColor(order.status)") {{ order.status }}
         div.d-flex.flex-row.flex-wrap.w-100(style="gap:5px;" )
           p {{ order.phone }}
           img(src="/img/ver-divider.svg" )
           p {{ order.email }}
 
     div.d-flex.justify-space-between(:class="$vuetify.display.width < 1020 ? 'flex-column' : 'flex-row'")
-      p.mt-auto.mb-1(style="color:#767676") {{ fDate(order.date_created) }} at {{ fTime(order.date_created) }}
+      p.mt-auto.mb-1(style="color:#767676; font-size:12px") {{ fDate(order.date_created) }} at {{ fTime(order.date_created) }}
       div.d-flex.flex-column.flex-grow-1.justify-start(style="max-width: 460px")
         v-expansion-panels(variant="accordion" plain)
           v-expansion-panel(plain)
@@ -79,20 +79,20 @@ function statusColor(value) {
   let color = ""
    switch (value) {
     case 'new':
-      color = "info"
+      color = "#FF9800"
       break;
     case 'processing':
-      color = "blue"
+      color = "#2196F3"
       break;
     case 'shipping':
-      color = "warning"
+      color = "#9C27B0"
       break;
     case 'completed':
-      color = "success"
+      color = "#009688"
       break;
    
     default:
-      color = "info"
+      color = "secondary"
       break;
    }
   return color

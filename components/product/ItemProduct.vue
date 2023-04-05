@@ -4,21 +4,23 @@ div
     v-card-text.pa-1
       div.d-flex.flex-row
         v-img( :src="product.image === '#' ? '/img/logo.svg' : product.image"
-          aspect-ratio="1"
-          :max-width="90"
-          :width="100"
+          max-width="90"
+          width="100%"
           cover
+          style="aspect-ratio:1"
         )
-        div.d-flex.flex-column.pa-2.flex-grow-1
+        div.d-flex.flex-column.pa-1.px-2.px-md-5.flex-grow-1
           p.font-weight-bold(style="font-size:14px") {{ product.name }}
-          p.flex-wrap.my-2(style="font-size:12px; color:#767676; line-height:16px;") {{ truncateText(product.description) }}
+          p.flex-wrap.my-1(style="font-size:12px; color:#767676; line-height:16px;") {{ truncateText(product.description) }}
           p.font-weight-bold(style="font-size:13px; color:#767676;") {{ fCurrency(product.base_price) }}
         div.d-flex.flex-column.flex-shrink-1
           v-switch.align-self-end.pr-2(
               inset
               hide-details="auto"
+              hide-error
               color="primary"
               value='true'
+              density="compact"
               v-model="productPublished"
               @update:modelValue="$emit('updatePublish',{id:product.id, value: productPublished })"
             )
@@ -43,7 +45,7 @@ onMounted(() => {
 })
 
 function truncateText(text) {
-  const limit = 35
+  const limit = 25
   let truncated = text
   if (display.width.value > 430) {
     return text
@@ -58,4 +60,8 @@ function fCurrency(amount) {
   return amount.toLocaleString('en-MY', { style: 'currency', currency: 'myr' });
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.v-img .v-img__img){
+  object-position: top;
+}
+</style>

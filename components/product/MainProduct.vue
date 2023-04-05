@@ -33,7 +33,7 @@ async function getData() {
 
 function addProduct(e){
   e.status = 'true'
-  console.log(e);
+  // console.log(e);
   products.value.push(e)
 }
 

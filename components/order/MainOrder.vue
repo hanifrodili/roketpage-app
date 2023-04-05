@@ -1,10 +1,11 @@
 <template lang="pug">
 div
-  order-filter-order.mb-5(@search="search" @filter="filter")
+  order-filter-order.mb-5(@search="search" @filter="filter" @sort="sort")
   v-card.card
     v-card-text.d-flex.flex-column.justify-space-between.pa-0
-      template(v-for="(order, index) in orders" :key="order.id")
-        order-item-order-v2(:order="order")
+      div.order-list()
+        template(v-for="(order, index) in orders" :key="order.id")
+          order-item-order-v2(:order="order")
       general-pagination.mt-5(v-model="page" @limit="limit" :limit="queryLimit" :maxPage="maxPage")
 </template>
 
@@ -18,6 +19,7 @@ const totalOrders = ref(0)
 const searchKeyword = ref(null)
 const filters = ref([])
 const queryLimit = ref(5)
+const sortOrder = ref('id')
 
 onMounted(async () => {
   await getData()
@@ -28,7 +30,7 @@ watch(page, async (updatedPage) => {
 })
 
 async function getData() {
-  let url = `https://api-test.roketpage.com/items/order_test?limit=${queryLimit.value}&fields[]=*&sort[]=id&page=${page.value}`
+  let url = `https://api-test.roketpage.com/items/order_test?limit=${queryLimit.value}&fields[]=*&sort[]=${sortOrder.value}&page=${page.value}`
 
   if (searchKeyword.value) {
     url += `&search=${searchKeyword.value}`
@@ -99,6 +101,11 @@ async function limit(e){
   queryLimit.value = e
   await getData()
 }
+
+async function sort(e) {
+  sortOrder.value = e
+  await getData()
+}
 </script>
 <style lang="scss" scoped>
 .card{
@@ -119,5 +126,15 @@ async function limit(e){
 
 .order-row:not(:last-of-type) > td{
   border-bottom: 1px solid #7d7d7d !important;
+}
+
+.order-list{
+  height:calc(100vh - 330px);
+  overflow:scroll;
+  scrollbar-width: none
+}
+
+.order-list::-webkit-scrollbar{
+  display: none;
 }
 </style>

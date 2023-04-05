@@ -27,23 +27,59 @@ div.d-flex.flex-column(style="gap:10px" )
           :class="status == item.value ? 'bg-primary' : undefined"
           @click="status = item.value, $emit('filter',{field:'status', value:status})"
         ) {{ item.label }}
-  v-text-field.w-100(
-    v-model="searchInput"
-    color='secondary',
-    placeholder='Search',
-    variant="outlined",
-    clearable
-    type="search",
-    prepend-inner-icon="mdi-magnify",
-    hide-details="auto" density="compact"
-    @keyup="$emit('search', searchInput)"
-    @click:clear="$emit('search', searchInput)"
-  )
+  div.d-flex.flex-row(style="gap:8px")
+    v-text-field.w-100(
+      v-model="searchInput"
+      color='secondary',
+      placeholder='Search',
+      variant="outlined",
+      clearable
+      type="search",
+      prepend-inner-icon="mdi-magnify",
+      hide-details="auto" density="compact"
+      @keyup="$emit('search', searchInput)"
+      @click:clear="$emit('search', searchInput)"
+    )
+    v-btn.px-0(id="sort" @click="sortDialog = true" variant="outlined" rounded="lg" color="#ababab" height="auto" min-width="40px" )
+      v-icon(style="font-size:24px") mdi-sort 
+    v-menu(activator="#sort")
+      v-list.pa-0(rounded="lg")
+        v-list-item(v-for="(item, index) in sortList" :key="index" @click="$emit('sort', item.value), sort = item.value" :class="sort == item.value ? 'bg-primary' : ''")
+          template(v-slot:append)
+            v-icon.mr-2 {{ `mdi-${item.mdi}` }}
+          v-list-item-title {{ item.label }}
+            
+      
 </template>
 
 <script setup>
 const status = ref('')
 const searchInput = ref('')
+const sortDialog = ref(false)
+const sort = ref('id')
+
+const sortList = ref([
+  {
+    label: "Newest",
+    value: "id",
+    mdi: "sort-ascending"
+  },
+  {
+    label: "Oldest",
+    value: "-id",
+    mdi: "sort-descending"
+  },
+  {
+    label: "Name: A-Z",
+    value: "name",
+    mdi: "sort-alphabetical-ascending"
+  },
+  {
+    label: "Name: Z-A",
+    value: "-name",
+    mdi: "sort-alphabetical-descending"
+  }
+])
 
 const statusList = ref([
   {

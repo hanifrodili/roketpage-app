@@ -1,32 +1,51 @@
 <template lang="pug">
 div
   v-btn.text-capitalize.align-center( @click="dialog = true" prepend-icon="mdi-plus-circle-outline" variant="tonal" color="info" rounded) New Product
-  v-dialog(
-      v-model="dialog"
-      width="100%"
-      max-width="600px"
-      persistent
-    )
-    v-card()
-      v-card-title.d-flex.flex-row.align-center.justify-space-between(style="font-size:14px")
-        p Add Product
-        v-icon.cursor-pointer(@click="dialog = false") mdi-close-circle-outline
-      v-card-text
-        v-form(ref="form" fast-fail)
-          v-text-field.mb-4(v-model="productForm.name" hide-details="auto" variant="outlined" label="Name" density="compact" :rules='rules.not_empty')
-          v-textarea.mb-4(v-model="productForm.description" hide-details="auto" variant="outlined" label="Description" density="compact" :rules='rules.not_empty')
+  general-dialog-type-a(v-model="dialog" :persistent='true')
+    template(v-slot:title)
+      p Add Product
+    template( v-slot:content )
+      v-form(ref="form" fast-fail)
           v-row
-            v-col(cols="4")
+            v-col.py-0(cols="12")
+              v-text-field.mb-4(v-model="productForm.name" hide-details="auto" variant="outlined" label="Name" density="compact" :rules='rules.not_empty')
+          v-row
+            v-col.py-0(cols="12")
+              v-textarea.mb-4(v-model="productForm.description" hide-details="auto" variant="outlined" label="Description" density="compact" :rules='rules.not_empty' append-inner-icon="mdi-help-circle-outline" @click:append-inner="descriptionHelpDialog = true")
+          v-row
+            v-col.py-0(cols="12" md="4")
               v-text-field.mb-4(v-model="productForm.price" hide-details="auto" variant="outlined" label="Price" density="compact" type="number" placeholder="0" prefix="RM" :rules='rules.not_empty')
-            v-col(cols="4")
+            v-col.py-0(cols="12" md="4")
               v-text-field.mb-4(v-model="productForm.weight" hide-details="auto" variant="outlined" label="Weight" density="compact" type="number" placeholder="0" suffix="KG" :rules='rules.not_empty')
-            v-col(cols="4")
+            v-col.py-0(cols="12" md="4")
               v-text-field.mb-4(v-model="productForm.stock" hide-details="auto" variant="outlined" label="Stock" density="compact" type="number" placeholder="0" :rules='rules.not_empty')
-          v-text-field.mb-4(v-model="productForm.image_url" hide-details="auto" variant="outlined" label="Image URL" density="compact" type="url" :rules='rules.not_empty')
-      v-card-actions
-        v-spacer
-        v-btn( @click="dialog = false" variant="text") Cancel
-        v-btn( @click="addProduct" variant="tonal" color="info" :loading="loading") Add
+          v-row
+            v-col.py-0(cols="12")
+              v-text-field.mb-4(v-model="productForm.image_url" hide-details="auto" variant="outlined" label="Image URL" density="compact" type="url" :rules='rules.not_empty' append-inner-icon="mdi-help-circle-outline" @click:append-inner="imageHelpDialog = true")
+    template( v-slot:action )
+      v-btn( @click="dialog = false" variant="text") Cancel
+      v-btn( @click="addProduct" variant="tonal" color="info" :loading="loading") Add
+
+  general-dialog-type-a(v-model="imageHelpDialog" :persistent='true')
+    template(v-slot:title)
+      p Image URL
+    template( v-slot:content )
+      ul.px-5
+        li Use image from your <a href="https://photos.google.com/" target="_blank">Google Photo</a>. Click your photo, open image in new tab and copy the url.
+        li Use <a href="https://imagekit.io/" target="_blank">ImageKit.io</a> to host your image. Upload your image to ImageKit and copy the url.
+    template( v-slot:action )
+      v-btn( @click="imageHelpDialog = false" variant="tonal") Close
+  
+  general-dialog-type-a(v-model="descriptionHelpDialog" :persistent='true')
+    template(v-slot:title)
+      p Product Description
+    template( v-slot:content )
+      ul.px-5
+        li Write detailed information about your product, including its features, benefits, and specifications.
+        li You can use <a href="https://chat.openai.com/chat" target="_blank">ChatGPT</a> to help you write better description.
+        li Example, "Describe keropok cendawan in 150 characters. Must include keyword organic, fresh, original from my own recipe and premium"
+    template( v-slot:action )
+      v-btn( @click="descriptionHelpDialog = false" variant="tonal") Close
 </template>
 
 <script setup>
@@ -35,6 +54,8 @@ import axios from 'axios'
 const emits = defineEmits(['updateProduct'])
 
 const dialog = ref(false)
+const imageHelpDialog = ref(false)
+const descriptionHelpDialog = ref(false)
 const loading =ref(false)
 const form = ref(null)
 const productForm = ref({
@@ -76,6 +97,7 @@ async function addProduct() {
       // Handle error
       console.log(error);
     });
+  form.value.reset()
   dialog.value = false
   loading.value = false
 }

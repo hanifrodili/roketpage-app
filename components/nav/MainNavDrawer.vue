@@ -1,41 +1,41 @@
 <template lang="pug">
 v-app
   v-navigation-drawer(
-    v-model="drawer"
-)
+      v-model="drawer"
+    )
 
-v-list.pa-0
-  v-list-group
-    template( v-slot:activator="{ props }" ) 
-      v-list-item.py-3(
-        v-bind="props"
-        prepend-avatar="https://ik.imagekit.io/hanifrodili/HNFRDL.jpg?updatedAt=1671006782759"
-        title="HNFRDL Store"
-        append-icon=""
+    v-list.pa-0
+      v-list-group
+        template( v-slot:activator="{ props }" ) 
+          v-list-item.py-3(
+            v-bind="props"
+            prepend-avatar="https://ik.imagekit.io/hanifrodili/HNFRDL.jpg?updatedAt=1671006782759"
+            title="HNFRDL Store"
+            append-icon=""
+          )
+        v-list-item(@click="openSelectCompany = true" style="padding-left:20px !important")
+          template(v-slot:prepend)
+            v-icon.mr-2.icon-nav mdi-swap-horizontal
+          v-list-item-title.menu-text {{ $t('switchaccount') }}
+
+      v-divider
+
+      v-list-item.px-5(v-for="(nav, index) in navList" :key="index" @click="$router.push(nav.path)" :class="$route.name == nav.name ? 'activated' : ''")
+        template(v-slot:prepend)
+          v-icon.mr-2.icon-nav {{ `mdi-${nav.mdi}` }}
+        div.d-flex.flex-row.align-center.justify-space-between
+          v-list-item-title.menu-text {{ $t(nav.i18n_key) }}
+          div.rounded-pill.bg-red.d-flex.align-center.justify-center(style="height:25px; padding:5px" v-if="nav.notification" )
+            p.mb-0(style="font-size:14px") {{ nav.notification }}
+
+      v-divider
+
+      v-list-item.px-5(
+        @click="openSelectLanguage = true"
       )
-    v-list-item(@click="openSelectCompany = true" style="padding-left:20px !important")
-      template(v-slot:prepend)
-        v-icon.mr-2.icon-nav mdi-swap-horizontal
-      v-list-item-title.menu-text {{ $t('switchaccount') }}
-
-  v-divider
-
-  v-list-item.px-5(v-for="(nav, index) in navList" :key="index" @click="$router.push(nav.path), drawer = false" :class="$route.name == nav.name ? 'activated' : ''")
-    template(v-slot:prepend)
-      v-icon.mr-2.icon-nav {{ `mdi-${nav.mdi}` }}
-    div.d-flex.flex-row.align-center.justify-space-between
-      v-list-item-title.menu-text {{ $t(nav.i18n_key) }}
-      div.rounded-pill.bg-red.d-flex.align-center.justify-center(style="height:25px; padding:5px" v-if="nav.notification" )
-        p.mb-0(style="font-size:14px") {{ nav.notification }}
-
-  v-divider
-
-  v-list-item.px-5(
-    @click="openSelectLanguage = true"
-  )
-    template(v-slot:prepend)
-      v-icon.mr-2 mdi-translate
-    v-list-item-title.menu-text {{ $t('language') }}
+        template(v-slot:prepend)
+          v-icon.mr-2 mdi-translate
+        v-list-item-title.menu-text {{ $t('language') }}
 
   v-app-bar.elevation-1.bg-neutralDark()
     v-app-bar-nav-icon(variant="text" @click.stop="drawer = !drawer")
@@ -50,7 +50,7 @@ v-list.pa-0
         p(style="font-size:7px") {{ $t('language') }}
 
     v-btn.elevation-0.text-neutral.mr-3( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
-
+    
     v-menu()
       template( v-slot:activator="{ props }" )
         v-btn.elevation-0.text-neutral.bg-transparent(icon="mdi-account" variant="outlined" v-bind="props")
@@ -89,10 +89,11 @@ v-list.pa-0
 <script setup>
 import { useStoreUser } from '~/store/storeMerchant'
 import { onMounted } from 'vue';
-import { useTheme } from 'vuetify'
+import { useDisplay, useTheme } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 
 const theme = useTheme()
+const display = useDisplay()
 const { locale } = useI18n({ useScope: 'global' })
 const userStore = useStoreUser()
 const router = useRouter()
@@ -146,10 +147,14 @@ onMounted(() => {
 })
 
 watch(drawer, (newDrawerVal) => {
-  if (newDrawerVal) {
-    document.querySelector(".app").style.overflow = 'hidden'
-  } else {
-    document.querySelector(".app").style.overflow = 'auto'
+  if (display.width.value < 1440) {
+    if (newDrawerVal) {
+      document.querySelector(".app").style.overflow = 'hidden'
+      document.querySelector(".app").style.height = '100vh'
+    } else {
+      document.querySelector(".app").style.overflow = 'auto'
+      document.querySelector(".app").style.height = 'unset'
+    }
   }
 })
 
@@ -181,31 +186,31 @@ function logout() {
   vertical-align: middle;
 }
 
-.icon-nav {
+.icon-nav{
   color: rgb(var(--v-theme-neutralLight));
 }
 
 .v-list-item.activated {
   background-color: rgb(var(--v-theme-primary));
-
-  .menu-text {
+  
+  .menu-text{
     color: #000;
   }
 
-  .v-icon {
-    color: #000
+  .v-icon{
+    color:#000
   }
 }
 
 :deep(.v-navigation-drawer__scrim) {
-  background-color: rgba(0, 0, 0, .2);
-  opacity: 1;
-  backdrop-filter: blur(2px);
+    background-color: rgba(0,0,0,.2);
+    opacity: 1;
+    backdrop-filter: blur(2px);
 }
 
-@media(max-width: 500px) {
+@media(max-width: 500px){
   .menu-text {
-    padding: 0;
-  }
+  padding: 0;
+}
 }
 </style>
