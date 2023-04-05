@@ -7,7 +7,9 @@
     "build--test": "nuxt build && nuxt start"
   },
   "devDependencies": {
-    "nuxt": "^3.3.1"
+    "@prettier/plugin-pug": "^2.4.2",
+    "nuxt": "^3.3.1",
+    "prettier": "^2.8.7"
   },
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^0.10.0",
