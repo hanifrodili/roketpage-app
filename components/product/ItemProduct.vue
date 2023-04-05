@@ -41,7 +41,6 @@ const productPublished = ref('true')
 
 onMounted(() => {
   productPublished.value = props.product.status
-  console.log(productPublished.value);
 })
 
 function truncateText(text) {

@@ -15,10 +15,12 @@ div.py-8
 <script setup>
 import axios from 'axios'
 
+const config = useRuntimeConfig()
+
 const orders = ref([])
 
 onMounted(async () => {
-  await axios.get('https://api-test.roketpage.com/items/order_test?limit=5&fields[]=*&sort[]=id&filter[status]=new')
+  await axios.get(`${config.public.apiUrl}/items/order_test?limit=5&fields[]=*&sort[]=id&filter[status]=new`)
     .then(response => {
       // Handle successful response
       orders.value = response.data.data

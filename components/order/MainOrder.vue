@@ -12,6 +12,8 @@ div
 <script setup>
 import axios from 'axios'
 
+const config = useRuntimeConfig()
+
 const page = ref(1)
 const maxPage = ref(1)
 const orders = ref([])
@@ -48,7 +50,7 @@ function stickyScroll() {
 }
 
 async function getData() {
-  let url = `https://api-test.roketpage.com/items/order_test?limit=${queryLimit.value}&fields[]=*&sort[]=${sortOrder.value}&page=${page.value}`
+  let url = `${config.public.apiUrl}/items/order_test?limit=${queryLimit.value}&fields[]=*&sort[]=${sortOrder.value}&page=${page.value}`
 
   if (searchKeyword.value) {
     url += `&search=${searchKeyword.value}`

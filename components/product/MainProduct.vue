@@ -11,6 +11,10 @@ div
 <script setup>
 import axios from 'axios'
 
+const config = useRuntimeConfig()
+
+const snackbar = useSnackbar()
+
 const products = ref([])
 
 onMounted(async () => {
@@ -18,7 +22,7 @@ onMounted(async () => {
 })
 
 async function getData() {
-  let url = `https://api-test.roketpage.com/items/product_test?fields[]=*&sort[]=id`
+  let url = `${config.public.apiUrl}/items/product_test?fields[]=*&sort[]=id`
 
   await axios.get(url)
     .then(response => {
@@ -38,12 +42,23 @@ function addProduct(e){
 }
 
 async function updatePublish(e) {
-  let url = `https://api-test.roketpage.com/items/product_test/${e.id}`
+  let url = `${config.public.apiUrl}/items/product_test/${e.id}`
+
+  let text
+
+  if (e.value) {
+    text = 'published'
+  }else{
+    text = 'changed to draft'
+  }
 
   await axios.patch(url, { status: e.value })
     .then(response => {
       // Handle successful response
-      console.log(response.status);
+      snackbar.add({
+        type: 'success',
+        text:`${response.data.data.name} ${text}.`
+      })
     })
     .catch(error => {
       // Handle error

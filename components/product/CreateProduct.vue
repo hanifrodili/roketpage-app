@@ -53,6 +53,8 @@ import axios from 'axios'
 
 const emits = defineEmits(['updateProduct'])
 
+const snackbar = useSnackbar()
+
 const dialog = ref(false)
 const imageHelpDialog = ref(false)
 const descriptionHelpDialog = ref(false)
@@ -91,11 +93,19 @@ async function addProduct() {
   })
     .then(response => {
       // Handle successful response
+      snackbar.add({
+        type: 'success',
+        text: 'New product added !'
+      })
       emits('updateProduct', response.data.data)
     })
     .catch(error => {
       // Handle error
-      console.log(error);
+      snackbar.add({
+        type: 'error',
+        text: error.response.data.errors[0].message
+      })
+      console.log(error.response.data.errors[0].message);
     });
   form.value.reset()
   dialog.value = false
