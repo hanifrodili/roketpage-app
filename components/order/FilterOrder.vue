@@ -1,5 +1,5 @@
 <template lang="pug">
-div.d-flex.flex-column(style="gap:10px" )
+v-card.d-flex.flex-column.elevation-0(style="gap:10px")
   //- v-select(
   //-   v-model="status"
   //-   color='secondary',

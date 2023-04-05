@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  order-filter-order.mb-5(@search="search" @filter="filter" @sort="sort")
+  order-filter-order.mb-5(id="order-filter" @search="search" @filter="filter" @sort="sort")
   v-card.card
     v-card-text.d-flex.flex-column.justify-space-between.pa-0
       div.order-list()
@@ -20,14 +20,32 @@ const searchKeyword = ref(null)
 const filters = ref([])
 const queryLimit = ref(5)
 const sortOrder = ref('id')
+const orderfilter =ref(null)
+const sticky = ref(0)
 
 onMounted(async () => {
   await getData()
+  orderfilter.value = document.getElementById("order-filter");
+  sticky.value = orderfilter.value.offsetTop
+  window.addEventListener('scroll', stickyScroll)
 })
+
+onUnmounted(() => {
+  window.addEventListener('scroll', stickyScroll)
+})
+
 
 watch(page, async (updatedPage) => {
   await getData()
 })
+
+function stickyScroll() {
+  if (window.pageYOffset > (sticky.value - 10)) {
+    orderfilter.value.classList.add("sticky");
+  } else {
+    orderfilter.value.classList.remove("sticky");
+  }
+}
 
 async function getData() {
   let url = `https://api-test.roketpage.com/items/order_test?limit=${queryLimit.value}&fields[]=*&sort[]=${sortOrder.value}&page=${page.value}`
@@ -129,12 +147,22 @@ async function sort(e) {
 }
 
 .order-list{
-  height:calc(100vh - 330px);
-  overflow:scroll;
+  // height:calc(100vh - 330px);
+  // overflow:scroll;
   scrollbar-width: none
 }
 
 .order-list::-webkit-scrollbar{
   display: none;
+}
+
+.sticky {
+  position: fixed;
+  top: 63px;
+  width: calc(100%);
+  padding: 0 5%;
+  padding-top: 10px;
+  margin: 0 -5%;
+  z-index: 9;
 }
 </style>

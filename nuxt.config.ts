@@ -71,7 +71,7 @@ export default defineNuxtConfig({
     },
   },
   buildModules: [],
-  modules: ["@pinia/nuxt", "nuxt-snackbar"],
+  modules: ["@pinia/nuxt", "nuxt-snackbar", "@vueuse/nuxt"],
   snackbar: {
     top: true,
     right: true,
