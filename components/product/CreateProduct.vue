@@ -1,6 +1,7 @@
 <template lang="pug">
 div
-  v-btn.text-capitalize.align-center( @click="dialog = true" prepend-icon="mdi-plus-circle-outline" variant="tonal" color="info" rounded) New Product
+  v-btn.px-0.outlined-1( @click="dialog = true" variant="tonal" rounded="lg" color="info" height="100%" min-width="40px" )
+    v-icon(style="font-size:24px") mdi-plus
   general-dialog-type-a(v-model="dialog" :persistent='true')
     template(v-slot:title)
       p Add Product
@@ -43,7 +44,7 @@ div
       ul.px-5
         li Write detailed information about your product, including its features, benefits, and specifications.
         li You can use <a href="https://chat.openai.com/chat" target="_blank">ChatGPT</a> to help you write better description.
-        li Example, "Describe keropok cendawan in 150 characters. Must include keyword organic, fresh, original from my own recipe and premium"
+        li Example, "Describe keropok cendawan in 100 characters. Must include keyword organic, fresh, original from my own recipe and premium"
     template( v-slot:action )
       v-btn( @click="descriptionHelpDialog = false" variant="tonal") Close
 </template>
@@ -51,7 +52,7 @@ div
 <script setup>
 import axios from 'axios'
 
-const emits = defineEmits(['updateProduct'])
+const emits = defineEmits(['addProduct'])
 
 const snackbar = useSnackbar()
 
@@ -97,7 +98,7 @@ async function addProduct() {
         type: 'success',
         text: 'New product added !'
       })
-      emits('updateProduct', response.data.data)
+      emits('addProduct', response.data.data)
     })
     .catch(error => {
       // Handle error

@@ -1,11 +1,10 @@
 <template lang="pug">
-div
-  order-filter-order.mb-5(id="order-filter" @search="search" @filter="filter" @sort="sort")
+div.main-order
+  order-filter-order.mb-2(id="order-filter" @search="search" @filter="filter" @sort="sort")
   v-card.card
     v-card-text.d-flex.flex-column.justify-space-between.pa-0
-      div.order-list()
-        template(v-for="(order, index) in orders" :key="order.id")
-          order-item-order-v2(:order="order")
+      template(v-for="(order, index) in orders" :key="order.id")
+        order-item-order-v2(:order="order")
       general-pagination.mt-5(v-model="page" @limit="limit" :limit="queryLimit" :maxPage="maxPage")
 </template>
 
@@ -20,7 +19,7 @@ const orders = ref([])
 const totalOrders = ref(0)
 const searchKeyword = ref(null)
 const filters = ref([])
-const queryLimit = ref(5)
+const queryLimit = ref(10)
 const sortOrder = ref('id')
 const orderfilter =ref(null)
 const sticky = ref(0)
@@ -33,7 +32,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  window.addEventListener('scroll', stickyScroll)
+  window.removeEventListener('scroll', stickyScroll)
 })
 
 
@@ -42,8 +41,10 @@ watch(page, async (updatedPage) => {
 })
 
 function stickyScroll() {
+  const parent = document.querySelector('.main-order')
   if (window.pageYOffset > (sticky.value - 10)) {
     orderfilter.value.classList.add("sticky");
+    orderfilter.value.style.maxWidth = `${parent.clientWidth + 2}px`
   } else {
     orderfilter.value.classList.remove("sticky");
   }
@@ -144,27 +145,13 @@ async function sort(e) {
   border-radius: 8px;
 }
 
-.order-row:not(:last-of-type) > td{
-  border-bottom: 1px solid #7d7d7d !important;
-}
-
-.order-list{
-  // height:calc(100vh - 330px);
-  // overflow:scroll;
-  scrollbar-width: none
-}
-
-.order-list::-webkit-scrollbar{
-  display: none;
-}
-
 .sticky {
   position: fixed;
+  margin: 0 -1px;
+  padding-top: 20px;
+  padding-bottom: 10px;
   top: 63px;
-  width: calc(100%);
-  padding: 0 5%;
-  padding-top: 10px;
-  margin: 0 -5%;
+  width: 100%;
   z-index: 9;
 }
 </style>

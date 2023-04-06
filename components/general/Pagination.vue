@@ -7,7 +7,7 @@ div.d-flex.flex-row.justify-space-between(ref="pagination")
       variant="outlined"
       hide-details="auto"
       density="compact"
-      :items="[5, 10, 20, 50]"
+      :items="[10, 20, 50, 100]"
       @update:modelValue="$emit('limit',limit)"
       style="width:70px;"
     )

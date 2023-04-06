@@ -74,7 +74,8 @@ export default defineNuxtConfig({
   modules: ["@pinia/nuxt", "nuxt-snackbar"],
   snackbar: {
     top: true,
-    duration: 3000,
+    duration: 2000,
+    dense: true,
   },
   routeRules: {
     "/": { redirect: "/signin" }

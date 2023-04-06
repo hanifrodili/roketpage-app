@@ -4,7 +4,7 @@ v-app
       v-model="drawer"
     )
 
-    v-list.pa-0
+    v-list.pa-0.d-flex.flex-column.h-100
       v-list-group
         template( v-slot:activator="{ props }" ) 
           v-list-item.py-3(
@@ -28,14 +28,16 @@ v-app
           div.rounded-pill.bg-red.d-flex.align-center.justify-center(style="height:25px; padding:5px" v-if="nav.notification" )
             p.mb-0(style="font-size:14px") {{ nav.notification }}
 
+      v-spacer
       v-divider
 
-      v-list-item.px-5(
-        @click="openSelectLanguage = true"
-      )
-        template(v-slot:prepend)
-          v-icon.mr-2 mdi-translate
-        v-list-item-title.menu-text {{ $t('language') }}
+      .d-flex.flex-row.align-center.py-4.justify-space-evenly
+        v-btn.elevation-0.text-neutral.rounded-lg( @click="openSelectLanguage = true" variant="text")
+          div.d-flex.flex-column.align-center.justify-center
+            v-icon mdi-translate
+            p(style="font-size:7px") {{ $t('language') }}
+
+        v-btn.elevation-0.text-neutral( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
 
   v-app-bar.elevation-1.bg-neutralDark()
     v-app-bar-nav-icon(variant="text" @click.stop="drawer = !drawer")
@@ -43,21 +45,16 @@ v-app
       img(height="48" src="/icon.svg" )
 
     v-spacer
-
-    v-btn.elevation-0.text-neutral.rounded-lg( @click="openSelectLanguage = true" variant="text")
-      div.d-flex.flex-column.align-center.justify-center
-        v-icon mdi-translate
-        p(style="font-size:7px") {{ $t('language') }}
-
-    v-btn.elevation-0.text-neutral.mr-3( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
     
     v-menu()
       template( v-slot:activator="{ props }" )
         v-btn.elevation-0.text-neutral.bg-transparent(icon="mdi-account" variant="outlined" v-bind="props")
       v-list.pa-0
-        v-list-item(@click="")
-          v-list-item-title {{ userStore.user.email }}
-        v-list-item(@click="logout")
+        v-list-item(@click="openSelectCompany = true")
+          template(v-slot:prepend)
+            v-icon.mr-2.icon-nav mdi-swap-horizontal
+          v-list-item-title {{ $t('switchaccount') }}
+        v-list-item(@click="logout" v-if="userStore.user.email != ''")
           v-list-item-title {{ $t('logout') }}
 
   v-main(style="min-height:100vh")
@@ -147,7 +144,7 @@ onMounted(() => {
 })
 
 watch(drawer, (newDrawerVal) => {
-  if (display.width.value < 1440) {
+  if (display.width.value < 1280) {
     if (newDrawerVal) {
       document.querySelector(".app").style.overflow = 'hidden'
       document.querySelector(".app").style.height = '100vh'
