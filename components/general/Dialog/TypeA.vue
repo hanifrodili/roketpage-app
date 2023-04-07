@@ -3,6 +3,7 @@ v-dialog(
     v-model="dialog"
     width="100%"
     max-width="600px"
+    scrollable
     :persistent="persistent"
     :fullscreen="$vuetify.display.width < 450 ? true : false"
     :scrim="$vuetify.display.width < 450 ? false : true"

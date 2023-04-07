@@ -19,15 +19,20 @@ div
             v-col.py-0(cols="12")
               v-textarea.mb-4(v-model="orderForm.address" hide-details="auto" variant="outlined" label="Address" density="compact" :rules='rules.not_empty')
           v-row
-            v-col.py-0(cols="12")
-              .d-flex.flex-row.justify-space-between.align-center.pa-3.px-md-5(v-for="(item, index) in selectedProduct" :key="item.id")
-                p {{ item.name }}
-                .d-flex.flex-row.align-center(style="gap:15px")
-                  p x
-                  v-text-field( v-model="selectedProduct[index].quantity" type="number" min="1" hide-details="auto" variant="outlined" density="compact" style="max-width:80px; width:100%" placeholder="0")
+            v-col.py-0(cols="12" md="4")
+              v-text-field.mb-4(hide-details="auto" variant="outlined" label="Postcode" density="compact" :rules='rules.not_empty')
+            v-col.py-0(cols="12" md="4")
+              v-text-field.mb-4(hide-details="auto" variant="outlined" label="City" density="compact" :rules='rules.not_empty')
+            v-col.py-0(cols="12" md="4")
+              v-text-field.mb-4(hide-details="auto" variant="outlined" label="State" density="compact" :rules='rules.not_empty')
           v-row
             v-col.py-0(cols="12")
-              v-select.mb-4(v-model="product" hide-details="auto" variant="outlined" density="compact" :items="products" item-title="name" item-value="id" return-object label="Select product" @update:model-value="addProduct(product)")
+              .d-flex.flex-row.justify-space-between.align-center.pa-2.px-md-5(v-for="(item, index) in selectedProduct" :key="item.id")
+                p {{ item.name }}
+                general-count-input-delete(v-model="selectedProduct[index].quantity" min="1" @remove="removeProduct(item)")
+          v-row
+            v-col.py-0(cols="12")
+              v-select.mb-4.pa-2.px-md-5(v-model="product" hide-details="auto" variant="underlined" :items="products" item-title="name" item-value="id" return-object placeholder="Select product" @update:model-value="addProduct(product)")
     template( v-slot:action )
       v-btn( @click="dialog = false" variant="text") Cancel
       v-btn( @click="addOrder" variant="tonal" color="info" :loading="loading") Add
@@ -70,10 +75,20 @@ watch(dialog, (updatedDialog) => {
 })
 
 function addProduct(e) {
-  e.quantity = null
+  e.quantity = 0
   selectedProduct.value.push(e)
   products.value = products.value.filter(prod => prod.id != e.id);
   product.value = null
+}
+
+function removeProduct(e) {
+  selectedProduct.value = selectedProduct.value.filter(prod => prod.id != e.id)
+  const { quantity, ...obj } = e
+  products.value.push(obj)
+  products.value.sort(function (a, b) {
+    return a.id - b.id
+  });
+
 }
 
 async function getProduct() {
@@ -98,30 +113,30 @@ async function addOrder() {
   }
   let url = `https://api-test.roketpage.com/items/order_test`
 
-  await axios.post(url,{
-    name: orderForm.value.name,
-    description: orderForm.value.description,
-    base_price: orderForm.value.price,
-    base_stock: orderForm.value.stock,
-    base_weight: orderForm.value.weight,
-    image: orderForm.value.image_url
-  })
-    .then(response => {
-      // Handle successful response
-      snackbar.add({
-        type: 'success',
-        text: 'New product added !'
-      })
-      emits('addProduct', response.data.data)
-    })
-    .catch(error => {
-      // Handle error
-      snackbar.add({
-        type: 'error',
-        text: error.response.data.errors[0].message
-      })
-      console.log(error.response.data.errors[0].message);
-    });
+  // await axios.post(url,{
+  //   name: orderForm.value.name,
+  //   description: orderForm.value.description,
+  //   base_price: orderForm.value.price,
+  //   base_stock: orderForm.value.stock,
+  //   base_weight: orderForm.value.weight,
+  //   image: orderForm.value.image_url
+  // })
+  //   .then(response => {
+  //     // Handle successful response
+  //     snackbar.add({
+  //       type: 'success',
+  //       text: 'New order added !'
+  //     })
+  //     emits('addProduct', response.data.data)
+  //   })
+  //   .catch(error => {
+  //     // Handle error
+  //     snackbar.add({
+  //       type: 'error',
+  //       text: error.response.data.errors[0].message
+  //     })
+  //     console.log(error.response.data.errors[0].message);
+  //   });
   form.value.reset()
   dialog.value = false
   loading.value = false
