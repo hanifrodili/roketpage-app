@@ -45,6 +45,15 @@ v-app
       img(height="48" src="/icon.svg" )
 
     v-spacer
+
+    v-btn.elevation-0.text-neutral.bg-transparent(size="small" icon="mdi-help-circle-outline" variant="text")
+
+    v-menu()
+      template( v-slot:activator="{ props }" )
+        v-btn.elevation-0.text-neutral.bg-transparent.mr-2(size="small" icon="mdi-bell-outline" variant="text" v-bind="props")
+      v-list.pa-0
+        v-list-item()
+          v-list-item-title Nothing new.
     
     v-menu()
       template( v-slot:activator="{ props }" )
