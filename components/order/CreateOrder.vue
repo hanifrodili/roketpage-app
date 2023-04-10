@@ -20,11 +20,11 @@ div
               v-textarea.mb-4(v-model="orderForm.address" hide-details="auto" variant="outlined" label="Address" density="compact" :rules='rules.not_empty')
           v-row
             v-col.py-0(cols="12" md="4")
-              v-text-field.mb-4(hide-details="auto" variant="outlined" label="Postcode" density="compact" :rules='rules.not_empty')
+              v-text-field.mb-4(v-model="orderForm.postcode" hide-details="auto" variant="outlined" label="Postcode" density="compact" :rules='rules.not_empty' @keyup="getCityState")
             v-col.py-0(cols="12" md="4")
-              v-text-field.mb-4(hide-details="auto" variant="outlined" label="City" density="compact" :rules='rules.not_empty')
+              v-text-field.mb-4(v-model="orderForm.city" hide-details="auto" variant="outlined" label="City" density="compact" :rules='rules.not_empty')
             v-col.py-0(cols="12" md="4")
-              v-text-field.mb-4(hide-details="auto" variant="outlined" label="State" density="compact" :rules='rules.not_empty')
+              v-text-field.mb-4(v-model="orderForm.state" hide-details="auto" variant="outlined" label="State" density="compact" :rules='rules.not_empty')
           v-row
             v-col.py-0(cols="12")
               .d-flex.flex-row.justify-space-between.align-center.pa-2.px-md-5(v-for="(item, index) in selectedProduct" :key="item.id")
@@ -40,6 +40,7 @@ div
 
 <script setup>
 import axios from 'axios'
+import postcode from '@/src/postcode'
 
 const emits = defineEmits(['addProduct'])
 
@@ -53,11 +54,17 @@ const quantity = ref(null)
 const dialog = ref(false)
 const loading =ref(false)
 const form = ref(null)
+
+const stateList = ref([])
+
 const orderForm = ref({
   name: '',
   phone: '',
   email: '',
-  address: ''
+  address: '',
+  postcode: '',
+  city: '',
+  state: '',
 })
 
 const rules = ref(
@@ -68,6 +75,7 @@ const rules = ref(
 
 onMounted(async () => {
   await getProduct()
+  stateList.value = postcode.getStates()
 })
 
 watch(dialog, (updatedDialog) => {
@@ -103,6 +111,11 @@ async function getProduct() {
       // Handle error
       console.log(error);
     });
+}
+
+function getCityState(){
+  orderForm.value.city = postcode.findPostcode(orderForm.value.postcode).city
+  orderForm.value.state = postcode.findPostcode(orderForm.value.postcode).state
 }
 
 async function addOrder() {

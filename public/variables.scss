@@ -88,16 +88,23 @@ h6 {
 .page-content {
   // padding-top: 95px;
   width: 100%;
-  max-width: 1080px;
+  max-width: 1020px;
   margin-left: auto;
   margin-right: auto;
   position: relative;
 }
 
+.setting-content {
+  width: 100%;
+  max-width: 800px;
+}
+
 .page-title{
   font-size: 18px;
+  font-weight: 700;
   line-height: 24px;
   letter-spacing: -0.03em;
+  text-transform: capitalize;
 }
 
 .cursor-pointer {

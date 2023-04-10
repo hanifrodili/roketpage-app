@@ -1,6 +1,6 @@
 <template lang="pug">
 div.page-content
-  order-main-order
+  h1 Blankkkk
 </template>
 
 <script setup></script>

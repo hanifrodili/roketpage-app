@@ -20,7 +20,7 @@ v-app
 
       v-divider
 
-      v-list-item.px-5(v-for="(nav, index) in navList" :key="index" @click="$router.push(nav.path)" :class="$route.name == nav.name ? 'activated' : ''")
+      v-list-item.px-5(v-for="(nav, index) in navList" :key="index" @click="$router.push(nav.path)" :class="$route.name.split('-')[0] == nav.name ? 'activated' : ''")
         template(v-slot:prepend)
           v-icon.mr-2.icon-nav {{ `mdi-${nav.mdi}` }}
         div.d-flex.flex-row.align-center.justify-space-between
@@ -31,33 +31,38 @@ v-app
       v-spacer
       v-divider
 
-      .d-flex.flex-row.align-center.py-4.justify-space-evenly
-        v-btn.elevation-0.text-neutral.rounded-lg( @click="openSelectLanguage = true" variant="text")
-          div.d-flex.flex-column.align-center.justify-center
-            v-icon mdi-translate
-            p(style="font-size:7px") {{ $t('language') }}
+      v-list-item.px-5(@click="openSelectLanguage = true")
+        template(v-slot:prepend)
+          v-icon.mr-2.icon-nav mdi-translate
+        div.d-flex.flex-row.align-center.justify-space-between
+          v-list-item-title.menu-text {{ $t('language') }}
 
-        v-btn.elevation-0.text-neutral( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
+      //- .d-flex.flex-row.align-center.py-4.justify-space-evenly
+      //-   v-btn.elevation-0.text-neutral.rounded-lg( @click="openSelectLanguage = true" variant="text")
+      //-     div.d-flex.flex-column.align-center.justify-center
+      //-       v-icon mdi-translate
+      //-       p(style="font-size:7px") {{ $t('language') }}
+
+        //- v-btn.elevation-0.text-neutral( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
 
   v-app-bar.elevation-1.bg-neutralDark()
     v-app-bar-nav-icon(variant="text" @click.stop="drawer = !drawer")
-    v-toolbar-title.ml-0
-      img(height="48" src="/icon.svg" )
+    v-toolbar-title.ml-0.ml-md-4.page-title {{ $t($route.name.split('-')[0]) }}
 
-    v-spacer
+    //- v-spacer
 
-    v-btn.elevation-0.text-neutral.bg-transparent(size="small" icon="mdi-help-circle-outline" variant="text")
+    v-btn.elevation-0.text-neutral.bg-transparent(size="small" icon="mdi-help-circle-outline" variant="text" width="28" height="28")
 
     v-menu()
       template( v-slot:activator="{ props }" )
-        v-btn.elevation-0.text-neutral.bg-transparent.mr-2(size="small" icon="mdi-bell-outline" variant="text" v-bind="props")
+        v-btn.elevation-0.text-neutral.bg-transparent.mr-2(size="small" icon="mdi-bell-outline" variant="text" v-bind="props" width="28" height="28")
       v-list.pa-0
         v-list-item()
           v-list-item-title Nothing new.
     
     v-menu()
       template( v-slot:activator="{ props }" )
-        v-btn.elevation-0.text-neutral.bg-transparent(icon="mdi-account" variant="outlined" v-bind="props")
+        v-btn.elevation-0.text-neutral.bg-transparent(icon="mdi-account" size="small" variant="outlined" v-bind="props")
       v-list.pa-0
         v-list-item(@click="openSelectCompany = true")
           template(v-slot:prepend)
@@ -116,8 +121,15 @@ const navList = ref([
     path: "/order",
     name: "order",
     mdi: "inbox-arrow-down",
-    i18n_key: "customer",
+    i18n_key: "order",
     notification: 20
+  },
+  {
+    path: "/customer",
+    name: "customer",
+    mdi: "account-group",
+    i18n_key:"customer",
+    notification: 30
   },
   {
     path: "/product",
@@ -127,8 +139,8 @@ const navList = ref([
     notification: 0
   },
   {
-    path: "/sites",
-    name: "sites",
+    path: "/pages",
+    name: "pages",
     mdi: "file-link",
     i18n_key: "pages",
     notification: 0

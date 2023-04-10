@@ -64,10 +64,11 @@ watch(statusRange, () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 2px 4px -1px rgb(34 34 34 / 50%);
   min-height: 150px;
   height: 100%;
-  border-radius: 16px;
+  box-shadow: none;
+  border: .5px solid #ababab;
+  border-radius: 8px;
 
   .status-number{
     font-size: 40px;

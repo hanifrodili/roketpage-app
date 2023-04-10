@@ -1,108 +1,77 @@
 <template lang="pug">
-v-expansion-panel()
-  v-expansion-panel-title(style="" expand-icon="mdi-chevron-down" collapse-icon="mdi-chevron-up") {{ $t('account') }}
-  v-expansion-panel-text.panel-body
-    v-form.mt-4()
-      v-text-field.mb-2(
-        v-model='account.full_name',
-        color='secondary',
-        label='Your Name',
-        :rules='rules.not_empty',
-        variant="outlined"
-      )
-      v-text-field.mb-2(
-        v-model='account.email',
-        color='secondary',
-        label='E-mail',
-        variant="outlined",
-        :rules='rules.email'
-        type="email"
-        disabled
-      )
-      v-text-field.mb-2(
-        v-model='account.phone',
-        color='secondary',
-        label='Phone number',
-        variant="outlined",
-        type="tel"
-      )
-      v-text-field.mb-2(
-        v-model='account.password',
-        color='secondary',
-        label='Password',
-        variant="outlined",
-        :append-inner-icon='showPasword ? "mdi-eye" : "mdi-eye-off"',
-        @click:append='showPasword = !showPasword',
-        :type='showPasword ? "text" : "password"',
-        :rules='rules.password'
-      )
-      v-text-field.mb-2(
-        v-model='account.repeat_password',
-        color='secondary',
-        label='Repeat Password',
-        variant="outlined",
-        :append-inner-icon='showPasword ? "mdi-eye" : "mdi-eye-off"',
-        @click:append-inner='showPasword = !showPasword',
-        :type='showPasword ? "text" : "password"',
-        :rules='rules.repeat_password'
-      )
-      v-btn.text-capitalize.text--secondary.elevation-0(
-        width="100%"
-        color='primary',
-        rounded="pill",
-        size="large",
-        @click='',
-        :loading='isLoading'
-      ) 
-        b.mr-2 {{ $t('save') }}
-        v-icon(right) mdi-content-save
+div
+  div.d-flex.align-center.mb-6(style="gap: 16px" :class="$vuetify.display.width < 600 ? 'flex-column' : 'flex-row'")
+    div.flex-shrink-1.pa-4.bg-green.rounded-circle
+      v-img(:aspect-ratio="1/1" width="40" src="/img/logo.svg" )
+    div.d-flex.flex-column()
+      p.text-wrap.font-weight-bold Mohd Hanif Bin Mohamod Rodili
+      .d-flex.flex-row.align-center.justify-space-between
+        div
+          p(style="color:#767676; font-size:14px; font-weight:400") hanifrodili@gmail.com
+          p(style="color:#767676; font-size:14px; font-weight:400") Owner
+        v-btn( variant="text" @click="$router.push('/settings/account')" icon="mdi-account-edit-outline" width="32" height="32" color="secondary")
+  v-card.card
+    v-card-text.d-flex.flex-column.pa-0
+      div.d-flex.flex-row.align-center.settings-item.pa-3.py-4.px-md-5(style="gap:20px" v-for="(setting, index) in settingsList" :key="index" @click="$router.push(setting.path)")
+        v-icon mdi-{{ setting.mdi }}
+        p.label {{ $t(setting.label) }}
+        v-icon.ml-auto mdi-chevron-right
 </template>
 
 <script setup>
-import { useDisplay } from 'vuetify'
-
-const { xs } = useDisplay()
-
-const account = ref({
-  full_name: '',
-  email: '',
-  phone: '',
-  password: '',
-  repeat_password: '',
-})
-const showPasword = ref(false)
-const isLoading = ref(false)
-const rules = ref(
+const settingsList = ref([
   {
-    not_empty: [(val) => (val || '').length > 0 || 'This field is required'],
-    email: [
-      (v) => !!v || 'E-mail address is required',
-      (v) =>
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-          v
-        ) || 'E-mail must be valid',
-    ],
-    password: [
-      (v) => !!v || 'Password is required',
-      (v) => (v || '').length >= 8 || 'Must be 8 characters and above',
-    ],
-    repeat_password: [
-      (v) => !!v || 'Repeat Password is required',
-      (v) => (v || '').length >= 8 || 'Must be 8 characters and above',
-      (v) => v === form.value.password || 'Password is not match',
-    ],
+    label: 'company',
+    path: '/settings/company',
+    mdi: 'domain'
+  },
+  {
+    label: 'payment',
+    path: '/settings/payment',
+    mdi: 'cash-multiple'
+  },
+  {
+    label: 'shipping',
+    path: '/settings/shipping',
+    mdi: 'truck'
+  },
+  {
+    label: 'notification',
+    path: '/settings/notification',
+    mdi: 'bell-ring'
+  },
+  {
+    label: 'subscription',
+    path: '/settings/subscription',
+    mdi: 'account-credit-card'
   }
-)
+])
 </script>
 
 <style lang="scss" scoped>
-.panel-body{
-  padding: 20px 80px;
+.card{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  // align-items: center;
+  // justify-content: center;
+  // box-shadow: 0px 2px 4px -1px rgb(34 34 34 / 50%);
+  box-shadow: none;
+  height: fit-content;
+  height: 100%;
+  border: .5px solid #ababab;
+  border-radius: 8px;
 }
 
-@media(max-width: 500px){
-  .panel-body{
-    padding: 20px 5px;
+.settings-item{
+  cursor: pointer;
+  p.label{
+    font-size: 15px;
+    font-weight: 500;
   }
+}
+
+.settings-item:not(:last-of-type){
+  border-bottom: 0.5px #ababab solid;
 }
 </style>

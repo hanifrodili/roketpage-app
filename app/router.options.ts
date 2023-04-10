@@ -23,7 +23,12 @@ export default <RouterConfig>{
       component: () => import('~/pages/app/order/index.vue'),
     },
     {
-      name: 'orderDetails',
+      name: 'customer',
+      path: '/customer',
+      component: () => import('~/pages/app/customer/index.vue'),
+    },
+    {
+      name: 'orderdetails',
       path: '/order/:id',
       component: () => import('~/pages/app/order/[id].vue'),
     },
@@ -35,16 +40,46 @@ export default <RouterConfig>{
     {
       name: 'settings',
       path: '/settings',
-      component: () => import('~/pages/app/settings.vue'),
+      component: () => import('~/pages/app/settings/index.vue'),
     },
     {
-      name: 'sites',
-      path: '/sites',
+      name: 'settings-account',
+      path: '/settings/account',
+      component: () => import('~/pages/app/settings/account.vue'),
+    },
+    {
+      name: 'settings-company',
+      path: '/settings/company',
+      component: () => import('~/pages/app/settings/company.vue'),
+    },
+    {
+      name: 'settings-payment',
+      path: '/settings/payment',
+      component: () => import('~/pages/app/settings/payment.vue'),
+    },
+    {
+      name: 'settings-shipping',
+      path: '/settings/shipping',
+      component: () => import('~/pages/app/settings/shipping.vue'),
+    },
+    {
+      name: 'settings-notification',
+      path: '/settings/notification',
+      component: () => import('~/pages/app/settings/notification.vue'),
+    },
+    {
+      name: 'settings-subscription',
+      path: '/settings/subscription',
+      component: () => import('~/pages/app/settings/subscription.vue'),
+    },
+    {
+      name: 'pages',
+      path: '/pages',
       component: () => import('~/pages/app/sites/index.vue'),
     },
     {
       name: 'sitesBuilder',
-      path: '/sites/builder/:id',
+      path: '/pages/builder/:id',
       component: () => import('~/pages/app/sites/builder/[id].vue'),
     },
     {
