@@ -1,21 +1,38 @@
 <template lang="pug">
 div
-  div.d-flex.align-center.mb-6(style="gap: 16px" :class="$vuetify.display.width < 600 ? 'flex-column' : 'flex-row'")
-    div.flex-shrink-1.pa-4.bg-green.rounded-circle
-      v-img(:aspect-ratio="1/1" width="40" src="/img/logo.svg" )
-    div.d-flex.flex-column()
-      p.text-wrap.font-weight-bold Mohd Hanif Bin Mohamod Rodili
-      .d-flex.flex-row.align-center.justify-space-between
-        div
-          p(style="color:#767676; font-size:14px; font-weight:400") hanifrodili@gmail.com
-          p(style="color:#767676; font-size:14px; font-weight:400") Owner
-        v-btn( variant="text" @click="$router.push('/settings/account')" icon="mdi-account-edit-outline" width="32" height="32" color="secondary")
-  v-card.card
-    v-card-text.d-flex.flex-column.pa-0
-      div.d-flex.flex-row.align-center.settings-item.pa-3.py-4.px-md-5(style="gap:20px" v-for="(setting, index) in settingsList" :key="index" @click="$router.push(setting.path)")
-        v-icon mdi-{{ setting.mdi }}
-        p.label {{ $t(setting.label) }}
-        v-icon.ml-auto mdi-chevron-right
+  v-row.pa-3
+    v-col.pa-2(cols="12" )
+      v-row(style="position:relative")
+        v-btn.text-capitalize( @click="$router.push('/settings/account')" rounded size="small" variant="tonal" color="info" style="position:absolute; top:10px; right:10px;" )
+          v-icon mdi-account-edit
+          p Edit
+        v-col.align-self-center.mb-3(cols="12" md="2")
+          div.pa-4.bg-primary.rounded-circle.overflow-hidden.mx-auto.mx-md-0(style="width:fit-content")
+            v-img(:aspect-ratio="1/1" width="60" src="/img/logo.svg" )
+        v-col(cols="12" md="5")
+          div.d-flex.flex-column.w-100()
+            .d-flex.flex-row.justify-space-between(style="gap:20px")
+              div.content
+                p.label Name
+                p.text Mohd Hanif Bin Mohamod Rodili
+              div.content
+                p.label Role
+                p.text Owner
+            .d-flex.flex-row.justify-space-between(style="gap:20px")
+              div.content
+                p.label Email
+                p.text hanif_rodili@yahoo.com
+              div.content
+                p.label Phone
+                p.text +60123456789
+          
+    v-col.pa-0(cols="12")
+      v-card.card()
+        v-card-text.d-flex.flex-column.pa-0
+          div.d-flex.flex-row.align-center.settings-item.pa-3.py-4.px-md-5(style="gap:20px" v-for="(setting, index) in settingsList" :key="index" @click="$router.push(setting.path)")
+            v-icon mdi-{{ setting.mdi }}
+            p.label {{ $t(setting.label) }}
+            v-icon.ml-auto mdi-chevron-right
 </template>
 
 <script setup>
@@ -73,5 +90,19 @@ const settingsList = ref([
 
 .settings-item:not(:last-of-type){
   border-bottom: 0.5px #ababab solid;
+}
+
+.content{
+  margin-bottom: 10px;
+  .label{
+    font-size: 12px;
+    font-weight: 400;
+    color: #767676;
+  }
+  .text{
+    font-size: 14px;
+    font-weight: 600;
+    word-break:break-all;
+  }
 }
 </style>

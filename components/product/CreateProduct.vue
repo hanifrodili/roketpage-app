@@ -23,6 +23,7 @@ div
           v-row
             v-col.py-0(cols="12")
               v-text-field.mb-4(v-model="productForm.image_url" hide-details="auto" variant="outlined" label="Image URL" density="compact" type="url" :rules='rules.not_empty' append-inner-icon="mdi-help-circle-outline" @click:append-inner="imageHelpDialog = true")
+      v-img(v-if="productForm.image_url" :src="productForm.image_url")
     template( v-slot:action )
       v-btn( @click="dialog = false" variant="text") Cancel
       v-btn( @click="addProduct" variant="tonal" color="info" :loading="loading") Add

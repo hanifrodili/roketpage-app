@@ -11,3 +11,6 @@ pagebuilder
 page-builder
 test.vue
 test
+PhoneInput.vue
+flags
+phoneCodeCountries.js

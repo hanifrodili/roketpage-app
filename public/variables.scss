@@ -88,15 +88,10 @@ h6 {
 .page-content {
   // padding-top: 95px;
   width: 100%;
-  max-width: 1020px;
+  max-width: 980px;
   margin-left: auto;
   margin-right: auto;
   position: relative;
-}
-
-.setting-content {
-  width: 100%;
-  max-width: 800px;
 }
 
 .page-title{
@@ -109,6 +104,19 @@ h6 {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.general-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  position: relative;
+  box-shadow: none;
+  min-height: 200px;
+  height: fit-content;
+  border: .5px solid #ababab;
+  border-radius: 8px;
 }
 
 .v-text-field {

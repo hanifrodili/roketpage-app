@@ -9,7 +9,7 @@ v-dialog(
     :scrim="$vuetify.display.width < 450 ? false : true"
     transition="dialog-bottom-transition"
   )
-    v-card()
+    v-card.rounded-lg(  )
       v-card-title.d-flex.flex-row.align-center.justify-space-between.pa-5.font-weight-bold(style="font-size:18px")
         slot(name="title")
         v-icon.cursor-pointer.ml-auto(@click="$emit('update:modelValue', false)") mdi-close-circle-outline

@@ -31,17 +31,17 @@ v-app
       v-spacer
       v-divider
 
-      v-list-item.px-5(@click="openSelectLanguage = true")
-        template(v-slot:prepend)
-          v-icon.mr-2.icon-nav mdi-translate
-        div.d-flex.flex-row.align-center.justify-space-between
-          v-list-item-title.menu-text {{ $t('language') }}
+      //- v-list-item.px-5(@click="openSelectLanguage = true")
+      //-   template(v-slot:prepend)
+      //-     v-icon.mr-2.icon-nav mdi-translate
+      //-   div.d-flex.flex-row.align-center.justify-space-between
+      //-     v-list-item-title.menu-text {{ $t('language') }}
 
-      //- .d-flex.flex-row.align-center.py-4.justify-space-evenly
-      //-   v-btn.elevation-0.text-neutral.rounded-lg( @click="openSelectLanguage = true" variant="text")
-      //-     div.d-flex.flex-column.align-center.justify-center
-      //-       v-icon mdi-translate
-      //-       p(style="font-size:7px") {{ $t('language') }}
+      .d-flex.flex-row.align-center.justify-start.pa-4
+        v-btn.elevation-0.text-neutral( @click="openSelectLanguage = true" variant="text" rounded)
+          div.d-flex.flex-column.align-center.justify-center
+            v-icon mdi-translate
+            p(style="font-size:7px") {{ $t('language') }}
 
         //- v-btn.elevation-0.text-neutral( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
 

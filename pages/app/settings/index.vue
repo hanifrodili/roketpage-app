@@ -1,5 +1,5 @@
 <template lang="pug">
-div.page-content.setting-content
+div.page-content
   settings-main-settings
 </template>
 

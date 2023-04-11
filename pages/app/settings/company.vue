@@ -1,9 +1,9 @@
 <template lang="pug">
-div.page-content.setting-content
+div.page-content
   .d-flex.flex-row.align-center.mb-5
     v-btn(variant="text" icon="mdi-arrow-left" @click.stop="$router.push('/settings')")
     h1.page-title {{ $t('company') }}
-  v-card.card
+  v-card.general-card
     v-btn.text-capitalize( @click="edit = true" rounded size="small" variant="tonal" color="info" style="position:absolute; top:10px; right:10px;" )
       v-icon mdi-pencil-box-outline
       p Edit
@@ -62,21 +62,6 @@ const edit = ref(false)
 </script>
 
 <style lang="scss" scoped>
-.card{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 8px;
-  position: relative;
-  // align-items: center;
-  // justify-content: center;
-  // box-shadow: 0px 2px 4px -1px rgb(34 34 34 / 50%);
-  box-shadow: none;
-  min-height: 400px;
-  height: fit-content;
-  border: .5px solid #ababab;
-  border-radius: 8px;
-}
 
 .content{
   margin-bottom: 10px;
