@@ -1,23 +1,40 @@
 <template lang="pug">
-.GatewaySetting
-  v-card(variant="text")
-    v-card-text.pa-1
-      div.d-flex.flex-row.align-center
-        div.d-flex.flex-column.flex-grow-1
-          v-img(src="/img/gateway/toyyibpay.svg" width="80px")
-        div.d-flex.flex-row.align-center(style="gap:10px")
-          v-btn.text-capitalize(variant="tonal" rounded size="small" color="info")
-            v-icon.mr-2 mdi-file-cog-outline
-            p Manage
-          v-switch(
-              inset
-              hide-details="auto"
-              color="primary"
-              value='true'
-              density="compact"
-              @update:modelValue=""
-            )
+div
+  template(v-for="(item, index) in gatewayList" :key="index")
+    settings-item-gateway(:data="item" @setManage="manageGateway")
+  general-dialog-type-b(v-model="openManage" :persistent="true")
+    template( v-slot:title )
+      p {{ onEdit.name }}
+    template( v-slot:content )
+      settings-gateway-toyyibpay(v-if="onEdit.code === 'typ'")
+      settings-gateway-billplz(v-if="onEdit.code === 'bpz'")
+    template( v-slot:action )
+      v-btn( @click="openManage = false" variant="text") Cancel
+      v-btn( @click="" variant="tonal" color="info") Save
+
+      
 </template>
 
-<script setup></script>
+<script setup>
+const openManage = ref(false)
+const gatewayList = ref([
+  {
+    name: 'toyyibPay',
+    code: 'typ',
+    logo: '/img/gateway/toyyibpay.svg'
+  },
+  {
+    name: 'Billplz',
+    code: 'bpz',
+    logo: '/img/gateway/billplz.svg'
+  }
+])
+
+const onEdit = ref(null)
+
+function manageGateway(e){
+  onEdit.value = e
+  openManage.value = true
+}
+</script>
 <style lang="scss" scoped></style>
