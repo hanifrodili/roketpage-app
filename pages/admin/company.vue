@@ -4,5 +4,10 @@ div
   company-main-company
 </template>
 
-<script setup></script>
+<script setup>
+definePageMeta({
+  middleware: 'auth',
+  name: 'company'
+})
+</script>
 <style lang="scss" scoped></style>

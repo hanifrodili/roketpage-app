@@ -1,7 +1,7 @@
 <template lang="pug">
 div.page-content
   .d-flex.flex-row.align-center
-    v-btn(variant="text" icon="mdi-arrow-left" @click.stop="$router.push('/settings')")
+    v-btn(variant="text" icon="mdi-arrow-left" @click.stop="$router.push('/admin/settings')")
     h1.page-title {{ $t('account') }}
   v-card.general-card
     v-form.pa-4
@@ -42,6 +42,10 @@ div.page-content
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: 'auth',
+  name: 'settings-account'
+})
 const editPasswordDialog = ref(false)
 const showCurrent = ref(false)
 const showNew = ref(false)

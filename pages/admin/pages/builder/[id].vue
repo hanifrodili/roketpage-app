@@ -25,6 +25,10 @@ const userComponents = ref([])
 const pageID = ref('')
 const pageTitle = ref('')
 
+definePageMeta({
+  middleware: 'auth',
+})
+
 onMounted(() => {
   pageID.value = route.params.id
   userPages.value = JSON.parse(window.localStorage.getItem('userPages'))

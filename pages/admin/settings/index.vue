@@ -3,5 +3,10 @@ div.page-content
   settings-main-settings
 </template>
 
-<script setup></script>
+<script setup>
+definePageMeta({
+  middleware: 'auth',
+  name: 'settings'
+})
+</script>
 <style lang="scss" scoped></style>

@@ -1,7 +1,7 @@
 <template lang="pug">
 div.page-content.setting-content
   .d-flex.flex-row.align-center
-    v-btn(variant="text" icon="mdi-arrow-left" @click.stop="$router.push('/settings')")
+    v-btn(variant="text" icon="mdi-arrow-left" @click.stop="$router.push('/admin/settings')")
     h1.page-title {{ $t('payment') }}
   v-card.general-card.pa-0
     v-expansion-panels(variant="accordion" v-model="panel")
@@ -17,6 +17,10 @@ div.page-content.setting-content
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: 'auth',
+  name: 'settings-payment'
+})
 const panel = ref(0)
 </script>
 

@@ -1,7 +1,7 @@
 <template lang="pug">
 div.page-content
   .d-flex.flex-row.align-center.mb-5
-    v-btn(variant="text" icon="mdi-arrow-left" @click.stop="$router.push('/settings')")
+    v-btn(variant="text" icon="mdi-arrow-left" @click.stop="$router.push('/admin/settings')")
     h1.page-title {{ $t('company') }}
   v-card.general-card
     v-btn.text-capitalize( @click="edit = true" rounded size="small" variant="tonal" color="info" style="position:absolute; top:10px; right:10px;" )
@@ -58,6 +58,10 @@ div.page-content
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: 'auth',
+  name: 'settings-company'
+})
 const edit = ref(false)
 </script>
 

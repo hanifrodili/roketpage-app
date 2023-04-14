@@ -21,15 +21,17 @@
               .text-body-2.mt-n1 Login to Continue
 
               v-form.mt-6(ref="form" fast-fail)
-                v-text-field(
+                v-text-field.mb-4(
                   color='secondary'
                   v-model='signinForm.email'
                   label='Email'
                   variant="outlined"
                   :rules='rules.email'
                   type="email"
+                  density="compact"
+                  hide-details="auto"
                 )
-                v-text-field(
+                v-text-field.mb-4(
                   color='secondary',
                   v-model='signinForm.password',
                   label='Password',
@@ -38,12 +40,13 @@
                   @click:append-inner='showPasword = !showPasword',
                   :type='showPasword ? "text" : "password"',
                   :rules='rules.password'
+                  density="compact"
+                  hide-details="auto"
                 )
-                v-btn.text-capitalize.text--primary.text-body-1.mt-2.elevation-0(
+                v-btn.text-capitalize.text--primary.text-body-1.elevation-0(
                   width="100%"
                   color='primary',
-                  rounded="pill",
-                  size="large",
+                  rounded="lg",
                   @click="signin",
                   :loading='loading'
                 ) 
@@ -64,15 +67,16 @@ import { useDisplay } from 'vuetify'
 import { useStoreUser } from '~/store/storeMerchant'
 import { storeToRefs } from 'pinia'
 
+const supabase = useSupabaseAuthClient();
+
 const router = useRouter()
 const { lgAndDown, xs } = useDisplay()
 const userStore = useStoreUser()
 
-onMounted(() => {
-  userStore.getUser()
-  console.log(userStore.user.email);
-  if (userStore.user.email) {
-    router.push('/dashboard')
+onMounted(async () => {
+  const isLoggedIn = await checkSignedIn()
+  if (isLoggedIn) {
+    router.push('/admin/dashboard')
   }
 })
 
@@ -105,13 +109,29 @@ async function signin() {
   if (!validation.valid) {
     return
   }
-  const usr = {
-    email: signinForm.value.email
-  }
-  userStore.setUser(usr)
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: signinForm.value.email,
+    password: signinForm.value.password
+  })
   loading.value = true
-  router.push('/dashboard')
+  console.log(data);
+  if (data) {
+    userStore.setUser(data.user)
+    router.push('/admin/dashboard')
+  }
+  if (error) {
+    console.log(error);
+  }
 }
+
+async function checkSignedIn() {
+  const { data, error } = await supabase.auth.getSession()
+  if (data.session) {
+    return true
+  }
+
+  return false
+};
 </script>
 
 <style lang="scss" scoped></style>

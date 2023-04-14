@@ -76,6 +76,10 @@ const userPages = ref([])
 
 const router = useRouter();
 
+definePageMeta({
+  middleware: 'auth',
+})
+
 onMounted(() => {
   const savedPages = JSON.parse(window.localStorage.getItem('userPages'))
   if (savedPages === null) {

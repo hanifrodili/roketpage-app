@@ -29,6 +29,8 @@
                     :rules='rules.not_empty',
                     variant="outlined"
                     rounded
+                    density="compact"
+                    hide-details="auto"
                   )
                   v-text-field.mb-2(
                     v-model='registerForm.full_name',
@@ -36,6 +38,8 @@
                     label='Your Name',
                     :rules='rules.not_empty',
                     variant="outlined"
+                    density="compact"
+                    hide-details="auto"
                   )
                   v-text-field.mb-2(
                     v-model='registerForm.email',
@@ -43,6 +47,8 @@
                     label='E-mail address',
                     variant="outlined",
                     :rules='rules.email'
+                    density="compact"
+                    hide-details="auto"
                   )
                   v-text-field.mb-2(
                     v-model='registerForm.password',
@@ -53,6 +59,8 @@
                     @click:append='showPasword = !showPasword',
                     :type='showPasword ? "text" : "password"',
                     :rules='rules.password'
+                    density="compact"
+                    hide-details="auto"
                   )
                   v-text-field.mb-2(
                     v-model='registerForm.repeat_password',
@@ -63,12 +71,13 @@
                     @click:append-inner='showPasword = !showPasword',
                     :type='showPasword ? "text" : "password"',
                     :rules='rules.repeat_password'
+                    density="compact"
+                    hide-details="auto"
                   )
                   v-btn.text-capitalize.text--secondary.elevation-0(
                     width="100%"
                     color='primary',
-                    rounded="pill",
-                    size="large",
+                    rounded="lg",
                     @click='signup',
                     :loading='loading'
                   ) 
@@ -103,6 +112,7 @@
 
 <script setup>
 import { useDisplay } from 'vuetify'
+const supabase = useSupabaseAuthClient();
 
 const { xs } = useDisplay()
 const router = useRouter()
@@ -135,18 +145,34 @@ const rules = ref(
     repeat_password: [
       (v) => !!v || 'Repeat Password is required',
       (v) => (v || '').length >= 8 || 'Must be 8 characters and above',
-      (v) => v === form.value.password || 'Password is not match',
+      (v) => v === registerForm.value.password || 'Password is not match',
     ],
   }
 )
 
 async function signup() {
+  loading.value = true
   const validation = await form.value.validate()
   if (!validation.valid) {
     return
   }
-  loading.value = true
-  router.push('/dashboard')
+
+ 
+  const { data, error } = await supabase.auth.signUp({
+    email: registerForm.value.email,
+    password: registerForm.value.password,
+    options: {
+      data: {
+        full_name: registerForm.value.full_name,
+        company_name: registerForm.value.company_name,
+      },
+    },
+  })
+
+  // console.log(data);
+
+  loading.value = false
+  router.push('/welcome?user='+data.user)
 }
 </script>
 

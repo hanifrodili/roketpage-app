@@ -4,7 +4,7 @@ div.py-8
   v-card.card
     div.d-flex.flex-row.align-center.mb-3
       h2.pa-0(style="font-size:20px") {{ $t('latestorder',{number: 5}) }}
-      v-btn(icon="mdi-open-in-new" variant="text" size="small" @click="$router.push(`/order`)")
+      v-btn(icon="mdi-open-in-new" variant="text" size="small" @click="$router.push(`/admin/order`)")
     v-table(style="background-color:transparent")
       tbody
         tr(v-for="order in orders" :key="order.id")

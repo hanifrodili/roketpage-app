@@ -3,5 +3,10 @@ div
   b Coupon
 </template>
 
-<script setup></script>
+<script setup>
+definePageMeta({
+  middleware: 'auth',
+  name: 'coupon'
+})
+</script>
 <style lang="scss" scoped></style>

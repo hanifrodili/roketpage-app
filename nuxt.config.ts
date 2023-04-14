@@ -2,7 +2,6 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "url";
 import VueI18nVitePlugin from "@intlify/unplugin-vue-i18n/vite";
 
-// https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   app: {
     head: {
@@ -71,7 +70,7 @@ export default defineNuxtConfig({
     },
   },
   buildModules: [],
-  modules: ["@pinia/nuxt", "nuxt-snackbar"],
+  modules: ["@pinia/nuxt", "nuxt-snackbar", "@nuxtjs/supabase"],
   snackbar: {
     top: true,
     duration: 2000,
@@ -112,6 +111,9 @@ export default defineNuxtConfig({
     public: {
       baseUrl: process.env.BASE_URL,
       apiUrl: process.env.API_URL,
+      supabaseID: process.env.SUPABASE_ID,
+      supabaseURL: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_KEY,
     },
   },
 });

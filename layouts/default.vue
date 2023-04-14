@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-const excludeNav = ref(["index", "signin", "signup", "forgot", "reset"]);
+const excludeNav = ref(["index", "signin", "signup", "forgot", "reset", "welcome"]);
 </script>
 
 <style lang="scss"></style>

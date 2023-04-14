@@ -39,27 +39,27 @@ div
 const settingsList = ref([
   {
     label: 'company',
-    path: '/settings/company',
+    path: '/admin/settings/company',
     mdi: 'domain'
   },
   {
     label: 'payment',
-    path: '/settings/payment',
+    path: '/admin/settings/payment',
     mdi: 'cash-multiple'
   },
   {
     label: 'shipping',
-    path: '/settings/shipping',
+    path: '/admin/settings/shipping',
     mdi: 'truck'
   },
   {
     label: 'notification',
-    path: '/settings/notification',
+    path: '/admin/settings/notification',
     mdi: 'bell-ring'
   },
   {
     label: 'subscription',
-    path: '/settings/subscription',
+    path: '/admin/settings/subscription',
     mdi: 'account-credit-card'
   }
 ])

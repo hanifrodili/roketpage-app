@@ -10,7 +10,7 @@ v-app
           v-list-item.py-3(
             v-bind="props"
             prepend-avatar="https://ik.imagekit.io/hanifrodili/HNFRDL.jpg?updatedAt=1671006782759"
-            title="HNFRDL Store"
+            :title="companyName"
             append-icon=""
           )
         v-list-item(@click="openSelectCompany = true" style="padding-left:20px !important")
@@ -38,31 +38,31 @@ v-app
       //-     v-list-item-title.menu-text {{ $t('language') }}
 
       .d-flex.flex-row.align-center.justify-start.pa-4
-        v-btn.elevation-0.text-neutral( @click="openSelectLanguage = true" variant="text" rounded)
+        v-btn.elevation-0( @click="openSelectLanguage = true" variant="text" rounded)
           div.d-flex.flex-column.align-center.justify-center
             v-icon mdi-translate
             p(style="font-size:7px") {{ $t('language') }}
 
-        //- v-btn.elevation-0.text-neutral( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
+        //- v-btn.elevation-0( @click="toggleTheme" variant="text" :icon="theme.global.current.value.dark ? 'mdi-hite-balance-sunny' : 'mdi-weather-night'" :style="!theme.global.current.value.dark ? 'transform: rotate(0deg)' : 'transform: rotate(-90deg)'")
 
-  v-app-bar.elevation-1.bg-neutralDark()
+  v-app-bar.elevation-1()
     v-app-bar-nav-icon(variant="text" @click.stop="drawer = !drawer")
     v-toolbar-title.ml-0.ml-md-4.page-title {{ $t($route.name.split('-')[0]) }}
 
     //- v-spacer
 
-    v-btn.elevation-0.text-neutral.bg-transparent(size="small" icon="mdi-help-circle-outline" variant="text" width="28" height="28")
+    v-btn.elevation-0.bg-transparent(size="small" icon="mdi-help-circle-outline" variant="text" width="28" height="28")
 
     v-menu()
       template( v-slot:activator="{ props }" )
-        v-btn.elevation-0.text-neutral.bg-transparent.mr-2(size="small" icon="mdi-bell-outline" variant="text" v-bind="props" width="28" height="28")
+        v-btn.elevation-0.bg-transparent.mr-2(size="small" icon="mdi-bell-outline" variant="text" v-bind="props" width="28" height="28")
       v-list.pa-0
         v-list-item()
           v-list-item-title Nothing new.
     
     v-menu()
       template( v-slot:activator="{ props }" )
-        v-btn.elevation-0.text-neutral.bg-transparent(icon="mdi-account" size="small" variant="outlined" v-bind="props")
+        v-btn.elevation-0.bg-transparent(icon="mdi-account" size="small" variant="outlined" v-bind="props")
       v-list.pa-0
         v-list-item(@click="openSelectCompany = true")
           template(v-slot:prepend)
@@ -103,6 +103,9 @@ import { onMounted } from 'vue';
 import { useDisplay, useTheme } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 
+const config = useRuntimeConfig()
+const supabase = useSupabaseAuthClient();
+
 const theme = useTheme()
 const display = useDisplay()
 const { locale } = useI18n({ useScope: 'global' })
@@ -111,42 +114,42 @@ const router = useRouter()
 
 const navList = ref([
   {
-    path: "/dashboard",
+    path: "/admin/dashboard",
     name: "dashboard",
     mdi: "view-dashboard",
     i18n_key: "dashboard",
     notification: 0
   },
   {
-    path: "/order",
+    path: "/admin/order",
     name: "order",
     mdi: "inbox-arrow-down",
     i18n_key: "order",
     notification: 20
   },
   {
-    path: "/customer",
+    path: "/admin/customer",
     name: "customer",
     mdi: "account-group",
     i18n_key:"customer",
     notification: 30
   },
   {
-    path: "/product",
+    path: "/admin/product",
     name: "product",
     mdi: "package",
     i18n_key: "product",
     notification: 0
   },
   {
-    path: "/pages",
+    path: "/admin/pages",
     name: "pages",
     mdi: "file-link",
     i18n_key: "pages",
     notification: 0
   },
   {
-    path: "/settings",
+    path: "/admin/settings",
     name: "settings",
     mdi: "cogs",
     i18n_key: "settings",
@@ -157,11 +160,13 @@ const navList = ref([
 const drawer = ref(false)
 const openSelectLanguage = ref(false)
 const openSelectCompany = ref(false)
+const companyName = ref('')
 
-onMounted(() => {
+onMounted(async () => {
   locale.value = window.localStorage.getItem('preferredLanguage') || 'en'
   theme.global.name.value = window.localStorage.getItem('preferredTheme') || 'light'
-  userStore.getUser()
+  // userStore.getUser()
+  companyName.value = (await supabase.auth.getSession()).data.session.user.user_metadata.company_name
 })
 
 watch(drawer, (newDrawerVal) => {
@@ -187,9 +192,12 @@ function setLanguage(lang) {
   window.localStorage.setItem('preferredLanguage', lang)
 }
 
-function logout() {
-  userStore.setUser()
-  router.push("/signin")
+async function logout() {
+  let { error } = await supabase.auth.signOut()
+  if (!error) {
+    userStore.setUser()
+    router.push("/signin")
+  }
 }
 </script>
 

@@ -4,5 +4,10 @@ div.page-content
   dashboard-latest-order
 </template>
 
-<script setup></script>
+<script setup>
+definePageMeta({
+  middleware: 'auth',
+  name: 'dashboard'
+})
+</script>
 <style lang="scss" scoped></style>

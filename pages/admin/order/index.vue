@@ -3,5 +3,10 @@ div.page-content
   order-main-order
 </template>
 
-<script setup></script>
+<script setup>
+definePageMeta({
+  middleware: 'auth',
+  name: 'order'
+})
+</script>
 <style lang="scss" scoped></style>

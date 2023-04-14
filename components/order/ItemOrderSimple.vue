@@ -13,7 +13,7 @@ div.d-flex.align-start.justify-space-between.py-4.px-md-4(style="gap: 20px;" :cl
     div.d-flex.flex-row(style="gap:4px" :class="$vuetify.display.width < 1020 ? 'justify-start' : 'justify-end'")
       p {{ itemsLength }} item(s) for
       p.font-weight-bold RM{{ totalPrice }}
-    v-btn(icon="mdi-open-in-new" variant="text" size="small" @click="$router.push(`/order/${order.id}`)")
+    v-btn(icon="mdi-open-in-new" variant="text" size="small" @click="$router.push(`/admin/order/${order.id}`)")
         
 
 

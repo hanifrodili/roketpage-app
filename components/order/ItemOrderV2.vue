@@ -13,7 +13,7 @@ div
 
     div.d-flex.justify-space-between(:class="$vuetify.display.width < 1020 ? 'flex-column' : 'flex-row'")
       p.mt-auto.mb-1(style="color:#767676; font-size:12px") {{ fDate(order.date_created) }} at {{ fTime(order.date_created) }}
-      div.d-flex.flex-column.flex-grow-1.justify-start(style="max-width: 460px")
+      div.d-flex.flex-column.flex-grow-1.justify-start()
         v-expansion-panels(variant="accordion" plain)
           v-expansion-panel(plain)
             v-expansion-panel-title.pa-0(expand-icon="" collapse-icon="" style="min-height:32px !important; width:fit-content !important;" :class="$vuetify.display.width < 1020 ? 'mr-auto' : 'ml-auto'")
@@ -36,7 +36,7 @@ div
         div.d-flex.flex-row.justify-end()
           v-btn(icon="mdi-trash-can-outline" variant="text" size="small" color="red")
           v-btn(icon="mdi-file-edit-outline" variant="text" size="small")
-          v-btn(icon="mdi-open-in-new" variant="text" size="small" @click="$router.push(`/order/${order.id}`)")
+          v-btn(icon="mdi-open-in-new" variant="text" size="small" @click="$router.push(`/admin/order/${order.id}`)")
   v-divider     
 </template>
 
