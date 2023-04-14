@@ -48,18 +48,12 @@ v-app
 
     //- v-btn(
       icon="mdi-help-circle-outline",
-      variant="icon",
       width="35",
       height="35")
 
     v-menu
       template(v-slot:activator="{ props }")
-        v-btn(
-          icon="mdi-bell-outline",
-          variant="icon",
-          v-bind="props",
-          width="35",
-          height="35")
+        v-btn(icon="mdi-bell-outline", v-bind="props", width="35", height="35")
       v-list.pa-0
         v-list-item
           v-list-item-title Nothing new.
@@ -68,7 +62,6 @@ v-app
       template(v-slot:activator="{ props }")
         v-btn(
           icon="mdi-account-outline",
-          variant="icon",
           width="35",
           height="35",
           v-bind="props")
@@ -143,7 +136,7 @@ const navList = ref([
     name: "customer",
     mdi: "account-group",
     i18n_key: "customer",
-    notification: 30,
+    notification: 0,
   },
   {
     path: "/product",
