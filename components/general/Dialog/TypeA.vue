@@ -5,8 +5,8 @@ v-dialog(
   max-width="500",
   scrollable,
   :persistent="persistent",
-  :fullscreen="fullscreen",
-  :scrim="scrim",
+  :fullscreen="$vuetify.display.width < 450 ? true : false",
+  :scrim="$vuetify.display.width < 450 ? false : true",
   transition="dialog-bottom-transition")
   v-card.rounded-lg
     v-card-title.d-flex.flex-row.align-center.justify-space-between.pa-5.font-weight-bold(
@@ -29,7 +29,7 @@ const props = defineProps({
   },
   fullscreen: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   scrim: {
     type: Boolean,

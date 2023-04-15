@@ -1,6 +1,6 @@
 <template lang="pug">
 .main-customer
-  customer-filter-customer#order-filter.mb-2(
+  customer-filter-customer#customer-filter.mb-2(
     @search="search",
     @filter="filter",
     @sort="sort")
@@ -33,7 +33,7 @@ const sticky = ref(0);
 
 onMounted(async () => {
   await getData();
-  orderfilter.value = document.getElementById("order-filter");
+  orderfilter.value = document.getElementById("customer-filter");
   sticky.value = orderfilter.value.offsetTop;
   window.addEventListener("scroll", stickyScroll);
 });

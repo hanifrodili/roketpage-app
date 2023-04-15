@@ -1,19 +1,6 @@
 <template lang="pug">
-v-card.d-flex.flex-column.elevation-0(style="gap: 10px")
-  //- v-select(
-  //-   v-model="status"
-  //-   color='secondary',
-  //-   variant="outlined"
-  //-   hide-details="auto"
-  //-   density="compact"
-  //-   :items="statusList"
-  //-   item-title="label"
-  //-   item-value="value"
-  //-   @update:modelValue="$emit('filter',{field:'status', value:status})"
-  //-   style="width:fit-content;"
-  //-   )
-
-  v-slide-group.w-100(show-arrows="")
+v-card(flat)
+  v-slide-group.my-2(show-arrows)
     v-slide-group-item(v-for="(item, index) in statusList", :key="index")
       v-btn.mx-1.text-capitalize(
         flat,
@@ -107,19 +94,4 @@ function addProduct(e) {
   emits("addProduct", e);
 }
 </script>
-<style lang="scss" scoped>
-:deep(.v-slide-group__content) {
-  justify-content: flex-start;
-}
-
-:deep(.v-slide-group__next),
-:deep(.v-slide-group__prev) {
-  min-width: 30px !important;
-}
-
-// @media(max-width: 650px) {
-//   :deep(.v-slide-group__content) {
-//     justify-content: center;
-//   }
-// }
-</style>
+<style lang="scss" scoped></style>
