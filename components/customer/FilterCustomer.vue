@@ -45,7 +45,7 @@ v-card.elevation-0
             template(v-slot:append)
               v-icon.mr-2 {{ `mdi-${item.mdi}` }}
             v-list-item-title {{ item.label }}
-      order-create-order
+      customer-create-customer
 </template>
 
 <script setup>

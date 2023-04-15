@@ -2,17 +2,15 @@
 v-dialog(
   v-model="dialog",
   width="100%",
-  max-width="600",
+  max-width="500",
   scrollable,
   :persistent="persistent",
-  :fullscreen="$vuetify.display.width < 450 ? true : false",
-  :scrim="$vuetify.display.width < 450 ? false : true",
-  transition="dialog-bottom-transition"
-)
+  :fullscreen="fullscreen",
+  :scrim="scrim",
+  transition="dialog-bottom-transition")
   v-card.rounded-lg
     v-card-title.d-flex.flex-row.align-center.justify-space-between.pa-5.font-weight-bold(
-      style="font-size: 18px"
-    )
+      style="font-size: 18px")
       slot(name="title")
       v-icon.cursor-pointer.ml-auto(@click="$emit('update:modelValue', false)") mdi-close-circle-outline
     v-card-text.pa-5
@@ -29,9 +27,13 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  maxWidth: {
-    type: String,
-    default: "600",
+  fullscreen: {
+    type: Boolean,
+    default: false,
+  },
+  scrim: {
+    type: Boolean,
+    default: true,
   },
 });
 const emit = defineEmits(["update:modelValue"]);
