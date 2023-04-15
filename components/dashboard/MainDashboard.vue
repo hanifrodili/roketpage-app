@@ -11,7 +11,7 @@ div
   //- chart
   v-card.status-card.mt-4(
     :class="$vuetify.display.width > 930 ? 'pa-10' : 'pa-3'",
-    style="height: 300px")
+    max-height="300")
     dashboard-bar-chart
 
   .d-flex.flex-row.justify-space-between.pt-5(

@@ -6,8 +6,8 @@
     @sort="sort")
   v-card.card
     v-card-text.d-flex.flex-column.justify-space-between.pa-0
-      template(v-for="(order, index) in orders", :key="order.id")
-        order-item-order-v2(:order="order")
+      template(v-for="(customer, index) in customers", :key="customer.id")
+        customer-item-customer(:customer="customer")
       general-pagination.mt-5(
         v-model="page",
         @limit="limit",
@@ -22,7 +22,7 @@ const config = useRuntimeConfig();
 
 const page = ref(1);
 const maxPage = ref(1);
-const orders = ref([]);
+const customers = ref([]);
 const totalOrders = ref(0);
 const searchKeyword = ref(null);
 const filters = ref([]);
@@ -75,14 +75,14 @@ async function getData() {
     .get(url)
     .then((response) => {
       // Handle successful response
-      orders.value = response.data.data;
+      customers.value = response.data.data;
     })
     .catch((error) => {
       // Handle error
       console.log(error);
     });
 
-  // Get total orders
+  // Get total customers
   if (page.value === 1) {
     await axios
       .get(url + "&aggregate[countDistinct]=id")
