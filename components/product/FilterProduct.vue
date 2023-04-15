@@ -11,7 +11,7 @@ v-card(flat)
         @click="(status = item.value), $emit('filter', { field: 'status', value: status })")
         b {{ item.label }}
   .d-flex.flex-row(style="gap: 8px")
-    v-text-field.w-100(
+    v-text-field(
       v-model="searchInput",
       color="secondary",
       placeholder="Search",
