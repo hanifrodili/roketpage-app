@@ -16,9 +16,9 @@ v-app
         v-for="(nav, index) in navList",
         :key="index",
         @click="$router.push(nav.path)",
-        :class="$route.name.split('-')[0] == nav.name ? 'bg-secondary text-neutralLight' : ''")
+        :class="$route.name.split('-')[0] == nav.name ? 'bg-secondary text-white' : ''")
         template(v-slot:prepend)
-          v-icon.mr-2(color="neutralLight") {{ `mdi-${nav.mdi}` }}
+          v-icon.mr-2 {{ nav.icon }}
         .d-flex.flex-row.align-center.justify-space-between
           .text-body-2
             b {{ $t(nav.i18n_key) }}
@@ -120,42 +120,42 @@ const navList = ref([
   {
     path: "/dashboard",
     name: "dashboard",
-    mdi: "view-dashboard",
+    icon: "mdi-view-dashboard",
     i18n_key: "dashboard",
     notification: 0,
   },
   {
     path: "/order",
     name: "order",
-    mdi: "inbox-arrow-down",
+    icon: "mdi-inbox-arrow-down",
     i18n_key: "order",
     notification: 20,
   },
   {
     path: "/customer",
     name: "customer",
-    mdi: "account-group",
+    icon: "mdi-account-group",
     i18n_key: "customer",
     notification: 0,
   },
   {
     path: "/product",
     name: "product",
-    mdi: "package",
+    icon: "mdi-package",
     i18n_key: "product",
     notification: 0,
   },
   {
     path: "/pages",
     name: "pages",
-    mdi: "file-link",
+    icon: "mdi-file-link",
     i18n_key: "pages",
     notification: 0,
   },
   {
     path: "/settings",
     name: "settings",
-    mdi: "cogs",
+    icon: "mdi-cogs",
     i18n_key: "settings",
     notification: 0,
   },

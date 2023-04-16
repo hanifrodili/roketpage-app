@@ -39,8 +39,8 @@ v-card(flat)
           @click="$emit('sort', item.value), (sort = item.value)",
           :class="sort == item.value ? 'bg-primary' : ''")
           template(v-slot:append)
-            v-icon.mr-2 {{ `mdi-${item.mdi}` }}
-          v-list-item-title {{ item.label }}
+            v-icon.mr-1 {{ item.icon }}
+          small {{ item.label }}
     customer-create-customer
 </template>
 
@@ -56,22 +56,22 @@ const sortList = ref([
   {
     label: "Newest",
     value: "id",
-    mdi: "sort-ascending",
+    icon: "mdi-sort-ascending",
   },
   {
     label: "Oldest",
     value: "-id",
-    mdi: "sort-descending",
+    icon: "mdi-sort-descending",
   },
   {
     label: "Name: A-Z",
     value: "name",
-    mdi: "sort-alphabetical-ascending",
+    icon: "mdi-sort-alphabetical-ascending",
   },
   {
     label: "Name: Z-A",
     value: "-name",
-    mdi: "sort-alphabetical-descending",
+    icon: "mdi-sort-alphabetical-descending",
   },
 ]);
 
