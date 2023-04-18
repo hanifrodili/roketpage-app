@@ -1,13 +1,9 @@
 <template lang="pug">
 .page-content
-  h2.pa-0.mb-3 {{ $t("pagelist") }}
-  v-row.ma-0
-    v-col.px-1.py-2(
-      cols="6",
-      md="3",
-      sm="4",
-      v-for="page in userPages",
-      :key="page.id")
+  v-row(no-gutters)
+    v-col.mb-4(cols="12")
+      sites-filter-sites
+    v-col(cols="6", md="3", sm="4", v-for="page in userPages", :key="page.id")
       v-card.d-flex.flex-column.justify-space-between(
         flat,
         style="height: 100%")
@@ -29,10 +25,10 @@
           //- router-link(:to="{ name: 'MyPageBuilderPreview', params: { id: page.id }}" target="_blank")
             v-btn.mx-1(icon color="success" small)
               v-icon mdi-eye-outline
-          a(@click="$router.push(`sites/builder/${page.id}`)")
+          a(@click="$router.push(`/sites/builder/${page.id}`)")
             v-btn.mx-1(icon="mdi-pencil", color="primary", size="small")
 
-    v-col.px-1.py-2(cols="6", md="3", sm="4")
+    v-col(cols="6", md="3", sm="4")
       v-card.new-card.elevation-0.d-flex(
         @click="(dialogAdd = true), (newPageID = `site-${randID(5)}`)",
         style="height: 100%")
