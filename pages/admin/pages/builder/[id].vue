@@ -1,20 +1,9 @@
 <template lang="pug">
 .mypage-builder
-  sites-builder-menu-bar(
-    @import="importData",
-    :pageID="pageID",
-    :pageData="userComponents",
-    :pageTitle="pageTitle",
-    style="position: fixed; width: 100%")
-  div(style="margin-top: 90px")
-    template(
-      v-for="(component, index) in userComponents",
-      :key="component._uid")
-      component(
-        :is="component.component",
-        :data="component",
-        :pages="userPages",
-        :pageId="pageID")
+  sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" style="position:static; width:100%")
+  div
+    template(v-for="(component, index) in userComponents" :key="component._uid")
+      component(:is="component.component" :data="component" :pages="userPages" :pageId="pageID")
       //- .menuBtn.d-flex.flex-row()
       //-   sites-builder-speed-menu.ml-auto(style="margin-top:-55px; margin-right: 20px")
       .d-flex.flex-column.align-center.justify-center(
