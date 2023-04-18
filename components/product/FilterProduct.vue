@@ -41,10 +41,10 @@ v-card.d-flex.flex-column.elevation-0(style="gap:10px")
       @click:clear="$emit('search', searchInput)"
     )
     v-btn.px-0(id="sort" @click="sortDialog = true" variant="outlined" rounded="lg" color="#ababab" height="auto" min-width="40px" )
-      v-icon(style="font-size:24px") mdi-sort 
+      v-icon(style="font-size:24px") mdi-{{ sort.mdi }} 
     v-menu(activator="#sort")
       v-list.pa-0(rounded="lg")
-        v-list-item(v-for="(item, index) in sortList" :key="index" @click="$emit('sort', item.value), sort = item.value" :class="sort == item.value ? 'bg-primary' : ''")
+        v-list-item(v-for="(item, index) in sortList" :key="index" @click="$emit('sort', item), sort = item" :class="sort.label === item.label ? 'bg-primary' : ''")
           template(v-slot:append)
             v-icon.mr-2 {{ `mdi-${item.mdi}` }}
           v-list-item-title {{ item.label }}
@@ -57,27 +57,36 @@ const emits = defineEmits(['addProduct', 'search', 'sort', 'filter'])
 const status = ref('')
 const searchInput = ref('')
 const sortDialog = ref(false)
-const sort = ref('id')
+const sort = ref({
+  label: "Newest",
+  column: "id",
+  ascending: true,
+  mdi: "sort-ascending"
+})
 
 const sortList = ref([
   {
     label: "Newest",
-    value: "id",
+    column: "id",
+    ascending: true,
     mdi: "sort-ascending"
   },
   {
     label: "Oldest",
-    value: "-id",
+    column: "id",
+    ascending: false,
     mdi: "sort-descending"
   },
   {
     label: "Name: A-Z",
-    value: "name",
+    column: "name",
+    ascending: true,
     mdi: "sort-alphabetical-ascending"
   },
   {
     label: "Name: Z-A",
-    value: "-name",
+    column: "name",
+    ascending: false,
     mdi: "sort-alphabetical-descending"
   }
 ])

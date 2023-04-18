@@ -4,9 +4,10 @@ div.page-content
 </template>
 
 <script setup>
+const route = useRoute()
 definePageMeta({
   middleware: 'auth',
-  name: 'order'
+  name: 'Order Details'
 })
 </script>
 

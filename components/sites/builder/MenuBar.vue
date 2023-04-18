@@ -1,6 +1,6 @@
 <template lang="pug">
-div.d-flex.flex-row.align-center.px-9.bg-secondary(style="z-index:150; margin: 0 -5%;")
-  router-link.mr-3(to="/sites" target="_self" )
+div.d-flex.flex-row.align-center.px-2.bg-secondary(style="z-index:150;")
+  router-link.mr-3(to="/admin/pages" target="_self" )
     v-btn(icon="mdi-arrow-left" variant="text" color="white")
   p.ma-0 {{pageTitle}}
   v-spacer

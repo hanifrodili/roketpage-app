@@ -23,7 +23,7 @@ div
           v-row
             v-col.py-0(cols="12")
               v-text-field.mb-4(v-model="productForm.image_url" hide-details="auto" variant="outlined" label="Image URL" density="compact" type="url" :rules='rules.not_empty' append-inner-icon="mdi-help-circle-outline" @click:append-inner="imageHelpDialog = true")
-      v-img(v-if="productForm.image_url" :src="productForm.image_url")
+      v-img.mt-2.rounded-lg(v-if="productForm.image_url" :src="productForm.image_url")
     template( v-slot:action )
       v-btn( @click="dialog = false" variant="text") Cancel
       v-btn( @click="addProduct" variant="tonal" color="info" :loading="loading") Add
@@ -51,11 +51,13 @@ div
 </template>
 
 <script setup>
-import axios from 'axios'
+import { useStoreUser } from '~/store/storeMerchant'
 
 const emits = defineEmits(['addProduct'])
 
+const supabase = useSupabaseAuthClient();
 const snackbar = useSnackbar()
+const userStore = useStoreUser()
 
 const dialog = ref(false)
 const imageHelpDialog = ref(false)
@@ -81,34 +83,42 @@ async function addProduct() {
   loading.value = true
   const validation = await form.value.validate()
   if (!validation.valid) {
+    loading.value = false
     return
   }
-  let url = `https://api-test.roketpage.com/items/product_test`
 
-  await axios.post(url,{
-    name: productForm.value.name,
-    description: productForm.value.description,
-    base_price: productForm.value.price,
-    base_stock: productForm.value.stock,
-    base_weight: productForm.value.weight,
-    image: productForm.value.image_url
-  })
-    .then(response => {
-      // Handle successful response
-      snackbar.add({
-        type: 'success',
-        text: 'New product added !'
-      })
-      emits('addProduct', response.data.data)
+  userStore.getUser()
+  
+  const resp = await supabase
+    .from('product')
+    .insert([
+      {
+        name: productForm.value.name,
+        description: productForm.value.description,
+        base_price: productForm.value.price * 100, //convert to sen, RM1 = 100sen
+        base_stock: productForm.value.stock,
+        base_weight: productForm.value.weight * 1000, //combert to gram, 1KG = 1000gram
+        image: productForm.value.image_url,
+        company_id: userStore.user.current_company.id
+      },
+    ])
+
+  // console.log(resp);
+
+  if (resp.status === 201) {
+    snackbar.add({
+      type: 'success',
+      text: 'New product added !'
     })
-    .catch(error => {
-      // Handle error
-      snackbar.add({
-        type: 'error',
-        text: error.response.data.errors[0].message
-      })
-      console.log(error.response.data.errors[0].message);
-    });
+    emits('addProduct', true)
+  }
+
+  if (resp.error) {
+    snackbar.add({
+      type: 'error',
+      text: resp.error
+    })
+  }
   form.value.reset()
   dialog.value = false
   loading.value = false

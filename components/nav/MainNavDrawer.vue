@@ -9,8 +9,8 @@ v-app
         template( v-slot:activator="{ props }" ) 
           v-list-item.py-3(
             v-bind="props"
-            prepend-avatar="https://ik.imagekit.io/hanifrodili/HNFRDL.jpg?updatedAt=1671006782759"
-            :title="companyName"
+            :prepend-avatar="company_logo"
+            :title="company_name"
             append-icon=""
           )
         v-list-item(@click="openSelectCompany = true" style="padding-left:20px !important")
@@ -98,8 +98,6 @@ v-app
 </template>
 
 <script setup>
-import { useStoreUser } from '~/store/storeMerchant'
-import { onMounted } from 'vue';
 import { useDisplay, useTheme } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 
@@ -160,13 +158,17 @@ const navList = ref([
 const drawer = ref(false)
 const openSelectLanguage = ref(false)
 const openSelectCompany = ref(false)
-const companyName = ref('')
+const user = ref({})
+const company_logo = ref('')
+const company_name = ref('')
 
 onMounted(async () => {
   locale.value = window.localStorage.getItem('preferredLanguage') || 'en'
   theme.global.name.value = window.localStorage.getItem('preferredTheme') || 'light'
-  // userStore.getUser()
-  companyName.value = (await supabase.auth.getSession()).data.session.user.user_metadata.company_name
+  userStore.getUser()
+  user.value = userStore.user
+  company_logo.value = userStore.user.user_metadata.avatar_url
+  company_name.value = userStore.user.current_company.name
 })
 
 watch(drawer, (newDrawerVal) => {

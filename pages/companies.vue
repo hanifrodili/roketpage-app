@@ -1,13 +1,12 @@
 <template lang="pug">
 div
-  v-card(min-height="50" flat color="transparent")
   company-main-company
 </template>
 
 <script setup>
-definePageMeta({
-  middleware: 'auth',
-  name: 'company'
-})
+// definePageMeta({
+//   middleware: 'auth',
+//   name: 'companies'
+// })
 </script>
 <style lang="scss" scoped></style>

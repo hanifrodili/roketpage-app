@@ -1,38 +1,39 @@
 <template lang="pug">
 .signup.lighten-4.min-height
   v-container.d-flex.flex-column.justify-center.pa-0()
-    v-card.rounded-xl.mx-auto(flat style="max-width:800px; width: 100%;")
+    v-card.rounded-lg.mx-auto(flat style="max-width:800px; width: 100%;")
       v-row(no-gutter, align='center')
         v-col.py-1(cols='12', sm='6') 
           v-card.grey.lighten-4.pt-5(
             flat,
             :class='xs ? "rounded-t-xl" : "rounded-l-xl"'
           ) 
-            v-img(
-              src="/icon.svg",
-              :max-height='xs ? 100 : 500'
+            v-img.rounded-circle.mx-auto(
+              :src="registerForm.avatar_url ? registerForm.avatar_url : '/icon.svg'",
+              :width='xs ? 150 : 300'
+              aspect-ratio="1/1"
             )
 
         v-col.py-1(cols='12', sm='6')
-          .ma-4.mx-6.ml-sm-0
+          .ma-4.mx-md-6.ml-sm-0
             v-card.mt-4(flat) 
-              v-card-text.px-0.grey--text
+              v-card-text.px-0.px-md-4
                 .text-h4 
                   b Register
-                .text-body-2.mt-n1.mb-2 Get Access to Your Dashboard
+                .text-body-2.mt-n1.mb-2.text-grey Get Access to Your Dashboard
 
                 v-form.mt-4(ref="form" fast-fail)
-                  v-text-field.mb-2(
-                    v-model='registerForm.company_name',
+                  v-text-field.mb-4(
+                    v-model='registerForm.avatar_url',
                     color='secondary',
-                    label='Company Name',
+                    label='Profile Image URL',
                     :rules='rules.not_empty',
                     variant="outlined"
                     rounded
                     density="compact"
                     hide-details="auto"
                   )
-                  v-text-field.mb-2(
+                  v-text-field.mb-4(
                     v-model='registerForm.full_name',
                     color='secondary',
                     label='Your Name',
@@ -41,7 +42,7 @@
                     density="compact"
                     hide-details="auto"
                   )
-                  v-text-field.mb-2(
+                  v-text-field.mb-4(
                     v-model='registerForm.email',
                     color='secondary',
                     label='E-mail address',
@@ -50,26 +51,26 @@
                     density="compact"
                     hide-details="auto"
                   )
-                  v-text-field.mb-2(
+                  v-text-field.mb-4(
                     v-model='registerForm.password',
                     color='secondary',
                     label='Password',
                     variant="outlined",
-                    :append-inner-icon='showPasword ? "mdi-eye" : "mdi-eye-off"',
-                    @click:append='showPasword = !showPasword',
-                    :type='showPasword ? "text" : "password"',
+                    :append-inner-icon='showPassword ? "mdi-eye" : "mdi-eye-off"',
+                    @click:append-inner='showPassword = !showPassword',
+                    :type='showPassword ? "text" : "password"',
                     :rules='rules.password'
                     density="compact"
                     hide-details="auto"
                   )
-                  v-text-field.mb-2(
+                  v-text-field.mb-4(
                     v-model='registerForm.repeat_password',
                     color='secondary',
                     label='Repeat Password',
                     variant="outlined",
-                    :append-inner-icon='showPasword ? "mdi-eye" : "mdi-eye-off"',
-                    @click:append-inner='showPasword = !showPasword',
-                    :type='showPasword ? "text" : "password"',
+                    :append-inner-icon='showPassword2 ? "mdi-eye" : "mdi-eye-off"',
+                    @click:append-inner='showPassword2 = !showPassword2',
+                    :type='showPassword2 ? "text" : "password"',
                     :rules='rules.repeat_password'
                     density="compact"
                     hide-details="auto"
@@ -84,24 +85,24 @@
                     b.mr-2 Create Acount
                     v-icon(right) mdi-account-plus
 
-                  .text-center.my-2.text-caption
+                  .text-center.my-2.text-caption.text-grey
                     div By signing up, you agree to the
                     .mt-n1
-                      a(
+                      a.text-info(
                         style='text-decoration: underline',
                         href='',
                         target='_blank'
                       ) TERMS OF SERVICE
                       span &nbsp;&&nbsp;
-                      a(
+                      a.text-info(
                         style='text-decoration: underline',
                         href='',
                         target='_blank'
                       ) PRIVACY POLICY
 
-                v-card.mx-2.my-4.rounded-lg(flat, color='grey lighten-4')
+                v-card.mb-6.rounded-lg(flat, color='#e8e8e8' style="color:#767676")
                   v-card-text.text-center.text-body-2.py-2 Registered?&nbsp;
-                    a.text-decoration-underline.info--text.cursor-pointer(
+                    a.text-decoration-underline.cursor-pointer.text-info(
                       @click='$router.push("/signin")'
                     ) Login Here
   //- dialogs
@@ -116,17 +117,19 @@ const supabase = useSupabaseAuthClient();
 
 const { xs } = useDisplay()
 const router = useRouter()
+const snackbar = useSnackbar()
 
 const form = ref(null)
 const registerForm = ref({
-  company_name: '',
+  avatar_url: '',
   full_name: '',
   email: '',
   password: '',
   repeat_password: '',
 })
 const showDialog = ref(false)
-const showPasword = ref(false)
+const showPassword = ref(false)
+const showPassword2 = ref(false)
 const loading = ref(false)
 const rules = ref(
   {
@@ -157,14 +160,28 @@ async function signup() {
     return
   }
 
+  
+  let { data:profiles, error_profile } = await supabase
+    .from('profiles')
+    .select("email")
+    .eq('email', registerForm.value.email)
+
+  if (profiles.length) {
+    snackbar.add({
+      type: 'error',
+      text: "Email already exist."
+    })
+    loading.value = false
+    return
+  }
  
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error_signup } = await supabase.auth.signUp({
     email: registerForm.value.email,
     password: registerForm.value.password,
     options: {
       data: {
         full_name: registerForm.value.full_name,
-        company_name: registerForm.value.company_name,
+        avatar_url: registerForm.value.avatar_url
       },
     },
   })
@@ -172,7 +189,7 @@ async function signup() {
   // console.log(data);
 
   loading.value = false
-  router.push('/welcome?user='+data.user)
+  router.push('/welcome?user='+JSON.stringify(data.user))
 }
 </script>
 

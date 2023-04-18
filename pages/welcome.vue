@@ -22,7 +22,8 @@ onMounted(async () => {
   if (!route.query.user) {
     router.push('/signin')
   }
-  email.value = route.query.user.email
+  const data = JSON.parse(route.query.user)
+  email.value = data.email
 })
 </script>
 

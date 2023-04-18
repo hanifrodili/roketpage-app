@@ -18,7 +18,7 @@
           //- router-link(:to="{ name: 'MyPageBuilderPreview', params: { id: page.id }}" target="_blank")
             v-btn.mx-1(icon color="success" small)
               v-icon mdi-eye-outline
-          a(@click="$router.push(`sites/builder/${page.id}`)")
+          a(@click="$router.push(`/admin/pages/builder/${page.id}`)")
             v-btn.mx-1(icon="mdi-pencil" color="primary" size="small")
         v-dialog(v-model="dialogDelete" scrollable persistent max-width="300px")
           v-card()
@@ -31,7 +31,7 @@
               v-btn(variant="text" color="secondary" @click="deletePage(page.id)") Yes
               v-btn.elevation-0(color="red" variant="tonal" @click="dialogDelete=false") No
     v-col.px-1.py-2(cols="6" md="3" sm="4")
-      v-card.new-card.elevation-0.d-flex(@click="dialogAdd=true, newPageID = `site-${randID(5)}`" style="height:100%")
+      v-card.new-card.elevation-0.d-flex(@click="dialogAdd=true, newPageID = `page-${randID(5)}`" style="height:100%")
         v-card-text.text-center.ma-auto
           div.mt-6
             v-icon.text-secondary mdi-plus
@@ -52,7 +52,9 @@
             v-model="newPageProducts"
             chips
             label="Choose Product "
-            :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+            :items="products"
+            item-title="name"
+            item-value="id"
             multiple
             variant="outlined"
           )
@@ -73,14 +75,19 @@ const newPageDescription = ref('')
 const newPageProducts = ref([])
 const withForm = ref(true)
 const userPages = ref([])
+const products = ref([])
+const company_id = ref('')
 
-const router = useRouter();
+const router = useRouter()
+const supabase = useSupabaseAuthClient()
+const userStore = useStoreUser()
 
 definePageMeta({
   middleware: 'auth',
+  name: 'pages'
 })
 
-onMounted(() => {
+onMounted(async () => {
   const savedPages = JSON.parse(window.localStorage.getItem('userPages'))
   if (savedPages === null) {
     window.localStorage.setItem('userPages', JSON.stringify(userPages.value))
@@ -88,10 +95,14 @@ onMounted(() => {
     userPages.value = savedPages
   }
 
-  const browserID = window.localStorage.getItem('browserID')
-  if (browserID == null || browserID == '') {
-    window.localStorage.setItem('browserID', 'browser-' + randID(4))
-  }
+  company_id.value = userStore.user.current_company.id
+
+  let { data: product, error, count } = await supabase
+    .from('product')
+    .select('*', { count: "exact" })
+    .eq('company_id', company_id.value)
+
+  products.value = product
 })
 
 const randID = (len) => {
@@ -130,7 +141,7 @@ const createNewPage = () => {
   newPageID.value = ''
   newPageTitle.value = ''
   dialogAdd.value = false
-  router.push(`/sites/builder/${id}`)
+  router.push(`/admin/pages/builder/${id}`)
 }
 
 const deletePage = (id) => {

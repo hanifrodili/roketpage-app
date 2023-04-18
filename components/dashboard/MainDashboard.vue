@@ -32,6 +32,10 @@ div
 </template>
 
 <script setup>
+// import { useStoreUser } from '~/store/storeMerchant'
+// const supabase = useSupabaseAuthClient();
+// const userStore = useStoreUser()
+
 const statusRange = ref('Today')
 const previousRange = ref('yesterday')
 

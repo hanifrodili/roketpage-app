@@ -1,6 +1,6 @@
 <template lang="pug">
 .signin.lighten-4.min-height.d-flex.justify-center.align-center
-  v-card.rounded-xl.mx-auto(flat style="max-width:800px; width: 100%;")
+  v-card.rounded-lg.mx-auto(flat style="max-width:800px; width: 100%;")
     v-row(no-gutter, align='center')
       v-col.py-1(cols='12', sm='6') 
         v-card.grey.lighten-4.pt-5(
@@ -13,12 +13,12 @@
           )
 
       v-col.py-1(cols='12', sm='6')
-        .ma-4.mx-6.ml-sm-0
+        .ma-3.mx-md-6.ml-sm-0
           v-card.mt-4(flat) 
-            v-card-text.grey--text
+            v-card-text.px-0.px-md-4
               .text-h4 
                 b Welcome
-              .text-body-2.mt-n1 Login to Continue
+              .text-body-2.mt-n1.text-grey Login to Continue
 
               v-form.mt-6(ref="form" fast-fail)
                 v-text-field.mb-4(
@@ -52,12 +52,12 @@
                 ) 
                   b.mr-2 Login
                   v-icon(right) mdi-arrow-right-bold
-                .text-center.my-1.text-decoration-underline.cursor-pointer
+                .text-center.my-1.text-decoration-underline.cursor-pointer.text-grey
                   a.text-body-2(@click='$router.push("/forgot")') Forgot password?
-            v-card.mx-2.mb-6.rounded-lg(flat, color='grey lighten-4')
+            v-card.mx-md-4.mb-6.rounded-lg(flat, color='#e8e8e8' style="color:#767676")
               v-card-text.text-center.text-body-2.py-2 New Merchant?&nbsp;
                 div
-                  a.text-decoration-underline.info--text.cursor-pointer(
+                  a.text-decoration-underline.cursor-pointer.text-info(
                     @click='$router.push("/signup")'
                   ) Create An Account
 </template>
@@ -72,6 +72,7 @@ const supabase = useSupabaseAuthClient();
 const router = useRouter()
 const { lgAndDown, xs } = useDisplay()
 const userStore = useStoreUser()
+const snackbar = useSnackbar()
 
 onMounted(async () => {
   const isLoggedIn = await checkSignedIn()
@@ -105,22 +106,33 @@ const rules = ref(
 )
 
 async function signin() {
+  loading.value = true
   const validation = await form.value.validate()
   if (!validation.valid) {
+    loading.value = false
     return
   }
   const { data, error } = await supabase.auth.signInWithPassword({
     email: signinForm.value.email,
     password: signinForm.value.password
   })
-  loading.value = true
-  console.log(data);
-  if (data) {
+  
+  if (data.session) {
+    let user = data.user
+    user.current_company = {
+      name: "",
+      id: null
+    }
     userStore.setUser(data.user)
-    router.push('/admin/dashboard')
+    router.push('/companies')
+    loading.value = false
   }
   if (error) {
-    console.log(error);
+    snackbar.add({
+      type: 'error',
+      text: error.toString().split(":")[1]
+    })
+    loading.value = false
   }
 }
 

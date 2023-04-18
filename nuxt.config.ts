@@ -69,7 +69,9 @@ export default defineNuxtConfig({
       ],
     },
   },
-  buildModules: [],
+  imports: {
+    dirs: ['store'],
+  },
   modules: ["@pinia/nuxt", "nuxt-snackbar", "@nuxtjs/supabase"],
   snackbar: {
     top: true,

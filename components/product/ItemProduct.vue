@@ -19,7 +19,7 @@ div
               hide-details="auto"
               hide-error
               color="primary"
-              value='true'
+              :value="true"
               density="compact"
               v-model="productPublished"
               @update:modelValue="$emit('updatePublish',{id:product.id, value: productPublished })"
@@ -37,10 +37,10 @@ import { useDisplay } from "vuetify/lib/framework.mjs"
 const props = defineProps(['product'])
 const emits = defineEmits(['updatePublish'])
 const display = useDisplay()
-const productPublished = ref('true')
+const productPublished = ref(false)
 
 onMounted(() => {
-  productPublished.value = props.product.status
+  productPublished.value = props.product.published
 })
 
 function truncateText(text) {
@@ -55,8 +55,9 @@ function truncateText(text) {
   return truncated
 }
 
-function fCurrency(amount) {
-  return amount.toLocaleString('en-MY', { style: 'currency', currency: 'myr' });
+function fCurrency(cent) {
+  const amount = cent/100
+  return amount.toLocaleString('en-MY', { style: 'currency', currencyDisplay: 'symbol', currency: 'myr' });
 }
 </script>
 <style lang="scss" scoped>

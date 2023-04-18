@@ -5,9 +5,22 @@ div.page-content
 </template>
 
 <script setup>
+import { useStoreUser } from '~/store/storeMerchant'
+const userStore = useStoreUser()
+const router = useRouter()
+const route = useRoute()
+
 definePageMeta({
-  middleware: 'auth',
+  middleware: ['auth'],
   name: 'dashboard'
+})
+
+onMounted(() => {
+  console.log(route);
+  userStore.getUser()
+  if (!userStore.user.current_company) {
+    router.push('/companies')
+  }
 })
 </script>
 <style lang="scss" scoped></style>

@@ -1,8 +1,7 @@
 <template lang="pug">
-div.page-content
+.index
   order-main-order
 </template>
-
 <script setup>
 definePageMeta({
   middleware: 'auth',

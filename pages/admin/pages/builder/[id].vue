@@ -1,7 +1,7 @@
 <template lang="pug">
 .mypage-builder
-  sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" style="position:fixed; width:100%")
-  div(style="margin-top:90px")
+  sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" style="position:static; width:100%")
+  div
     template(v-for="(component, index) in userComponents" :key="component._uid")
       component(:is="component.component" :data="component" :pages="userPages" :pageId="pageID")
       //- .menuBtn.d-flex.flex-row()
@@ -27,6 +27,7 @@ const pageTitle = ref('')
 
 definePageMeta({
   middleware: 'auth',
+  name: 'builder'
 })
 
 onMounted(() => {
