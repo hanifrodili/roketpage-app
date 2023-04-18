@@ -19,60 +19,61 @@ v-card(flat)
       clearable,
       type="search",
       prepend-inner-icon="mdi-magnify",
-      hide-details="auto" density="compact"
-      @keyup="$emit('search', searchInput)"
-      @click:clear="$emit('search', searchInput)"
-    )
-    v-btn.px-0(id="sort" @click="sortDialog = true" variant="outlined" rounded="lg" color="#ababab" height="auto" min-width="40px" )
-      v-icon(style="font-size:24px") mdi-{{ sort.mdi }} 
+      hide-details="auto",
+      density="compact",
+      @keyup="$emit('search', searchInput)",
+      @click:clear="$emit('search', searchInput)")
+    v-btn#sort.px-0(
+      @click="sortDialog = true",
+      variant="outlined",
+      rounded="lg",
+      color="#ababab",
+      height="auto",
+      min-width="40px")
+      v-icon(style="font-size: 24px") mdi-sort
     v-menu(activator="#sort")
       v-list.pa-0(rounded="lg")
-        v-list-item(v-for="(item, index) in sortList" :key="index" @click="$emit('sort', item), sort = item" :class="sort.label === item.label ? 'bg-primary' : ''")
+        v-list-item(
+          v-for="(item, index) in sortList",
+          :key="index",
+          @click="$emit('sort', item.value), (sort = item.value)",
+          :class="sort == item.value ? 'bg-primary' : ''")
           template(v-slot:append)
             v-icon.mr-2 {{ `mdi-${item.mdi}` }}
           v-list-item-title {{ item.label }}
-    product-create-product(@add-product="addProduct")
+    //- product-create-product(@add-product="addProduct")
 </template>
 
 <script setup>
 const emits = defineEmits(["addProduct", "search", "sort", "filter"]);
 
-const status = ref('')
-const searchInput = ref('')
-const sortDialog = ref(false)
-const sort = ref({
-  label: "Newest",
-  column: "id",
-  ascending: true,
-  mdi: "sort-ascending"
-})
+const status = ref("");
+const searchInput = ref("");
+const sortDialog = ref(false);
+const sort = ref("id");
 
 const sortList = ref([
   {
     label: "Newest",
-    column: "id",
-    ascending: true,
-    mdi: "sort-ascending"
+    value: "id",
+    mdi: "sort-ascending",
   },
   {
     label: "Oldest",
-    column: "id",
-    ascending: false,
-    mdi: "sort-descending"
+    value: "-id",
+    mdi: "sort-descending",
   },
   {
     label: "Name: A-Z",
-    column: "name",
-    ascending: true,
-    mdi: "sort-alphabetical-ascending"
+    value: "name",
+    mdi: "sort-alphabetical-ascending",
   },
   {
     label: "Name: Z-A",
-    column: "name",
-    ascending: false,
-    mdi: "sort-alphabetical-descending"
-  }
-])
+    value: "-name",
+    mdi: "sort-alphabetical-descending",
+  },
+]);
 
 const statusList = ref([
   {

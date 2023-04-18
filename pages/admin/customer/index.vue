@@ -1,6 +1,6 @@
 <template lang="pug">
-div.page-content
-  h1 Blankkkk
+.page-content
+  customer-main-customer
 </template>
 
 <script setup>

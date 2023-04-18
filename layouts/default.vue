@@ -1,6 +1,6 @@
 <template lang="pug">
 .app
-  nav-main-nav-drawer(v-if="!(excludeNav.includes($route.name))")
+  nav-main-nav-drawer(v-if="!excludeNav.includes($route.name)")
     slot
   div(v-else)
     slot

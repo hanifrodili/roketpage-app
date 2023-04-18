@@ -39,9 +39,9 @@ v-card(flat)
           @click="$emit('sort', item.value), (sort = item.value)",
           :class="sort == item.value ? 'bg-primary' : ''")
           template(v-slot:append)
-            v-icon.mr-2 {{ `mdi-${item.mdi}` }}
-          v-list-item-title {{ item.label }}
-    order-create-order
+            v-icon.mr-1 {{ item.icon }}
+          small {{ item.label }}
+    customer-create-customer
 </template>
 
 <script setup>
@@ -56,22 +56,22 @@ const sortList = ref([
   {
     label: "Newest",
     value: "id",
-    mdi: "sort-ascending",
+    icon: "mdi-sort-ascending",
   },
   {
     label: "Oldest",
     value: "-id",
-    mdi: "sort-descending",
+    icon: "mdi-sort-descending",
   },
   {
     label: "Name: A-Z",
     value: "name",
-    mdi: "sort-alphabetical-ascending",
+    icon: "mdi-sort-alphabetical-ascending",
   },
   {
     label: "Name: Z-A",
     value: "-name",
-    mdi: "sort-alphabetical-descending",
+    icon: "mdi-sort-alphabetical-descending",
   },
 ]);
 
@@ -85,37 +85,9 @@ const statusList = ref([
     value: "new",
   },
   {
-    label: "Processing",
-    value: "processing",
-  },
-  {
-    label: "Shipping",
-    value: "shipping",
-  },
-  {
-    label: "Completed",
-    value: "completed",
+    label: "Closed",
+    value: "closed",
   },
 ]);
 </script>
-<style lang="scss" scoped>
-:deep(.v-slide-group__content) {
-  justify-content: flex-start;
-}
-
-:deep(.v-slide-group__next),
-:deep(.v-slide-group__prev) {
-  min-width: 20px !important;
-  max-width: 20px !important;
-
-  .v-icon {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 650px) {
-  :deep(.v-slide-group__content) {
-    justify-content: center;
-  }
-}
-</style>
+<style lang="scss" scoped></style>
