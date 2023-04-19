@@ -71,7 +71,7 @@ v-app
         v-list-item(@click="logout" v-if="userStore.user.email != ''")
           v-list-item-title {{ $t('logout') }}
 
-  v-main(style="min-height:100vh")
+  v-main()
     slot
   //- Language dialog
   v-dialog( v-model="openSelectLanguage" width="100%" max-width="350px")

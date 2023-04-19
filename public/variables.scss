@@ -22,7 +22,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Montserrat";
+  font-family: "Open Sans";
 }
 
 // overwrite vuetify classes
@@ -80,7 +80,6 @@ h6 {
 }
 
 .main-content {
-  min-height: calc(100vh - 64px);
   height: 100%;
   padding: 5% 5%;
 }

@@ -9,13 +9,13 @@
       .d-flex.flex-column.align-center.justify-center(
         style="height: 50px; position: relative")
         hr(
-          style="border: 1px dashed rgb(var(--v-theme-secondary)); width: 100%")
+          style="border: 0.5px dashed rgb(var(--v-theme-secondary)); width: 100%")
         sites-builder-add-block(
           :position="index",
           @addBlock="addBlock",
           :blockList="Layouts")
     .pt-10(v-if="userComponents.length === 0")
-      hr(style="border: 1px dashed rgb(var(--v-theme-secondary))")
+      hr(style="border: 0.5px dashed rgb(var(--v-theme-secondary))")
       sites-builder-add-block(
         :position="-1",
         @addBlock="addBlock",

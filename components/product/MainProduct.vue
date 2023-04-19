@@ -17,7 +17,7 @@ const products = ref([])
 const page = ref(1)
 const maxPage = ref(1)
 const totalProducts = ref(0)
-const searchKeyword = ref(null)
+const searchKeyword = ref('')
 const filters = ref([])
 const queryLimit = ref(10)
 const sortProduct = ref({
@@ -59,16 +59,29 @@ function stickyScroll() {
 async function getProducts() {
   const from = (page.value - 1) * queryLimit.value
   const to = page.value * (queryLimit.value - 2)
-  let { data: product, error, count } = await supabase
+  let query = supabase
     .from('product')
     .select('*', { count: "exact" })
     .order(sortProduct.value.column, { ascending: sortProduct.value.ascending })
     .eq('company_id', company_id.value)
-    .in('published', [true, false])
-    .range(from, to) 
+    
+  // console.log(filters.value.length);
+  if (filters.value.length) {
+    filters.value.forEach(filter => {
+      if (filter.field === 'published') {
+        query.in(filter.field, filter.value)
+      }
+    });
+  }
+
+  if (searchKeyword.value && searchKeyword.value !== "") {
+    query.ilike('name', `%${searchKeyword.value}%`)
+    query.ilike('description', `%${searchKeyword.value}%`)
+  }
+
+  let { data: product, error, count } = await query.range(from, to)
 
   products.value = product
-  console.log('Error:',error);
 
   // Get total products
   if (page.value === 1) {

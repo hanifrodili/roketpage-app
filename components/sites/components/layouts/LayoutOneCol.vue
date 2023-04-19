@@ -3,7 +3,7 @@
   v-row(style="min-height:200px")
     v-col(cols="12")
       component(v-if="components[0]"  :is="components[0].component" :data="components[0]")
-      div.rounded.d-flex.align-center.addNew(v-else)
+      div.d-flex.align-center.addNew(v-else)
         sites-builder-add-block(:position="-1" @addBlock="addBlock" :blockList="Blocks")
 
 </template>

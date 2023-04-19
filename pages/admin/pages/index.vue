@@ -1,19 +1,15 @@
 <template lang="pug">
 .page-content
-  v-row(no-gutters)
-    v-col.mb-4(cols="12")
+  v-row(no-gutters style="gap:16px")
+    v-col(cols="12")
       sites-filter-sites
     v-col(cols="6", md="3", sm="4", v-for="page in userPages", :key="page.id")
-      v-card.d-flex.flex-column.justify-space-between(
-        flat,
-        style="height: 100%")
+      v-card.d-flex.flex-column.justify-space-between.page-card()
         v-card-text.pa-4.pb-0
           .d-flex.flex-column.justify-space-between(style="height: 100%")
-            h3 {{ page.title }}
-            p.mb-0(style="font-size: 12px; line-height: 15px")
-              i {{ $t("lastupdate") }}:
-              br
-              | {{ page.lastUpdate }}
+            p.font-weight-bold(style="font-size:15px") {{ page.title }}
+            p.mb-0(style="font-size:10px; line-height: 14px; color:#767676")
+              i {{ $t("lastupdate") }}: {{ fTime(page.lastUpdate) }}
         v-card-actions.pa-2
           v-spacer
           v-btn.mx-1(
@@ -37,8 +33,8 @@
               v-spacer
               v-btn(variant="text" color="secondary" @click="deletePage(page.id)") Yes
               v-btn.elevation-0(color="red" variant="tonal" @click="dialogDelete=false") No
-    v-col.px-1.py-2(cols="6" md="3" sm="4")
-      v-card.new-card.elevation-0.d-flex(@click="dialogAdd=true, newPageID = `page-${randID(5)}`" style="height:100%")
+    v-col.px-0(cols="6" md="3" sm="4")
+      v-card.new-card.d-flex(@click="dialogAdd=true, newPageID = `page-${randID(5)}`")
         v-card-text.text-center.ma-auto
           .mt-6
             v-icon.text-secondary mdi-plus
@@ -49,22 +45,9 @@
   v-dialog(v-model="dialogDelete", scrollable, persistent, max-width="300px")
     v-card
       v-card-text.pa-4
-        v-container()
-          v-text-field(v-model="newPageID" label="Site Url" variant="outlined" hide-details="auto" clearable)
-          v-text-field.mt-3(v-model="newPageTitle" label="Site Title" variant="outlined" hide-details="auto" clearable)
-          v-textarea.mt-3(v-model="newPageDescription" label="Site Description" variant="outlined" hide-details="auto" clearable)
-          v-checkbox(v-model="withForm" label="With form")
-          v-select(
-            v-if="withForm" 
-            v-model="newPageProducts"
-            chips
-            label="Choose Product "
-            :items="products"
-            item-title="name"
-            item-value="id"
-            multiple
-            variant="outlined"
-          )
+        div
+          p Confirm Delete?
+          p.font-weight-bold This action can't be undo
             
       v-card-actions
         v-spacer
@@ -104,7 +87,9 @@
           v-model="newPageProducts",
           chips,
           label="Choose Product ",
-          :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']",
+          :items="products"
+          item-title="name"
+          item-value="id"
           multiple,
           variant="outlined")
     template(#action)
@@ -142,12 +127,14 @@ onMounted(async () => {
     userPages.value = savedPages;
   }
 
+  userStore.getUser()
   company_id.value = userStore.user.current_company.id
 
   let { data: product, error, count } = await supabase
     .from('product')
     .select('*', { count: "exact" })
     .eq('company_id', company_id.value)
+    .eq('published', true)
 
   products.value = product
 })
@@ -196,15 +183,26 @@ const deletePage = (id) => {
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
   dialogDelete.value = false;
 };
+
+function fTime(datetime) {
+  const date = new Date(datetime);
+  const options = { timeZone: 'Asia/Kuala_Lumpur', day: '2-digit', month: '2-digit', year: 'numeric',  hour12: true, hour: '2-digit', minute: '2-digit' };
+  const formattedTime = date.toLocaleTimeString('en-MY', options);
+
+  return formattedTime
+}
 </script>
 <style scoped>
 a {
   text-decoration: none;
 }
 
-.new-card {
-  border: 2px solid rgb(var(--v-theme-secondary)) !important;
-  background-color: transparent;
+.new-card, .page-card {
+  border: 1px solid rgb(var(--v-theme-secondary)) !important;
+  /* background-color: transparent; */
+  box-shadow: none !important;
+  border-radius: 8px;
+  height: 100%;
 }
 
 .new-card:hover {

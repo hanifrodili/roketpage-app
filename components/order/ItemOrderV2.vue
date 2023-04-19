@@ -62,7 +62,7 @@ onMounted(() => {
 function fDate(datetime){
   const date = new Date(datetime);
   const options = { timeZone: 'Asia/Kuala_Lumpur', day: '2-digit', month: '2-digit', year: 'numeric' };
-  const formattedDate = date.toLocaleDateString('en-US', options);
+  const formattedDate = date.toLocaleDateString('en-MY', options);
 
   return formattedDate
 }
@@ -70,7 +70,7 @@ function fDate(datetime){
 function fTime(datetime) {
   const date = new Date(datetime);
   const options = { timeZone: 'Asia/Kuala_Lumpur', hour12: true, hour: '2-digit', minute: '2-digit' };
-  const formattedTime = date.toLocaleTimeString('en-US', options);
+  const formattedTime = date.toLocaleTimeString('en-MY', options);
 
   return formattedTime
 }

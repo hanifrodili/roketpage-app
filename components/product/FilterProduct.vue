@@ -6,9 +6,9 @@ v-card(flat)
         flat,
         size="small",
         rounded,
-        :color="status == item.value ? 'primary' : ''",
-        :class="status == item.value ? 'bg-primary' : 'bg-grey-lighten-2'",
-        @click="(status = item.value), $emit('filter', { field: 'status', value: status })")
+        :color="status === item.label ? 'primary' : ''",
+        :class="status === item.label ? 'bg-primary' : 'bg-grey-lighten-2'",
+        @click="(status = item.label), $emit('filter', { field: 'published', value: item.value })")
         b {{ item.label }}
   .d-flex.flex-row(style="gap: 8px")
     v-text-field(
@@ -37,7 +37,7 @@ v-card(flat)
 <script setup>
 const emits = defineEmits(["addProduct", "search", "sort", "filter"]);
 
-const status = ref('')
+const status = ref('All')
 const searchInput = ref('')
 const sortDialog = ref(false)
 const sort = ref({
@@ -77,15 +77,15 @@ const sortList = ref([
 const statusList = ref([
   {
     label: "All",
-    value: "",
+    value: [true, false],
   },
   {
     label: "Draft",
-    value: "false",
+    value: [false],
   },
   {
     label: "Published",
-    value: "true",
+    value: [true],
   },
 ]);
 
