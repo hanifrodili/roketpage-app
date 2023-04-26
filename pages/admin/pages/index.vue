@@ -1,9 +1,8 @@
 <template lang="pug">
 .page-content
-  v-row(no-gutters style="gap:16px")
-    v-col(cols="12")
-      sites-filter-sites
-    v-col(cols="6", md="3", sm="4", v-for="page in userPages", :key="page.id")
+  sites-filter-sites.mb-4
+  v-row()
+    v-col(cols="6" md="3", v-for="page in userPages", :key="page.id")
       v-card.d-flex.flex-column.justify-space-between.page-card()
         v-card-text.pa-4.pb-0
           .d-flex.flex-column.justify-space-between(style="height: 100%")
@@ -33,8 +32,8 @@
               v-spacer
               v-btn(variant="text" color="secondary" @click="deletePage(page.id)") Yes
               v-btn.elevation-0(color="red" variant="tonal" @click="dialogDelete=false") No
-    v-col.px-0(cols="6" md="3" sm="4")
-      v-card.new-card.d-flex(@click="dialogAdd=true, newPageID = `page-${randID(5)}`")
+    v-col(cols="6" md="3")
+      v-card.new-card.d-flex(@click="formFields = defaultFormFields, dialogAdd=true, newPageID = `page-${randID(5)}`")
         v-card-text.text-center.ma-auto
           .mt-6
             v-icon.text-secondary mdi-plus
@@ -68,34 +67,69 @@
           label="Site Url",
           variant="outlined",
           hide-details="auto",
+          density="compact"
           clearable)
         v-text-field.mt-3(
           v-model="newPageTitle",
           label="Site Title",
           variant="outlined",
           hide-details="auto",
+          density="compact"
           clearable)
-        v-textarea.mt-3(
+        v-textarea.my-3(
           v-model="newPageDescription",
           label="Site Description",
           variant="outlined",
           hide-details="auto",
+          density="compact"
           clearable)
-        v-checkbox(v-model="withForm", label="With form")
-        v-select(
-          v-if="withForm",
-          v-model="newPageProducts",
+        v-checkbox.mb-1(v-model="hasForm", label="With form" density="compact" hide-details="auto")
+        v-select.mb-3(
+          v-if="hasForm",
+          v-model="pageProducts",
           chips,
-          label="Choose Product ",
+          label="Choose Product",
           :items="products"
           item-title="name"
           item-value="id"
-          multiple,
+          hide-details="auto"
+          density="compact"
           variant="outlined")
+        div(v-if="hasForm" )
+          v-checkbox.mb-1(v-model="hasPayment", label="Allow payment" density="compact" hide-details="auto")
+          v-select.mb-3(
+            v-if="hasPayment",
+            v-model="pagePayments",
+            chips,
+            label="Choose Payment Options",
+            :items="paymentOptions"
+            hide-details="auto"
+            density="compact"
+            multiple
+            variant="outlined")
+          v-checkbox.mb-1(v-model="hasShipping", label="Has shipping" density="compact" hide-details="auto")
+          v-select.mb-3(
+            v-if="hasShipping",
+            v-model="pageShipping",
+            chips,
+            label="Choose Shipping Options",
+            :items="shippingOptions"
+            hide-details="auto"
+            density="compact"
+            multiple
+            variant="outlined")
+          p.font-weight-bold.mt-4.mb-1 Customer Info
+          v-card.general-card
+            v-card-text.pa-0
+              template(v-for="(field, index) in formFields" :key="index")
+                //- p {{ field }}
+                sites-form-field(:field="field" @delete="deleteField(index)")
+                v-divider(v-if="index < formFields.length-1")
+              sites-add-form-field.mt-3(@updateField="updateField")
     template(#action)
       v-spacer
       v-btn(variant="text", color="secondary", @click="dialogAdd = false") Close
-      v-btn(variant="tonal", color="primary", @click="createNewPage") {{ $t("create") }}
+      v-btn(variant="tonal", color="info", @click="createNewPage") {{ $t("create") }}
 </template>
 
 <script setup>
@@ -104,10 +138,45 @@ const dialogDelete = ref(false)
 const newPageID = ref('')
 const newPageTitle = ref('')
 const newPageDescription = ref('')
-const newPageProducts = ref([])
-const withForm = ref(true)
+const pageProducts = ref([])
+const pagePayments = ref([])
+const pageShipping = ref([])
+const hasForm = ref(true)
+const hasPayment = ref(false)
+const hasShipping = ref(false)
 const userPages = ref([])
 const products = ref([])
+const paymentOptions = ref([
+  'FPX',
+  'Bank Transfer',
+  'Cash on Delivery'
+])
+const shippingOptions = ref([
+  'PosLaju',
+  'NinjaVan',
+  'J&T',
+])
+const defaultFormFields = ref([
+  {
+    name: 'name',
+    type: 'text',
+    options: null,
+    enabled: true
+  },
+  {
+    name: 'phone',
+    type: 'tel',
+    options: null,
+    enabled: true
+  },
+  {
+    name: 'email',
+    type: 'email',
+    options: null,
+    enabled: true
+  }
+])
+const formFields = ref([])
 const company_id = ref('')
 
 const router = useRouter()
@@ -156,20 +225,70 @@ const createNewPage = () => {
   id = id.split(".").join("-");
   const title = newPageTitle.value;
   const description = newPageDescription.value;
-  let products = [];
-  console.log(withForm.value);
-  console.log(newPageProducts.value);
-  if (withForm.value) {
-    products = newPageProducts.value;
-  }
+  console.log(hasForm.value);
+  console.log(pageProducts.value);
   const d = new Date()
   let newpage = {}
   newpage['id'] = id
   newpage['title'] = title
   newpage['description'] = description
-  newpage['products'] = products
+  newpage['hasForm'] = hasForm.value
+  newpage['hasPayment'] = hasPayment.value
+  newpage['hasShipping'] = hasShipping.value
+  newpage['products'] = pageProducts.value
+  newpage['paymentOptions'] = pagePayments.value
+  newpage['shippingOptions'] = pageShipping.value
   newpage['lastUpdate'] = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
-  newpage['components'] = []
+  newpage['components'] = [
+    {
+      "_uid": "mFrAvhM6HO",
+      "component": "OneColumn",
+      "name": "OneColumn",
+      "config": {},
+      "childBlock": [
+        {
+          "_uid": "5hrQp648Ob",
+          "component": "Text",
+          "name": "Text",
+          "config": {}
+        }
+      ]
+    },
+    {
+      "_uid": "wllsm16MHs",
+      "component": "TwoColumns",
+      "name": "TwoColumns",
+      "config": {},
+      "childBlock": [
+        {
+          "_uid": "ixhs9bCNAX",
+          "component": "Text",
+          "name": "Text",
+          "config": {}
+        },
+        {
+          "_uid": "tyPbth0FBW",
+          "component": "Text",
+          "name": "Text",
+          "config": {}
+        }
+      ]
+    },
+    {
+      "_uid": "TLn3FPxDys",
+      "component": "OneColumn",
+      "name": "OneColumn",
+      "config": {},
+      "childBlock": [
+        {
+          "_uid": "sFyO0ZkQpE",
+          "component": "Image",
+          "name": "Image",
+          "config": {}
+        }
+      ]
+    }
+  ]
   userPages.value.push(newpage)
   window.localStorage.setItem('userPages', JSON.stringify(userPages.value))
   newPageID.value = ''
@@ -190,6 +309,16 @@ function fTime(datetime) {
   const formattedTime = date.toLocaleTimeString('en-MY', options);
 
   return formattedTime
+}
+
+function updateField(e){
+  let obj = e
+  obj.enabled = true
+  formFields.value.push(obj)
+}
+
+function deleteField(index) {
+  formFields.value.splice(index, 1)
 }
 </script>
 <style scoped>

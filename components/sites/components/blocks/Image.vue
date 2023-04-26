@@ -1,6 +1,6 @@
 <template lang="pug">
 .Image
-  div(style="height:400px; width:400px; display:flex; justify-content:flex-start")
+  div.mx-auto(style="height:400px; min-width:400px; display:flex; justify-content:center")
     v-img( src="/icon.svg" width="100%")
 </template>
 

@@ -1,7 +1,7 @@
 <template lang="pug">
 .LayoutA(style="height: fit-content")
   v-row(style="min-height:200px")
-    v-col(cols="12")
+    v-col.px-5(cols="12")
       component(v-if="components[0]"  :is="components[0].component" :data="components[0]")
       div.d-flex.align-center.addNew(v-else)
         sites-builder-add-block(:position="-1" @addBlock="addBlock" :blockList="Blocks")
