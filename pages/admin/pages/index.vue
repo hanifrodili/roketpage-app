@@ -241,54 +241,83 @@ const createNewPage = () => {
   newpage['lastUpdate'] = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
   newpage['components'] = [
     {
-      "_uid": "mFrAvhM6HO",
+      "_uid": randID(10),
       "component": "OneColumn",
       "name": "OneColumn",
       "config": {},
       "childBlock": [
         {
-          "_uid": "5hrQp648Ob",
-          "component": "Text",
-          "name": "Text",
-          "config": {}
+          "_uid": randID(10),
+          "component": "HeadingH1",
+          "name": "HeadingH1",
+          "config": {
+            "content": "Biji Kopi Premium"
+          }
         }
       ]
     },
     {
-      "_uid": "wllsm16MHs",
-      "component": "TwoColumns",
-      "name": "TwoColumns",
-      "config": {},
-      "childBlock": [
-        {
-          "_uid": "ixhs9bCNAX",
-          "component": "Text",
-          "name": "Text",
-          "config": {}
-        },
-        {
-          "_uid": "tyPbth0FBW",
-          "component": "Text",
-          "name": "Text",
-          "config": {}
-        }
-      ]
-    },
-    {
-      "_uid": "TLn3FPxDys",
+      "_uid": randID(10),
       "component": "OneColumn",
       "name": "OneColumn",
       "config": {},
       "childBlock": [
         {
-          "_uid": "sFyO0ZkQpE",
+          "_uid": randID(10),
+          "component": "Paragraph",
+          "name": "Paragraph",
+          "config": {
+            "content": "Nikmati pengalaman unik minum kopi dengan Biji Kopi Single Origin Premium kami! Kopi asli dari satu kawasan sahaja, yang memberikan rasa yang terbaik. Biji kopi kami dipilih dengan teliti, dipanggang dengan penuh kasih sayang, dan dihasilkan dalam kuantiti terhad setiap musim. Rasa kopi kami yang unik dan istimewa pasti memuaskan penikmat kopi sejati. Dapatkan sekarang dan rasai kenikmatan kopi yang premium ini!"
+          }
+        }
+      ]
+    },
+    {
+      "_uid": randID(10),
+      "component": "OneColumn",
+      "name": "OneColumn",
+      "config": {},
+      "childBlock": [
+        {
+          "_uid": randID(10),
           "component": "Image",
           "name": "Image",
           "config": {}
         }
       ]
+    },
+    {
+      "_uid": randID(10),
+      "component": "OneColumn",
+      "name": "OneColumn",
+      "config": {},
+      "childBlock": [
+        {
+          "_uid": randID(10),
+          "component": "CtaButton",
+          "name": "CtaButton",
+          "config": {}
+        }
+      ]
+    },
+    {
+      "_uid": randID(10),
+      "component": "OneColumn",
+      "name": "OneColumn",
+      "config": {},
+      "childBlock": [
+        {
+          "_uid": randID(10),
+          "component": "Paragraph",
+          "name": "Paragraph",
+          "config": {
+            "content": "Anda pasti terpikat dengan Biji Kopi Single Origin Premium kami! Ditanam dengan penuh kasih sayang di ladang terpilih, biji kopi kami dihasilkan dari satu varieti kopi tunggal yang unik dan mempunyai ciri-ciri yang istimewa. Anda akan teruja dengan kepekatannya yang kaya dan aroma yang memukau. Kami memastikan kualiti yang terbaik dengan memproses biji kopi secara tradisional dengan tangan dan menjalani proses pengeringan yang berhemah karbon. Nikmatilah secawan kopi yang memuaskan dan nikmati pengalaman minum kopi yang tidak terlupakan dengan Biji Kopi Single Origin Premium kami!"
+          }
+        }
+      ]
     }
   ]
+
   userPages.value.push(newpage)
   window.localStorage.setItem('userPages', JSON.stringify(userPages.value))
   newPageID.value = ''
@@ -335,7 +364,7 @@ a {
 }
 
 .new-card:hover {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgb(var(--v-theme-primary));
 }
 
 /*:deep(.v-text-field--filled>.v-input__control>.v-input__slot) {

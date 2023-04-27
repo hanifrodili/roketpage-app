@@ -1,9 +1,10 @@
 <template lang="pug">
 .LayoutA(style="height: fit-content")
-  v-row(style="min-height:200px")
-    v-col.px-5(cols="12")
-      component(v-if="components[0]"  :is="components[0].component" :data="components[0]")
-      div.d-flex.align-center.addNew(v-else)
+  v-row.px-6(style="height:fit-content")
+    v-col.d-flex.align-center.justify-center(v-if="components[0]" cols="12")
+      component(  :is="components[0].component" :data="components[0]" :editable="editMode" @input="updateContent(components[0]._uid)" data-placeholder="Your Text Here")
+    v-col(v-else cols="12")
+      div.d-flex.align-center.addNew()
         sites-builder-add-block(:position="-1" @addBlock="addBlock" :blockList="Blocks")
 
 </template>
@@ -23,8 +24,14 @@ const props = defineProps({
   pages: {
     type: Array,
     default: []
+  },
+  editMode: {
+    type: Boolean,
+    default: false
   }
 })
+
+const emits = defineEmits(['updateContent'])
 
 const components = ref(props.data.childBlock)
 
@@ -52,6 +59,17 @@ const addBlock = (pos, block) => {
   })
   console.log(props.pages);
   window.localStorage.setItem('userPages', JSON.stringify(props.pages))
+}
+
+const updateContent = (id) => {
+  const el = document.getElementById(id)
+  let content = el.innerHTML
+  if (el.tagName === 'BUTTON') {
+    content = el.children[0].innerHTML
+  }
+
+  console.log(content);
+  emits('updateContent', {parentId:props.data._uid, elementId:id, content:content})
 }
 
 const randID = (len) => {
@@ -86,7 +104,7 @@ export default {
 
 <style lang="scss" scoped>
 .addNew{
-  height:100%;
+  height:100px;
   border: 1px dashed rgb(var(--v-theme-secondary));
   opacity: .5;
   position:relative;
@@ -115,5 +133,22 @@ export default {
 
 .menuBtn:hover{
   opacity: 1;
+}
+
+:deep([contenteditable]):empty:after{
+  content: attr(data-placeholder);
+  color: rgb(212, 212, 212);
+  // display: none;
+}
+:deep([contenteditable]):focus:empty:after{
+  content: attr(data-placeholder);
+  color: rgb(212, 212, 212);
+  // display: unset;
+}
+:deep([contenteditable]) {
+    -webkit-tap-highlight-color: transparent;
+}
+:deep([contenteditable]):focus-visible{
+  outline: none;
 }
 </style>

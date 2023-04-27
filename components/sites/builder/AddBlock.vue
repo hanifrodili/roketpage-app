@@ -39,7 +39,7 @@ const props = defineProps({
 const blocks = ref([])
 
 onMounted(() => {
-  console.log(props.blockList);
+  // console.log(props.blockList); 
   blocks.value = Object.keys(props.blockList).map((block) => {
     return block.replace(/([A-Z]+)/g, ",$1").replace(/^,/, "").split(",").join(" ")
   })

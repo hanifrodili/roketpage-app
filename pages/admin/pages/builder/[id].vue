@@ -3,7 +3,7 @@
   sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" style="position:fixed; width:100%")
   div.pt-15
     template(v-for="(component, index) in userComponents" :key="component._uid")
-      component(:is="component.component" :data="component" :pages="userPages" :pageId="pageID")
+      component(:is="component.component" :data="component" :pages="userPages" :pageId="pageID" :editMode="editMode" @updateContent="updateContent")
       //- .menuBtn.d-flex.flex-row()
       //-   sites-builder-speed-menu.ml-auto(style="margin-top:-55px; margin-right: 20px")
       .d-flex.flex-column.align-center.justify-center(
@@ -27,6 +27,7 @@ import Layouts from "~/components/sites/components/layouts";
 
 const { width } = useDisplay();
 const route = useRoute();
+const editMode = ref(true)
 
 const userPages = ref([]);
 const userComponents = ref([]);
@@ -49,7 +50,7 @@ onMounted(() => {
       }
     });
   }
-  console.log("Components:", userComponents.value);
+  // console.log("Components:", userComponents.value);
 });
 
 const removeDuplicateBlock = (e) => {
@@ -69,22 +70,23 @@ const removeBlock = (id) => {
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
 };
 
-const updateConfigs = (item, id, reuseID) => {
+const updateContent = (e) => {
   userComponents.value.forEach((component, index) => {
-    if (component._uid === id) {
-      userComponents.value[index].config = item;
-    }
-    if (component.reuseBlockID === reuseID) {
-      userComponents.value[index].config = item;
+    if (component._uid === e.parentId) {
+      const comps = userComponents.value[index].childBlock
+      comps.forEach(child => {
+        if (child._uid === e.elementId) {
+          child.config.content = e.content
+        }
+      });
     }
   });
+  // console.log(userComponents.value);
   userPages.value.forEach((item) => {
     if (item.id === pageID.value) {
       item.components = userComponents.value;
       const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${
-        d.getMonth() + 1
-      }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
     }
   });
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));

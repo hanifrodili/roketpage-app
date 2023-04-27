@@ -25,6 +25,9 @@ const companies = ref([])
 const isLoading = ref(false)
 
 onMounted(async () => {
+  if(!userStore.user.id){
+    router.push('/signin')
+  }
   userStore.getUser()
   await getCompany()
 })
