@@ -1,11 +1,10 @@
 <template lang="pug">
-.LayoutA(style="height: fit-content")
-  v-row.px-6(style="height:fit-content")
-    v-col.d-flex.align-center.justify-center(v-if="components[0]" cols="12")
-      component(  :is="components[0].component" :data="components[0]" :editable="editMode" @input="updateContent(components[0]._uid)" data-placeholder="Your Text Here")
-    v-col(v-else cols="12")
-      div.d-flex.align-center.addNew()
-        sites-builder-add-block(:position="-1" @addBlock="addBlock" :blockList="Blocks")
+v-row.ma-0(style="height:fit-content;" :style="`padding:${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`" :id="data._uid")
+  v-col.d-flex.align-center.justify-center(v-if="components[0]" cols="12")
+    component(:is="components[0].component" :data="components[0]" :editable="editMode" @input="updateContent(components[0]._uid)" data-placeholder="Your Text Here")
+  v-col(v-if="!components[0] && editMode" cols="12")
+    div.d-flex.align-center.addNew()
+      sites-builder-add-block(:position="-1" @addBlock="addBlock" :blockList="Blocks")
 
 </template>
 
@@ -34,6 +33,8 @@ const props = defineProps({
 const emits = defineEmits(['updateContent'])
 
 const components = ref(props.data.childBlock)
+
+const padding = ref(props.data.config.css.padding)
 
 const addBlock = (pos, block) => {
   const name = block.replace(" ", "")

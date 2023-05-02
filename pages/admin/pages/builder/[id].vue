@@ -1,25 +1,26 @@
 <template lang="pug">
 .mypage-builder
-  sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" style="position:fixed; width:100%")
-  div.pt-15
+  sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" @toggleAdd="toggleAdd" style="width:100%;")
+  div.py-3(id="builder" style="height:calc(100vh - 64px - 48px); overflow-y:scroll")
     template(v-for="(component, index) in userComponents" :key="component._uid")
       component(:is="component.component" :data="component" :pages="userPages" :pageId="pageID" :editMode="editMode" @updateContent="updateContent")
       //- .menuBtn.d-flex.flex-row()
       //-   sites-builder-speed-menu.ml-auto(style="margin-top:-55px; margin-right: 20px")
-      .d-flex.flex-column.align-center.justify-center(
-        style="height: 50px; position: relative")
-        hr(
-          style="border: 0.5px dashed rgb(var(--v-theme-secondary)); width: 100%")
-        sites-builder-add-block(
+      sites-builder-add-block.ignored(
+          v-if="showAdd" 
           :position="index",
           @addBlock="addBlock",
           :blockList="Layouts")
     .pt-10(v-if="userComponents.length === 0")
-      hr(style="border: 0.5px dashed rgb(var(--v-theme-secondary))")
-      sites-builder-add-block(
-        :position="-1",
-        @addBlock="addBlock",
-        :blockList="Layouts")
+      .d-flex.flex-column.align-center.justify-center.ignored(
+        style="height: 100px; border: 0.5px dashed #d0d0d0;")
+        //- hr(
+          style="border: 0.5px dashed #d0d0d0; width: 100%")
+        sites-builder-add-block(
+          :position="-1",
+          @addBlock="addBlock",
+          :blockList="Layouts")
+  sites-builder-edit-module(v-model="openEdit" :data="onEditComponent" @updateCSS="updateCSS")
 </template>
 <script setup>
 import { useDisplay } from "vuetify";
@@ -28,6 +29,10 @@ import Layouts from "~/components/sites/components/layouts";
 const { width } = useDisplay();
 const route = useRoute();
 const editMode = ref(true)
+const openEdit = ref(false)
+const clickedEl = ref(null)
+const onEditComponent = ref(null)
+const showAdd = ref(true)
 
 const userPages = ref([]);
 const userComponents = ref([]);
@@ -50,8 +55,63 @@ onMounted(() => {
       }
     });
   }
-  // console.log("Components:", userComponents.value);
+  document.getElementById("builder").addEventListener('click', (e) => {
+    const el = e.target
+    // const classList = el.classList.value.split(" ")
+    // const tagName = el.tagName
+    // console.log(el);
+    let layout = null
+    if (el.classList.contains('ignored')) {
+      if (clickedEl.value) {
+        clickedEl.value.classList.remove('editActive')
+      }
+      openEdit.value = false
+      return
+    }
+    if (el.parentNode.parentNode.parentNode.parentNode.classList.contains('v-row')) {
+      layout = el.parentNode.parentNode.parentNode.parentNode
+    }
+    if (el.parentNode.parentNode.parentNode.classList.contains('v-row')) {
+      layout = el.parentNode.parentNode.parentNode
+    }
+
+    if (el.parentNode.parentNode.classList.contains('v-row')) {
+      layout = el.parentNode.parentNode
+    }
+
+    if (el.parentNode.classList.contains('v-row')) {
+      layout = el.parentNode
+    }
+
+    if (el.classList.contains('v-row')) {
+      layout = el
+    }
+
+    if (clickedEl.value && clickedEl.value !== el) {
+      clickedEl.value.classList.remove('editActive')
+    }
+
+    userComponents.value.forEach(element => {
+      // console.log(element._uid === layout.id);
+      if (element._uid === layout.id) {
+        onEditComponent.value = element
+      }
+    });
+    if (!el.classList.contains('v-row') && !el.classList.contains('v-col')) {
+      el.classList.add('editActive')
+    }
+    // const deleteBtn = new DOMParser().parseFromString('<button data-v-af501b0b="" type="button" class="v-btn v-btn--icon v-theme--light text-red v-btn--density-default v-btn--size-default v-btn--variant-plain"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span><!----><span class="v-btn__content" data-no-activator=""><i class="mdi-trash-can mdi v-icon notranslate v-theme--light v-icon--size-default" aria-hidden="true"></i></span><!----><!----></button>', 'text/html')
+    // el.appendChild(deleteBtn)
+    clickedEl.value = el
+    openEdit.value = true
+  })
 });
+
+watch(openEdit, (newOpenEdit)=>{
+  if (!newOpenEdit) {
+    clickedEl.value.classList.remove('editActive')
+  }
+})
 
 const removeDuplicateBlock = (e) => {
   const uniqueBlock = Array.from(
@@ -91,6 +151,28 @@ const updateContent = (e) => {
   });
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
 };
+
+const updateCSS = (e) => {
+  console.log(e);
+  userComponents.value.forEach((component, index) => {
+    if (component._uid === e._uid) {
+      component = e
+    }
+  });
+  // console.log(userComponents.value);
+  userPages.value.forEach((item) => {
+    if (item.id === pageID.value) {
+      item.components = userComponents.value;
+      const d = new Date();
+      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+    }
+  });
+  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
+}
+
+const toggleAdd = (e) => {
+  showAdd.value = e
+}
 
 const addBlock = (pos, block) => {
   const name = block.replace(" ", "");
@@ -226,5 +308,10 @@ export default {
 
 .menuBtn:hover {
   opacity: 1;
+}
+</style>
+<style>
+.editActive{
+  border: 2px solid rgb(67, 175, 67);
 }
 </style>

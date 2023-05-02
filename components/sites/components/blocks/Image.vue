@@ -1,9 +1,26 @@
 <template lang="pug">
-.Image
-  div.mx-auto(style="height:400px; min-width:400px; display:flex; justify-content:center")
-    v-img( src="/icon.svg" width="100%")
+img.mx-auto(title="image" :src="content" width="100%" :id="data._uid" style="height:300px; min-width:300px; display:flex; justify-content:center")
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps({
+  data: {
+    type: Object,
+    default: () => { }
+  },
+  editable: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const content = ref('/icon.svg')
+
+onMounted(() => {
+  if (props.data.config.content && props.data.config.content !== '') {
+    content.value = props.data.config.content
+  }
+})
+</script>
 
 <style lang="scss" scoped></style>

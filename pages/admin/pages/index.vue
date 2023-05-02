@@ -244,7 +244,16 @@ const createNewPage = () => {
       "_uid": randID(10),
       "component": "OneColumn",
       "name": "OneColumn",
-      "config": {},
+      "config": {
+        "css": {
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      },
       "childBlock": [
         {
           "_uid": randID(10),
@@ -260,7 +269,16 @@ const createNewPage = () => {
       "_uid": randID(10),
       "component": "OneColumn",
       "name": "OneColumn",
-      "config": {},
+      "config": {
+        "css": {
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      },
       "childBlock": [
         {
           "_uid": randID(10),
@@ -276,7 +294,16 @@ const createNewPage = () => {
       "_uid": randID(10),
       "component": "OneColumn",
       "name": "OneColumn",
-      "config": {},
+      "config": {
+        "css": {
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      },
       "childBlock": [
         {
           "_uid": randID(10),
@@ -290,7 +317,16 @@ const createNewPage = () => {
       "_uid": randID(10),
       "component": "OneColumn",
       "name": "OneColumn",
-      "config": {},
+      "config": {
+        "css": {
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      },
       "childBlock": [
         {
           "_uid": randID(10),
@@ -304,7 +340,16 @@ const createNewPage = () => {
       "_uid": randID(10),
       "component": "OneColumn",
       "name": "OneColumn",
-      "config": {},
+      "config": {
+        "css": {
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      },
       "childBlock": [
         {
           "_uid": randID(10),

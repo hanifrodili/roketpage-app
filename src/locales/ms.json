@@ -26,5 +26,6 @@
   "latestorder": "{number} Order Terkini",
   "status": "Status",
   "deliveryfee": "Penghantaran",
-  "totalpaid": "Jumlah Dibayar"
+  "totalpaid": "Jumlah Dibayar",
+  "builder": "Builder"
 }

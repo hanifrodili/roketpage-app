@@ -1,5 +1,5 @@
 <template lang="pug">
-button.mx-auto(:id="data._uid")
+button.mx-auto(:id="data._uid" title="button")
   span(:contenteditable="editable") {{ content }}
 </template>
 
@@ -26,7 +26,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 button{
-  min-width: 50px;
+  min-width: 80px;
   min-height: 35px;
   padding: 8px 16px;
   background-color: red;

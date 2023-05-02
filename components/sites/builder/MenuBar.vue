@@ -4,8 +4,14 @@ div.d-flex.flex-row.align-center.px-2.bg-secondary(style="z-index:150;")
     v-btn(icon="mdi-arrow-left" variant="text" color="white")
   p.ma-0 {{pageTitle}}
   v-spacer
-  v-btn(icon="mdi-download" @click="downloadJSON" variant="plain" color="white")
-  v-btn(icon="mdi-upload" @click="dialog=true" variant="plain" color="white")
+  v-btn( @click="toggleAddBtn" variant="outlined" size="small")
+    .d-flex.flex-row.align-center(style="gap:4px")
+      v-icon(v-if="showAdd" ) mdi-eye-outline
+      v-icon(v-else) mdi-eye-off-outline
+      p Add Button
+    
+  //- v-btn(icon="mdi-download" @click="downloadJSON" variant="plain" color="white")
+  //- v-btn(icon="mdi-upload" @click="dialog=true" variant="plain" color="white")
   //- router-link(:to="`/pagebuilder/preview/${pageID}`" target="_blank" )
   //-   v-tooltip(bottom)
   //-     template( v-slot:activator="{ on, attrs }" )
@@ -51,7 +57,8 @@ export default {
   data:()=>({
     dialog: false,
     importedFile: null,
-    userComponents: null
+    userComponents: null,
+    showAdd: true
   }),
   mounted(){
     const userPages = JSON.parse(window.localStorage.getItem('userPages'))
@@ -103,6 +110,10 @@ export default {
       reader.readAsText(this.importedFile);
       this.importedFile = null
       this.dialog = false
+    },
+    toggleAddBtn() {
+      this.showAdd = !this.showAdd
+      this.$emit('toggleAdd', this.showAdd)
     }
   }
 }

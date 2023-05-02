@@ -26,5 +26,6 @@
   "latestorder": "Latest {number} Orders",
   "status": "Status",
   "deliveryfee": "Delivery Fee",
-  "totalpaid": "Total Paid"
+  "totalpaid": "Total Paid",
+  "builder": "Builder"
 }
