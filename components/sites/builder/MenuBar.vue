@@ -1,5 +1,5 @@
 <template lang="pug">
-div.d-flex.flex-row.align-center.px-2.py-2.bg-primary(style="z-index:150;")
+div.d-flex.flex-row.align-center.px-2.bg-primary(style="z-index:150;")
   router-link.mr-1(to="/admin/pages" target="_self" )
     v-btn(icon="mdi-arrow-left" variant="text" color="black")
   p.ma-0 {{pageTitle}}
