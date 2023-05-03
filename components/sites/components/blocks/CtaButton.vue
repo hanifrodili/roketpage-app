@@ -1,5 +1,5 @@
 <template lang="pug">
-button.mx-auto(:id="data._uid" title="button")
+button.mx-auto(:id="data._uid" title="button" :style="{fontFamily:css?.font.family, fontSize:css?.font.size}")
   span(:contenteditable="editable") {{ content }}
 </template>
 
@@ -16,10 +16,14 @@ const props = defineProps({
 })
 
 const content = ref('Edit me')
+const css = ref(null)
 
 onMounted(() => {
   if (props.data.config.content && props.data.config.content !== '') {
     content.value = props.data.config.content
+  }
+  if (props.data.config.css) {
+    css.value = props.data.config.css
   }
 })
 </script>

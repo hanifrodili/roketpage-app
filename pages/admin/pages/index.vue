@@ -2,11 +2,12 @@
 .page-content
   sites-filter-sites.mb-4
   v-row()
-    v-col(cols="6" md="3", v-for="page in userPages", :key="page.id")
+    v-col(cols="6" sm="3", v-for="page in userPages", :key="page.id")
       v-card.d-flex.flex-column.justify-space-between.page-card()
         v-card-text.pa-4.pb-0
           .d-flex.flex-column.justify-space-between(style="height: 100%")
-            p.font-weight-bold(style="font-size:15px") {{ page.title }}
+            a(@click="$router.push(`/admin/pages/builder/${page.id}`)")
+              p.font-weight-bold(style="font-size:15px") {{ page.title }}
             p.mb-0(style="font-size:10px; line-height: 14px; color:#767676")
               i {{ $t("lastupdate") }}: {{ fTime(page.lastUpdate) }}
         v-card-actions.pa-2
@@ -32,7 +33,7 @@
               v-spacer
               v-btn(variant="text" color="secondary" @click="deletePage(page.id)") Yes
               v-btn.elevation-0(color="red" variant="tonal" @click="dialogDelete=false") No
-    v-col(cols="6" md="3")
+    v-col(cols="6" sm="3")
       v-card.new-card.d-flex(@click="formFields = defaultFormFields, dialogAdd=true, newPageID = `page-${randID(5)}`")
         v-card-text.text-center.ma-auto
           .mt-6
@@ -225,8 +226,8 @@ const createNewPage = () => {
   id = id.split(".").join("-");
   const title = newPageTitle.value;
   const description = newPageDescription.value;
-  console.log(hasForm.value);
-  console.log(pageProducts.value);
+  // console.log(hasForm.value);
+  // console.log(pageProducts.value);
   const d = new Date()
   let newpage = {}
   newpage['id'] = id
@@ -260,7 +261,19 @@ const createNewPage = () => {
           "component": "HeadingH1",
           "name": "HeadingH1",
           "config": {
-            "content": "Biji Kopi Premium"
+            "content": "Biji Kopi Premium",
+            "css": {
+              "padding": {
+                "top": 0,
+                "right": 0,
+                "bottom": 0,
+                "left": 0
+              },
+              "font": {
+                "family": "Open Sans",
+                "size": "32px",
+              }
+            }
           }
         }
       ]
@@ -285,7 +298,19 @@ const createNewPage = () => {
           "component": "Paragraph",
           "name": "Paragraph",
           "config": {
-            "content": "Nikmati pengalaman unik minum kopi dengan Biji Kopi Single Origin Premium kami! Kopi asli dari satu kawasan sahaja, yang memberikan rasa yang terbaik. Biji kopi kami dipilih dengan teliti, dipanggang dengan penuh kasih sayang, dan dihasilkan dalam kuantiti terhad setiap musim. Rasa kopi kami yang unik dan istimewa pasti memuaskan penikmat kopi sejati. Dapatkan sekarang dan rasai kenikmatan kopi yang premium ini!"
+            "content": "Nikmati pengalaman unik minum kopi dengan Biji Kopi Single Origin Premium kami! Kopi asli dari satu kawasan sahaja, yang memberikan rasa yang terbaik. Biji kopi kami dipilih dengan teliti, dipanggang dengan penuh kasih sayang, dan dihasilkan dalam kuantiti terhad setiap musim. Rasa kopi kami yang unik dan istimewa pasti memuaskan penikmat kopi sejati. Dapatkan sekarang dan rasai kenikmatan kopi yang premium ini!",
+            "css": {
+              "padding": {
+                "top": 0,
+                "right": 0,
+                "bottom": 0,
+                "left": 0
+              },
+              "font": {
+                "family": "Open Sans",
+                "size": "16px",
+              }
+            }
           }
         }
       ]
@@ -309,7 +334,21 @@ const createNewPage = () => {
           "_uid": randID(10),
           "component": "Image",
           "name": "Image",
-          "config": {}
+          "config": {
+            "content": "/img/your-image.svg",
+            "css": {
+              "padding": {
+                "top": 0,
+                "right": 0,
+                "bottom": 0,
+                "left": 0
+              },
+              "font": {
+                "family": "Open Sans",
+                "size": "16px",
+              }
+            }
+          }
         }
       ]
     },
@@ -332,7 +371,21 @@ const createNewPage = () => {
           "_uid": randID(10),
           "component": "CtaButton",
           "name": "CtaButton",
-          "config": {}
+          "config": {
+            "content": "",
+            "css": {
+              "padding": {
+                "top": 0,
+                "right": 0,
+                "bottom": 0,
+                "left": 0
+              },
+              "font": {
+                "family": "Open Sans",
+                "size": "16px",
+              }
+            }
+          }
         }
       ]
     },
@@ -356,7 +409,19 @@ const createNewPage = () => {
           "component": "Paragraph",
           "name": "Paragraph",
           "config": {
-            "content": "Anda pasti terpikat dengan Biji Kopi Single Origin Premium kami! Ditanam dengan penuh kasih sayang di ladang terpilih, biji kopi kami dihasilkan dari satu varieti kopi tunggal yang unik dan mempunyai ciri-ciri yang istimewa. Anda akan teruja dengan kepekatannya yang kaya dan aroma yang memukau. Kami memastikan kualiti yang terbaik dengan memproses biji kopi secara tradisional dengan tangan dan menjalani proses pengeringan yang berhemah karbon. Nikmatilah secawan kopi yang memuaskan dan nikmati pengalaman minum kopi yang tidak terlupakan dengan Biji Kopi Single Origin Premium kami!"
+            "content": "Anda pasti terpikat dengan Biji Kopi Single Origin Premium kami! Ditanam dengan penuh kasih sayang di ladang terpilih, biji kopi kami dihasilkan dari satu varieti kopi tunggal yang unik dan mempunyai ciri-ciri yang istimewa. Anda akan teruja dengan kepekatannya yang kaya dan aroma yang memukau. Kami memastikan kualiti yang terbaik dengan memproses biji kopi secara tradisional dengan tangan dan menjalani proses pengeringan yang berhemah karbon. Nikmatilah secawan kopi yang memuaskan dan nikmati pengalaman minum kopi yang tidak terlupakan dengan Biji Kopi Single Origin Premium kami!",
+            "css": {
+              "padding": {
+                "top": 0,
+                "right": 0,
+                "bottom": 0,
+                "left": 0
+              },
+              "font": {
+                "family": "Open Sans",
+                "size": "16px",
+              }
+            }
           }
         }
       ]

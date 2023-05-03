@@ -1,14 +1,17 @@
 <template lang="pug">
-div.d-flex.flex-row.align-center.px-2.bg-secondary(style="z-index:150;")
-  router-link.mr-3(to="/admin/pages" target="_self" )
-    v-btn(icon="mdi-arrow-left" variant="text" color="white")
+div.d-flex.flex-row.align-center.px-2.py-2.bg-primary(style="z-index:150;")
+  router-link.mr-1(to="/admin/pages" target="_self" )
+    v-btn(icon="mdi-arrow-left" variant="text" color="black")
   p.ma-0 {{pageTitle}}
   v-spacer
-  v-btn( @click="toggleAddBtn" variant="outlined" size="small")
+  v-btn.mr-1( @click="toggleAddBtn" variant="outlined" size="x-small" rounded="lg")
     .d-flex.flex-row.align-center(style="gap:4px")
-      v-icon(v-if="showAdd" ) mdi-eye-outline
-      v-icon(v-else) mdi-eye-off-outline
-      p Add Button
+      p.text-capitalize {{ showAdd ? 'Hide' : 'Show' }}
+      v-icon mdi-plus-circle-outline
+  v-btn( @click="$router.push(`/admin/pages/preview/${pageID}`)" variant="outlined" size="x-small" rounded="lg")
+    .d-flex.flex-row.align-center(style="gap:4px")
+      p.text-capitalize Preview
+      v-icon mdi-eye-outline
     
   //- v-btn(icon="mdi-download" @click="downloadJSON" variant="plain" color="white")
   //- v-btn(icon="mdi-upload" @click="dialog=true" variant="plain" color="white")

@@ -27,5 +27,6 @@
   "status": "Status",
   "deliveryfee": "Penghantaran",
   "totalpaid": "Jumlah Dibayar",
-  "builder": "Builder"
+  "builder": "Builder",
+  "preview": "Preview"
 }

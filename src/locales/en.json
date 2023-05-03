@@ -27,5 +27,6 @@
   "status": "Status",
   "deliveryfee": "Delivery Fee",
   "totalpaid": "Total Paid",
-  "builder": "Builder"
+  "builder": "Builder",
+  "preview": "Preview"
 }

@@ -14,7 +14,7 @@ const props = defineProps({
   }
 })
 
-const content = ref('/icon.svg')
+const content = ref('/img/your-image.svg')
 
 onMounted(() => {
   if (props.data.config.content && props.data.config.content !== '') {

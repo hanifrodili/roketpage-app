@@ -1,9 +1,9 @@
 <template lang="pug">
-v-row.ma-0(style="height:fit-content;" :style="`padding:${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`" :id="data._uid")
+v-row.ma-0(style="height:fit-content;" :style="`padding:${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`" :id="data._uid")
   v-col.d-flex.align-center.justify-center(v-if="components[0]" cols="12")
     component(:is="components[0].component" :data="components[0]" :editable="editMode" @input="updateContent(components[0]._uid)" data-placeholder="Your Text Here")
   v-col(v-if="!components[0] && editMode" cols="12")
-    div.d-flex.align-center.addNew()
+    div.d-flex.align-center.addNew.ignored()
       sites-builder-add-block(:position="-1" @addBlock="addBlock" :blockList="Blocks")
 
 </template>
@@ -44,7 +44,20 @@ const addBlock = (pos, block) => {
     _uid: newBlockID,
     component: name,
     name: name,
-    config: {}
+    config: {
+      css: {
+        padding: {
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0
+        },
+        font: {
+          family: 'Open Sans',
+          size: 'revert',
+        }
+      }
+    }
   }
   components.value.splice(pos, 0, newBlock)
   props.pages.forEach(item => {

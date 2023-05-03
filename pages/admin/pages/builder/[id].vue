@@ -1,26 +1,30 @@
 <template lang="pug">
 .mypage-builder
   sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" @toggleAdd="toggleAdd" style="width:100%;")
-  div.py-3(id="builder" style="height:calc(100vh - 64px - 48px); overflow-y:scroll")
+  div.py-3.ignored(id="builder" style="height:calc(100vh - 64px - 48px); overflow-y:scroll")
     template(v-for="(component, index) in userComponents" :key="component._uid")
       component(:is="component.component" :data="component" :pages="userPages" :pageId="pageID" :editMode="editMode" @updateContent="updateContent")
       //- .menuBtn.d-flex.flex-row()
       //-   sites-builder-speed-menu.ml-auto(style="margin-top:-55px; margin-right: 20px")
-      sites-builder-add-block.ignored(
-          v-if="showAdd" 
-          :position="index",
-          @addBlock="addBlock",
-          :blockList="Layouts")
-    .pt-10(v-if="userComponents.length === 0")
+      //- sites-builder-add-block.ignored(
+        v-if="showAdd" 
+        :position="index",
+        @addBlock="addBlock",
+        :blockList="Layouts")
+      .add-block.ignored(v-if="showAdd")
+        v-btn.btn-add.ignored(@click="addBlock(index + 1, 'OneColumn')" variant="text" icon="mdi-plus-circle-outline")
+    .pt-10.ignored(v-if="userComponents.length === 0")
       .d-flex.flex-column.align-center.justify-center.ignored(
         style="height: 100px; border: 0.5px dashed #d0d0d0;")
         //- hr(
           style="border: 0.5px dashed #d0d0d0; width: 100%")
-        sites-builder-add-block(
+        //- sites-builder-add-block(
           :position="-1",
           @addBlock="addBlock",
           :blockList="Layouts")
-  sites-builder-edit-module(v-model="openEdit" :data="onEditComponent" @updateCSS="updateCSS")
+        .add-block()
+          v-btn.btn-add.ignored(@click="addBlock(0, 'OneColumn')" variant="text" icon="mdi-plus-circle-outline")
+  sites-builder-edit-module(v-model="openEdit" :data="onEditComponent" @updateCSS="updateCSS" @deleteBlock="removeBlock")
 </template>
 <script setup>
 import { useDisplay } from "vuetify";
@@ -61,7 +65,7 @@ onMounted(() => {
     // const tagName = el.tagName
     // console.log(el);
     let layout = null
-    if (el.classList.contains('ignored')) {
+    if (el.classList.contains('ignored') || el.classList.contains('v-icon')) {
       if (clickedEl.value) {
         clickedEl.value.classList.remove('editActive')
       }
@@ -80,11 +84,19 @@ onMounted(() => {
     }
 
     if (el.parentNode.classList.contains('v-row')) {
-      layout = el.parentNode
+      if (clickedEl.value) {
+        clickedEl.value.classList.remove('editActive')
+      }
+      openEdit.value = false
+      return
     }
 
     if (el.classList.contains('v-row')) {
-      layout = el
+      if (clickedEl.value) {
+        clickedEl.value.classList.remove('editActive')
+      }
+      openEdit.value = false
+      return
     }
 
     if (clickedEl.value && clickedEl.value !== el) {
@@ -100,14 +112,12 @@ onMounted(() => {
     if (!el.classList.contains('v-row') && !el.classList.contains('v-col')) {
       el.classList.add('editActive')
     }
-    // const deleteBtn = new DOMParser().parseFromString('<button data-v-af501b0b="" type="button" class="v-btn v-btn--icon v-theme--light text-red v-btn--density-default v-btn--size-default v-btn--variant-plain"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span><!----><span class="v-btn__content" data-no-activator=""><i class="mdi-trash-can mdi v-icon notranslate v-theme--light v-icon--size-default" aria-hidden="true"></i></span><!----><!----></button>', 'text/html')
-    // el.appendChild(deleteBtn)
     clickedEl.value = el
     openEdit.value = true
   })
 });
 
-watch(openEdit, (newOpenEdit)=>{
+watch(openEdit, (newOpenEdit) => {
   if (!newOpenEdit) {
     clickedEl.value.classList.remove('editActive')
   }
@@ -153,7 +163,6 @@ const updateContent = (e) => {
 };
 
 const updateCSS = (e) => {
-  console.log(e);
   userComponents.value.forEach((component, index) => {
     if (component._uid === e._uid) {
       component = e
@@ -183,7 +192,16 @@ const addBlock = (pos, block) => {
     component: name,
     name: name,
     // reuseBlockID: reuseBlockID,
-    config: {},
+    config: {
+      css: {
+        padding: {
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0
+        }
+      }
+    },
     childBlock: [],
   };
   userComponents.value.splice(pos, 0, newBlock);
@@ -191,13 +209,26 @@ const addBlock = (pos, block) => {
     if (item.id === pageID.value) {
       item.components = userComponents.value;
       const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${
-        d.getMonth() + 1
-      }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
+        }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
     }
   });
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
 };
+
+const deleteBlock = (id) => {
+  const removeIndex = userComponents.value.map(item => item._uid).indexOf(id);
+  openEdit.value = false
+  if(removeIndex >= 0) {
+    userComponents.value.splice(removeIndex, 1);
+  }
+  userPages.value.forEach((item) => {
+    if (item.id === pageID.value) {
+      item.components = userComponents.value;
+    }
+  });
+  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
+}
 
 const reuseBlock = (pos, blockData) => {
   let block = JSON.parse(blockData);
@@ -207,9 +238,8 @@ const reuseBlock = (pos, blockData) => {
     if (item.id === pageID.value) {
       item.components = userComponents.value;
       const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${
-        d.getMonth() + 1
-      }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
+        }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
     }
   });
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
@@ -227,9 +257,8 @@ const moveBlockUp = (id, index) => {
     if (item.id === pageID.value) {
       item.components = userComponents.value;
       const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${
-        d.getMonth() + 1
-      }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
+        }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
     }
   });
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
@@ -247,9 +276,8 @@ const moveBlockDown = (id, index) => {
     if (item.id === pageID.value) {
       item.components = userComponents.value;
       const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${
-        d.getMonth() + 1
-      }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
+        }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
     }
   });
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
@@ -284,9 +312,8 @@ const importData = (e) => {
     if (item.id === pageID.value) {
       item.components = JSON.parse(e);
       const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${
-        d.getMonth() + 1
-      }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
+        }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
     }
   });
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
@@ -301,17 +328,29 @@ export default {
 .my-pagebuilder {
   position: relative;
 }
-.menuBtn {
-  width: 100%;
-  opacity: 0.5;
-}
 
-.menuBtn:hover {
+.add-block{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-add{
+  // display: block;
+  // position: absolute;
+  // transform: translateY(-50%) translateX(-50%);\
+  z-index: 2;
   opacity: 1;
+  color: #acacac;
+  transform: rotate(0deg);
+  font-size: inherit;
+}
+.btn-add:hover,.btn-add--active{
+  transform: rotate(45deg) scale(1.2);
+  color: rgb(48, 168, 48);
 }
 </style>
 <style>
-.editActive{
+.editActive {
   border: 2px solid rgb(67, 175, 67);
 }
 </style>

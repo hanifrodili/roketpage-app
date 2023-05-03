@@ -65,8 +65,8 @@ function addBlock(pos, block) {
   background-color: rgb(var(--v-theme-bodyBg));
   height: 20px;
   width: 20px;
-  color: #d0d0d0;
-  border-color: #d0d0d0;
+  color: #acacac;
+  border-color: #acacac;
 }
 .add-icon{
   transform: rotate(0deg);
