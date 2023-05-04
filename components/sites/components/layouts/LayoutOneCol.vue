@@ -1,5 +1,5 @@
 <template lang="pug">
-v-row.ma-0(style="height:fit-content;" :style="`padding:${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px`" :id="data._uid")
+v-row.ma-0(style="height:fit-content;" :style="`padding:${padding?.top}px ${padding?.right}px ${padding?.bottom}px ${padding?.left}px; background-color:${background}`" :id="data._uid")
   v-col.d-flex.align-center.justify-center(v-if="components[0]" cols="12")
     component(:is="components[0].component" :data="components[0]" :editable="editMode" @input="updateContent(components[0]._uid)" data-placeholder="Your Text Here")
   v-col(v-if="!components[0] && editMode" cols="12")
@@ -34,7 +34,25 @@ const emits = defineEmits(['updateContent'])
 
 const components = ref(props.data.childBlock)
 
-const padding = ref(props.data.config.css.padding)
+const padding = ref(null)
+const background = ref('#ffffff')
+
+onMounted(() => {
+  if (props.data.config.css.padding) {
+    padding.value = props.data.config.css.padding
+  }
+
+  if (props.data.config.css.backgroundColor) {
+    background.value = props.data.config.css.backgroundColor
+  }
+})
+
+watch(
+  () => props.data.config.css.backgroundColor,
+  (backgroundColor) => {
+    background.value = backgroundColor
+  }
+)
 
 const addBlock = (pos, block) => {
   const name = block.replace(" ", "")

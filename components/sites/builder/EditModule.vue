@@ -2,20 +2,24 @@
 div()
   v-bottom-navigation(
       :active="sheet"
-      height="300"
+      height="350"
       style="background-color:transparent;"
   )
     v-card.w-100.pa-4(style="background-color:rgb(255 255 255 / 70%); backdrop-filter:blur(10px);")
-      v-card-title.d-flex.flex-row.align-center.font-weight-bold(
+      v-card-title.pa-0.d-flex.flex-row.align-center.font-weight-bold(
       style="font-size: 18px")
         p Customize {{ getBlockTitle(comp?.childBlock[0]._uid) }}
         v-spacer
         v-icon.cursor-pointer.ml-auto.mr-4(@click="dialogDelete = true" size="x-small" color="red") mdi-trash-can-outline
         v-icon.cursor-pointer.ml-auto(@click="$emit('update:modelValue', false)") mdi-close-circle-outline
-      v-card-text(style="height:100%; overflow-y: scroll")
+      v-card-text.pa-0(style="height:100%; overflow-y: scroll")
         //- p {{ comp?.config.css.padding }}
         //- p.text-capitalize {{ getBlockTitle(comp?.childBlock[0]._uid) }} 
         //-     |  {{ '#'+comp?.childBlock[0]._uid}}
+        v-row(v-if="comp")
+          v-col(cols='12')
+            p.mb-1.label Layout Background
+            v-text-field(v-model="comp.config.css.backgroundColor" type="color" variant="outlined" density="compact" hide-details="auto" @update:model-value="updateCss")
         v-row(v-if="comp")
           v-col(cols='12' md='3')
             p.mb-1.label Layout Padding
@@ -31,19 +35,28 @@ div()
                 density="compact" hide-details="auto" suffix="px" @update:model-value="updateCss")
               v-col.pa-2(cols="6")
                 v-text-field(v-model="comp.config.css.padding.right" variant="outlined" label="Right" type="number" density="compact" hide-details="auto" suffix="px" @update:model-value="updateCss")
-          v-col(cols='12' md='5' v-if="getBlockTitle(comp.childBlock[0]._uid) !== 'image'")
+          v-col(cols='12' md='4' v-if="getBlockTitle(comp.childBlock[0]._uid) !== 'image'")
             p.mb-1.label Font Style
             v-row.ma-0
-              v-col.pa-2(cols="6")
+              v-col.pa-2(cols="12")
                 v-select(v-model="comp.childBlock[0].config.css.font.family" :items="fontList" label="Family" variant="outlined" density="compact" hide-details="auto" @update:model-value="updateCss")
-              v-col.pa-2(cols="6")
+            v-row.ma-0
+              v-col.pa-2(cols="4")
                 v-select(v-model="comp.childBlock[0].config.css.font.size" :items="getFontSize(comp.childBlock[0]._uid)" label="Size" variant="outlined" density="compact" hide-details="auto" @update:model-value="updateCss")
+              v-col.pa-2(cols="4")
+                v-text-field(v-model="comp.childBlock[0].config.css.font.color" type="color" label="Color" variant="outlined" density="compact" hide-details="auto" @update:model-value="updateCss")
+              v-col.pa-2(cols="4")
+                v-select(v-model="comp.childBlock[0].config.css.font.weight" :items="['300', '400', '500', '600', '700', '800', '900']" label="Weight" variant="outlined" density="compact" hide-details="auto" @update:model-value="updateCss")
+          v-col(cols='12' md='4' v-if="getBlockTitle(comp.childBlock[0]._uid) === 'image'")
+            p.mb-1.label Image
+            v-row.ma-0
+              v-col.pa-2(cols="12")
+                v-text-field(type="url" label="URL" variant="outlined" density="compact" hide-details="auto" @update:model-value="updateContent(comp.childBlock[0]._uid, $e)")
             v-row.ma-0
               v-col.pa-2(cols="6")
-                v-text-field(type="color" label="Color" variant="outlined" density="compact" hide-details="auto" @update:model-value="updateCss")
+                v-text-field(type="number" label="Width" variant="outlined" density="compact" hide-details="auto" @update:model-value="" suffix="px")
               v-col.pa-2(cols="6")
-                v-select(:items="['300', '400', '500', '600', '700', '800', '900']" label="Weight" variant="outlined" density="compact" hide-details="auto" @update:model-value="updateCss")
-          v-col(cols='12' md='4')
+                v-text-field(type="number" label="Height" variant="outlined" density="compact" hide-details="auto" @update:model-value="" suffix="px")
 
   //- delete dialog
   v-dialog(v-model="dialogDelete", scrollable, persistent, max-width="300px")
@@ -67,7 +80,7 @@ const props = defineProps({
   modelValue: Boolean,
   data: Object
 })
-const emit = defineEmits(["update:modelValue", "updateCSS", "deleteBlock"]);
+const emit = defineEmits(["update:modelValue", "updateCSS", "deleteBlock", "updateContent"]);
 
 const comp = ref(null)
 const dialogDelete = ref(false)
@@ -174,6 +187,11 @@ function getFontSize(id) {
 function updateCss() {
   // comp.value.config.css = css.value
   emit('updateCSS', comp.value)
+}
+
+function updateImage(id, img) {
+  console.log(id, img);
+  // emit('updateContent', { parentId: props.data._uid, elementId: id, content: img })
 }
 
 function deleteLayout(id) {

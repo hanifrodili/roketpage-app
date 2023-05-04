@@ -1,5 +1,5 @@
 <template lang="pug">
-img.mx-auto(title="image" :src="content" width="100%" :id="data._uid" style="height:300px; min-width:300px; display:flex; justify-content:center")
+img.mx-auto(title="image" :src="content" :id="data._uid" style="min-height:300px; min-width:300px; display:flex; justify-content:center")
 </template>
 
 <script setup>

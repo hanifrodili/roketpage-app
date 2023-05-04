@@ -4,9 +4,9 @@ div
     component(:is="component.component" :data="component" :pages="userPages" :pageId="pageID" :editMode="editMode")
   .d-flex.flex-column(style="position:fixed; bottom: 10px; right:10px; gap:10px")
     a(@click="$router.push(`/admin/pages/builder/${pageID}`)")
-      v-btn( @click="" variant="outlined" icon="mdi-pencil" size="x-small")
+      v-btn(style="background-color: rgb(255,255,255, 30%); backdrop-filter: blur(4px);" @click="" variant="outlined" icon="mdi-pencil" size="x-small")
     a(@click="$router.push(`/admin/pages`)")
-      v-btn( @click="" variant="outlined" icon="mdi-home" size="x-small")
+      v-btn(style="background-color: rgb(255,255,255, 30%); backdrop-filter: blur(4px);" @click="" variant="outlined" icon="mdi-home" size="x-small")
     
 </template>
 

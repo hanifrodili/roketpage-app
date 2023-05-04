@@ -252,7 +252,8 @@ const createNewPage = () => {
             "right": 0,
             "bottom": 0,
             "left": 0
-          }
+          },
+          "backgroundColor": "#ffffff"
         }
       },
       "childBlock": [
@@ -261,7 +262,7 @@ const createNewPage = () => {
           "component": "HeadingH1",
           "name": "HeadingH1",
           "config": {
-            "content": "Biji Kopi Premium",
+            "content": "Tajuk Laman Anda",
             "css": {
               "padding": {
                 "top": 0,
@@ -272,6 +273,8 @@ const createNewPage = () => {
               "font": {
                 "family": "Open Sans",
                 "size": "32px",
+                "weight": "revert",
+                "color": "black",
               }
             }
           }
@@ -289,7 +292,8 @@ const createNewPage = () => {
             "right": 0,
             "bottom": 0,
             "left": 0
-          }
+          },
+          "backgroundColor": "#ffffff"
         }
       },
       "childBlock": [
@@ -309,6 +313,8 @@ const createNewPage = () => {
               "font": {
                 "family": "Open Sans",
                 "size": "16px",
+                "weight": "revert",
+                "color": "black",
               }
             }
           }
@@ -326,7 +332,8 @@ const createNewPage = () => {
             "right": 0,
             "bottom": 0,
             "left": 0
-          }
+          },
+          "backgroundColor": "#ffffff"
         }
       },
       "childBlock": [
@@ -346,6 +353,8 @@ const createNewPage = () => {
               "font": {
                 "family": "Open Sans",
                 "size": "16px",
+                "weight": "revert",
+                "color": "black",
               }
             }
           }
@@ -363,7 +372,8 @@ const createNewPage = () => {
             "right": 0,
             "bottom": 0,
             "left": 0
-          }
+          },
+          "backgroundColor": "#ffffff"
         }
       },
       "childBlock": [
@@ -383,6 +393,8 @@ const createNewPage = () => {
               "font": {
                 "family": "Open Sans",
                 "size": "16px",
+                "weight": "revert",
+                "color": "black",
               }
             }
           }
@@ -400,7 +412,8 @@ const createNewPage = () => {
             "right": 0,
             "bottom": 0,
             "left": 0
-          }
+          },
+          "backgroundColor": "#ffffff"
         }
       },
       "childBlock": [
@@ -420,6 +433,8 @@ const createNewPage = () => {
               "font": {
                 "family": "Open Sans",
                 "size": "16px",
+                "weight": "revert",
+                "color": "black",
               }
             }
           }

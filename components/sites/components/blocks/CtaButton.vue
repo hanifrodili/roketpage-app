@@ -1,5 +1,5 @@
 <template lang="pug">
-button.mx-auto(:id="data._uid" title="button" :style="{fontFamily:css?.font.family, fontSize:css?.font.size}")
+button.mx-auto(:id="data._uid" title="button" :style="{fontFamily:css?.font.family, fontSize:css?.font.size,fontWeight:css?.font.weight, color:css?.font.color}")
   span(:contenteditable="editable") {{ content }}
 </template>
 

@@ -1,7 +1,7 @@
 <template lang="pug">
 .mypage-builder
   sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" @toggleAdd="toggleAdd" style="width:100%;")
-  div.py-3.ignored(id="builder" style="height:calc(100vh - 64px - 48px); overflow-y:scroll")
+  div.pb-3.ignored(id="builder" style="height:calc(100vh - 64px - 48px); overflow-y:scroll")
     template(v-for="(component, index) in userComponents" :key="component._uid")
       component(:is="component.component" :data="component" :pages="userPages" :pageId="pageID" :editMode="editMode" @updateContent="updateContent")
       //- .menuBtn.d-flex.flex-row()
@@ -338,6 +338,8 @@ export default {
   // display: block;
   // position: absolute;
   // transform: translateY(-50%) translateX(-50%);\
+  height: 24px;
+  width: 24px;
   z-index: 2;
   opacity: 1;
   color: #acacac;
@@ -351,6 +353,6 @@ export default {
 </style>
 <style>
 .editActive {
-  border: 2px solid rgb(67, 175, 67);
+  border: 1.5px solid #18ed9a;
 }
 </style>
