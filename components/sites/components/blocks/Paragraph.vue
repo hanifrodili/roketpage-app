@@ -1,5 +1,5 @@
 <template lang="pug">
-p.mx-auto(:id="data._uid" title="paragraph" style="text-align:justify; max-width:50rem; letter-spacing:-0.03em" :style="{fontFamily:css?.font.family, fontSize:css?.font.size,fontWeight:css?.font.weight, color:css?.font.color}" :contenteditable="editable") {{ content }}
+p.mx-auto(:id="data._uid" title="paragraph" style="text-align:justify; max-width:50rem; letter-spacing:-0.03em" :style="{fontFamily:css?.font.family, fontSize:css?.font.size,fontWeight:css?.font.weight, color:css?.font.color}" :contenteditable="editable") {{ removeTags(content) }}
 </template>
 
 <script setup>
@@ -26,6 +26,10 @@ onMounted(() => {
     css.value = props.data.config.css
   }
 })
+
+function removeTags(content) {
+  return content.replace(/<(?:br|\/div)>/g, "\n").replace(/<.*?>/g, "");
+}
 </script>
 
 <style lang="scss" scoped></style>

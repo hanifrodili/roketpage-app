@@ -84,9 +84,15 @@
           hide-details="auto",
           density="compact"
           clearable)
-        v-checkbox.mb-1(v-model="hasForm", label="With form" density="compact" hide-details="auto")
+        //- v-checkbox.mb-1(v-model="hasForm", label="With form" density="compact" hide-details="auto")
         v-select.mb-3(
-          v-if="hasForm",
+          v-model="formType",
+          label="Form Type",
+          :items="formTypeList"
+          hide-details="auto"
+          density="compact"
+          variant="outlined")
+        v-select.mb-3(
           v-model="pageProducts",
           chips,
           label="Choose Product",
@@ -96,29 +102,30 @@
           hide-details="auto"
           density="compact"
           variant="outlined")
-        div(v-if="hasForm" )
-          v-checkbox.mb-1(v-model="hasPayment", label="Allow payment" density="compact" hide-details="auto")
-          v-select.mb-3(
-            v-if="hasPayment",
-            v-model="pagePayments",
-            chips,
-            label="Choose Payment Options",
-            :items="paymentOptions"
-            hide-details="auto"
-            density="compact"
-            multiple
-            variant="outlined")
-          v-checkbox.mb-1(v-model="hasShipping", label="Has shipping" density="compact" hide-details="auto")
-          v-select.mb-3(
-            v-if="hasShipping",
-            v-model="pageShipping",
-            chips,
-            label="Choose Shipping Options",
-            :items="shippingOptions"
-            hide-details="auto"
-            density="compact"
-            multiple
-            variant="outlined")
+        //- div(v-if="hasForm" )
+        //- v-checkbox.mb-1(v-model="hasPayment", label="Allow payment" density="compact" hide-details="auto")
+        v-select.mb-3(
+          v-if="formType === 'Payment'",
+          v-model="pagePayments",
+          chips,
+          label="Choose Payment Options",
+          :items="paymentOptions"
+          hide-details="auto"
+          density="compact"
+          multiple
+          variant="outlined")
+        //- v-checkbox.mb-1(v-model="hasShipping", label="Has shipping" density="compact" hide-details="auto")
+        v-select.mb-3(
+          v-if="formType === 'Payment'",
+          v-model="pageShipping",
+          chips,
+          label="Choose Shipping Options",
+          :items="shippingOptions"
+          hide-details="auto"
+          density="compact"
+          multiple
+          variant="outlined")
+        div(v-if="formType === 'Leads'",)
           p.font-weight-bold.mt-4.mb-1 Customer Info
           v-card.general-card
             v-card-text.pa-0
@@ -143,10 +150,15 @@ const pageProducts = ref([])
 const pagePayments = ref([])
 const pageShipping = ref([])
 const hasForm = ref(true)
+const formType = ref(null)
 const hasPayment = ref(false)
 const hasShipping = ref(false)
 const userPages = ref([])
 const products = ref([])
+const formTypeList = ref([
+  'Payment',
+  'Leads',
+])
 const paymentOptions = ref([
   'FPX',
   'Bank Transfer',
@@ -233,9 +245,9 @@ const createNewPage = () => {
   newpage['id'] = id
   newpage['title'] = title
   newpage['description'] = description
-  newpage['hasForm'] = hasForm.value
-  newpage['hasPayment'] = hasPayment.value
-  newpage['hasShipping'] = hasShipping.value
+  newpage['formType'] = formType.value
+  // newpage['hasPayment'] = hasPayment.value
+  // newpage['hasShipping'] = hasShipping.value
   newpage['products'] = pageProducts.value
   newpage['paymentOptions'] = pagePayments.value
   newpage['shippingOptions'] = pageShipping.value

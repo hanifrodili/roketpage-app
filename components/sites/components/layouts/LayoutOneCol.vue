@@ -100,7 +100,7 @@ const updateContent = (id) => {
     content = el.children[0].innerHTML
   }
 
-  console.log(content);
+  // console.log(content);
   emits('updateContent', {parentId:props.data._uid, elementId:id, content:content})
 }
 

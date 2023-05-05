@@ -24,7 +24,7 @@
           :blockList="Layouts")
         .add-block()
           v-btn.btn-add.ignored(@click="addBlock(0, 'OneColumn')" variant="text" icon="mdi-plus-circle-outline")
-  sites-builder-edit-module(v-model="openEdit" :data="onEditComponent" @updateCSS="updateCSS" @deleteBlock="removeBlock")
+  sites-builder-edit-module(v-model="openEdit" :data="onEditComponent" @updateCSS="updateCSS" @deleteBlock="deleteBlock")
 </template>
 <script setup>
 import { useDisplay } from "vuetify";
@@ -217,8 +217,8 @@ const addBlock = (pos, block) => {
 };
 
 const deleteBlock = (id) => {
-  const removeIndex = userComponents.value.map(item => item._uid).indexOf(id);
   openEdit.value = false
+  const removeIndex = userComponents.value.map(item => item._uid).indexOf(id);
   if(removeIndex >= 0) {
     userComponents.value.splice(removeIndex, 1);
   }
