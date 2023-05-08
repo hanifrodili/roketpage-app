@@ -81,9 +81,11 @@ export default defineNuxtConfig({
   routeRules: {
     "/": { redirect: "/signin" }
   },
-  server: {
+  devServer: {
     port: process.env.PORT,
+    host: "0"
   },
+
   css: [
     "vuetify/lib/styles/main.sass",
     "@mdi/font/css/materialdesignicons.min.css",

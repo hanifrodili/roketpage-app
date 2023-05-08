@@ -1,8 +1,8 @@
 <template lang="pug">
 div.d-flex.flex-row.align-center.px-2.bg-primary(style="z-index:150;")
-  router-link.mr-1(to="/admin/pages" target="_self" )
-    v-btn(icon="mdi-arrow-left" variant="text" color="black")
-  p.ma-0 {{pageTitle}}
+  router-link(to="/admin/pages" target="_self" )
+    v-btn(icon="mdi-arrow-left" variant="text" color="black" size="small")
+  p.ma-0.mr-4.text-truncate {{pageTitle}}
   v-spacer
   v-btn.mr-1( @click="toggleAddBtn" variant="outlined" size="x-small" rounded="lg")
     .d-flex.flex-row.align-center(style="gap:4px")

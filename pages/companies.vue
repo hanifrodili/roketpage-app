@@ -1,6 +1,7 @@
 <template lang="pug">
-div
-  company-main-company
+v-layout
+  v-main
+    company-main-company
 </template>
 
 <script setup>

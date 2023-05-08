@@ -1,39 +1,10 @@
 <template lang="pug">
 .page-content
   sites-filter-sites.mb-4
-  v-row()
-    v-col(cols="6" sm="3", v-for="page in userPages", :key="page.id")
-      v-card.d-flex.flex-column.justify-space-between.page-card()
-        v-card-text.pa-4.pb-0
-          .d-flex.flex-column.justify-space-between(style="height: 100%")
-            a(@click="$router.push(`/admin/pages/builder/${page.id}`)")
-              p.font-weight-bold(style="font-size:15px") {{ page.title }}
-            p.mb-0(style="font-size:10px; line-height: 14px; color:#767676")
-              i {{ $t("lastupdate") }}: {{ fTime(page.lastUpdate) }}
-        v-card-actions.pa-2
-          v-spacer
-          v-btn.mx-1(
-            @click="dialogDelete = true",
-            icon="mdi-trash-can",
-            color="red",
-            size="small")
-          //- p.mb-0 |
-          //- router-link(:to="{ name: 'MyPageBuilderPreview', params: { id: page.id }}" target="_blank")
-            v-btn.mx-1(icon color="success" small)
-              v-icon mdi-eye-outline
-          a(@click="$router.push(`/admin/pages/builder/${page.id}`)")
-            v-btn.mx-1(icon="mdi-pencil" color="primary" size="small")
-        v-dialog(v-model="dialogDelete" scrollable persistent max-width="300px")
-          v-card()
-            v-card-text.pa-4
-              div
-                p Confirm Delete?
-                p.font-weight-bold This action can't be undo
-            v-card-actions.pa-4
-              v-spacer
-              v-btn(variant="text" color="secondary" @click="deletePage(page.id)") Yes
-              v-btn.elevation-0(color="red" variant="tonal" @click="dialogDelete=false") No
-    v-col(cols="6" sm="3")
+  v-row(dense)
+    v-col(cols="12" sm="6" md="4", v-for="page in userPages", :key="page.id")
+      sites-page-form-card(:data="page" @delete="deletePage")
+    v-col(cols="12" sm="6" md="4" )
       v-card.new-card.d-flex(@click="formFields = defaultFormFields, dialogAdd=true, newPageID = `page-${randID(5)}`")
         v-card-text.text-center.ma-auto
           .mt-6
@@ -41,22 +12,6 @@
             p.mb-0.text-secondary(style="font-size: 12px") {{ $t("create") }}
 
   //- dialogs
-  //- delete dialog
-  v-dialog(v-model="dialogDelete", scrollable, persistent, max-width="300px")
-    v-card
-      v-card-text.pa-4
-        div
-          p Confirm Delete?
-          p.font-weight-bold This action can't be undo
-            
-      v-card-actions
-        v-spacer
-        v-btn(variant="text", color="secondary", @click="deletePage(page.id)") Yes
-        v-btn.elevation-0(
-          color="red",
-          variant="tonal",
-          @click="dialogDelete = false") No
-
   //- add dialog
   general-dialog-type-a(v-model="dialogAdd", persistent)
     template(#title)
@@ -99,6 +54,7 @@
           :items="products"
           item-title="name"
           item-value="id"
+          return-object
           hide-details="auto"
           density="compact"
           variant="outlined")
@@ -142,7 +98,6 @@
 
 <script setup>
 const dialogAdd = ref(false)
-const dialogDelete = ref(false)
 const newPageID = ref('')
 const newPageTitle = ref('')
 const newPageDescription = ref('')
