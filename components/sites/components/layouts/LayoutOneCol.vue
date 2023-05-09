@@ -20,17 +20,13 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  pages: {
-    type: Array,
-    default: []
-  },
   editMode: {
     type: Boolean,
     default: false
   }
 })
 
-const emits = defineEmits(['updateContent'])
+const emits = defineEmits(['updateContent', 'addChild'])
 
 const components = ref(props.data.childBlock)
 
@@ -78,19 +74,7 @@ const addBlock = (pos, block) => {
     }
   }
   components.value.splice(pos, 0, newBlock)
-  props.pages.forEach(item => {
-    if (item.id === props.pageId) {
-      item.components.forEach(comp => {
-        if (comp._uid === props.data._uid) {
-          comp.childBlock = components.value
-        }
-      })
-      const d = new Date()
-      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
-    }
-  })
-  console.log(props.pages);
-  window.localStorage.setItem('userPages', JSON.stringify(props.pages))
+  emits('addChild', components.value)
 }
 
 const updateContent = (id) => {

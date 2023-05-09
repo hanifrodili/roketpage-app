@@ -1,5 +1,5 @@
 <template lang="pug">
-h2.mx-auto(:id="data._uid" title="heading" style="text-align:center; max-width:31rem; text-wrap:balance;" :style="{fontFamily:css?.font.family, fontSize:css?.font.size,fontWeight:css?.font.weight, color:css?.font.color}" :contenteditable="editable") {{ content }}
+h2.mx-auto(:id="data._uid" title="heading" style="text-align:center; max-width:31rem; text-wrap:balance;" :style="{fontFamily:css?.font.family, fontSize:css?.font.size,fontWeight:css?.font.weight, color:css?.font.color}" :contenteditable="editable" spellcheck="false") {{ content }}
 </template>
 
 <script setup>

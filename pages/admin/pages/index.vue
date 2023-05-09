@@ -3,7 +3,7 @@
   sites-filter-sites.mb-4
   v-row(dense)
     v-col(cols="12" sm="6" md="4", v-for="page in userPages", :key="page.id")
-      sites-page-form-card(:data="page" @delete="deletePage")
+      sites-page-form-card(:data="page" :products="products" @delete="deletePage")
     v-col(cols="12" sm="6" md="4" )
       v-card.new-card.d-flex(@click="formFields = defaultFormFields, dialogAdd=true, newPageID = `page-${randID(5)}`")
         v-card-text.text-center.ma-auto
@@ -54,7 +54,6 @@
           :items="products"
           item-title="name"
           item-value="id"
-          return-object
           hide-details="auto"
           density="compact"
           variant="outlined")
@@ -66,6 +65,8 @@
           chips,
           label="Choose Payment Options",
           :items="paymentOptions"
+          item-title="name"
+          item-value="id"
           hide-details="auto"
           density="compact"
           multiple
@@ -77,6 +78,8 @@
           chips,
           label="Choose Shipping Options",
           :items="shippingOptions"
+          item-title="name"
+          item-value="id"
           hide-details="auto"
           density="compact"
           multiple
@@ -97,6 +100,13 @@
 </template>
 
 <script setup>
+import { useStoreUser } from '~/store/storeMerchant'
+
+const supabase = useSupabaseAuthClient()
+const userStore = useStoreUser()
+const snackbar = useSnackbar()
+const router = useRouter()
+
 const dialogAdd = ref(false)
 const newPageID = ref('')
 const newPageTitle = ref('')
@@ -115,14 +125,32 @@ const formTypeList = ref([
   'Leads',
 ])
 const paymentOptions = ref([
-  'FPX',
-  'Bank Transfer',
-  'Cash on Delivery'
+  {
+    id: 1,
+    name: "FPX",
+  },
+  {
+    id: 2,
+    name: "Bank Transfer",
+  },
+  {
+    id: 3,
+    name: "Cash on Delivery",
+  }
 ])
 const shippingOptions = ref([
-  'PosLaju',
-  'NinjaVan',
-  'J&T',
+  {
+    id: 1,
+    name: "PosLaju",
+  },
+  {
+    id: 2,
+    name: "NinjaVan",
+  },
+  {
+    id: 3,
+    name: "J&T",
+  }
 ])
 const defaultFormFields = ref([
   {
@@ -147,34 +175,36 @@ const defaultFormFields = ref([
 const formFields = ref([])
 const company_id = ref('')
 
-const router = useRouter()
-const supabase = useSupabaseAuthClient()
-const userStore = useStoreUser()
-
 definePageMeta({
   middleware: 'auth',
   name: 'pages'
 })
 
 onMounted(async () => {
-  const savedPages = JSON.parse(window.localStorage.getItem('userPages'))
-  if (savedPages === null) {
-    window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
-  } else {
-    userPages.value = savedPages;
-  }
-
   userStore.getUser()
   company_id.value = userStore.user.current_company.id
+  getProducts()
+  getPages()
+})
 
+const getProducts = async () => {
   let { data: product, error, count } = await supabase
     .from('product')
     .select('*', { count: "exact" })
     .eq('company_id', company_id.value)
     .eq('published', true)
+  
+    products.value = product
+}
 
-  products.value = product
-})
+const getPages = async () => {
+  let { data: pages, error, count } = await supabase
+    .from('pages')
+    .select('*', { count: "exact" })
+    .eq('company_id', company_id.value)
+    // .eq('published', true)
+  userPages.value = pages
+}
 
 const randID = (len) => {
   var length = len;
@@ -188,26 +218,14 @@ const randID = (len) => {
   return result;
 };
 
-const createNewPage = () => {
+const createNewPage = async () => {
   let id = newPageID.value.split(" ").join("-");
   id = id.split(".").join("-");
   const title = newPageTitle.value;
   const description = newPageDescription.value;
-  // console.log(hasForm.value);
-  // console.log(pageProducts.value);
-  const d = new Date()
-  let newpage = {}
-  newpage['id'] = id
-  newpage['title'] = title
-  newpage['description'] = description
-  newpage['formType'] = formType.value
-  // newpage['hasPayment'] = hasPayment.value
-  // newpage['hasShipping'] = hasShipping.value
-  newpage['products'] = pageProducts.value
-  newpage['paymentOptions'] = pagePayments.value
-  newpage['shippingOptions'] = pageShipping.value
-  newpage['lastUpdate'] = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
-  newpage['components'] = [
+  const products = [pageProducts.value]
+
+  const defaultComponent = [
     {
       "_uid": randID(10),
       "component": "OneColumn",
@@ -410,8 +428,37 @@ const createNewPage = () => {
     }
   ]
 
-  userPages.value.push(newpage)
-  window.localStorage.setItem('userPages', JSON.stringify(userPages.value))
+  const resp = await supabase
+    .from('pages')
+    .insert([
+      {
+        company_id: company_id.value,
+        slug: id,
+        title: title,
+        description: description,
+        formType: formType.value,
+        products: products,
+        paymentOptions: pagePayments.value,
+        shippingOptions: pageShipping.value,
+        components: defaultComponent
+      },
+    ])
+
+  // console.log(resp);
+
+  if (resp.status === 201) {
+    snackbar.add({
+      type: 'success',
+      text: `Page ${title} created !`
+    })
+  }
+
+  if (resp.error) {
+    snackbar.add({
+      type: 'error',
+      text: resp.error.message
+    })
+  }
   newPageID.value = ''
   newPageTitle.value = ''
   dialogAdd.value = false
@@ -423,14 +470,6 @@ const deletePage = (id) => {
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
   dialogDelete.value = false;
 };
-
-function fTime(datetime) {
-  const date = new Date(datetime);
-  const options = { timeZone: 'Asia/Kuala_Lumpur', day: '2-digit', month: '2-digit', year: 'numeric',  hour12: true, hour: '2-digit', minute: '2-digit' };
-  const formattedTime = date.toLocaleTimeString('en-MY', options);
-
-  return formattedTime
-}
 
 function updateField(e){
   let obj = e
@@ -447,7 +486,7 @@ a {
   text-decoration: none;
 }
 
-.new-card, .page-card {
+.new-card{
   border: 1px solid rgb(var(--v-theme-secondary)) !important;
   /* background-color: transparent; */
   box-shadow: none !important;
@@ -456,7 +495,7 @@ a {
 }
 
 .new-card:hover {
-  background-color: rgb(var(--v-theme-primary));
+  background-color: rgba(var(--v-theme-primary),0.2);
 }
 
 /*:deep(.v-text-field--filled>.v-input__control>.v-input__slot) {

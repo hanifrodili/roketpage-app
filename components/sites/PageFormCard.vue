@@ -6,20 +6,26 @@
       div.d-flex.flex-column(style="gap:4px")
         p.page-title {{ data.title }}
         p.page-description {{ data.description }}
+
       v-spacer
+
       div.d-flex.flex-column(style="gap:4px")
         p.sub-label Product
-        div.d-flex.flex-row.product-card
-          img(src="https://ik.imagekit.io/hanifrodili/coffee-bean.png?updatedAt=1683528093024" alt="product image" height="100" width="100")
+        div.d-flex.flex-row.product-card(v-for="(prod, index) in data.products" :key="index")
+          img(:src="getProduct(prod)?.image" alt="product image" height="100" width="100" style="object-fit: cover; object-position: center;")
           div.d-flex.flex-column.product-info
-            p.title {{ data.products.name }}
-            p.description {{ data.products.description }}
+            p.title {{ getProduct(prod)?.name }}
+            p.description {{ getProduct(prod)?.description }}
+        
       div.d-flex.flex-row.align-center(style="gap:10px; padding-top:10px")
         v-btn.delete-button(variant="text" icon="mdi-trash-can-outline" color="#DA4453" size="small" height="28" width="28" @click="dialogDelete=true")
         div.d-flex.flex-row.justify-space-evenly.w-100(style="gap:10px")
           v-btn.text-capitalize.flex-grow-1(variant="outlined" color="#4E4E4E" size="small" rounded="lg") Edit Form
-          v-btn.text-capitalize.flex-grow-1(variant="outlined" color="#4E4E4E" size="small" rounded="lg" @click="$router.push(`/admin/pages/builder/${data.id}`)") Edit Page
-      v-btn.text-capitalize(variant="tonal" color="#624EC4" size="small" rounded="lg" @click="$router.push(`/admin/pages/preview/${data.id}`)") Preview Page
+          v-btn.text-capitalize.flex-grow-1(variant="outlined" color="#4E4E4E" size="small" rounded="lg" @click="$router.push(`/admin/pages/builder/${data.slug}`)") Edit Page
+
+      v-btn.text-capitalize(variant="flat" color="#11ed9a" size="small" rounded="lg" @click="$router.push(`/admin/pages/preview/${data.slug}`)") Preview Page
+
+      p.font-italic(style="font-size:10px; color:#ababab") Last update: {{ fTime(data.updated_at) }}
   
   v-dialog(v-model="dialogDelete" scrollable persistent max-width="300px")
     v-card()
@@ -35,8 +41,20 @@
 
 <script setup>
 const dialogDelete = ref(false)
-const props = defineProps(['data'])
+const props = defineProps(['data', 'products'])
 const emit = defineEmits(['delete'])
+
+const getProduct = (id) => {
+  return props.products.find(x => x.id === id)
+}
+
+function fTime(datetime) {
+  const date = new Date(datetime);
+  const options = { timeZone: 'Asia/Kuala_Lumpur', day: '2-digit', month: '2-digit', year: 'numeric', hour12: true, hour: '2-digit', minute: '2-digit' };
+  const formattedTime = date.toLocaleTimeString('en-MY', options);
+
+  return formattedTime
+}
 </script>
 
 <style lang="scss" scoped>

@@ -3,28 +3,15 @@
   sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" @toggleAdd="toggleAdd" style="width:100%;")
   div.pb-3.ignored(id="builder" style="height:calc(100vh - 64px - 48px); overflow-y:scroll")
     template(v-for="(component, index) in userComponents" :key="component._uid")
-      component(:is="component.component" :data="component" :pages="userPages" :pageId="pageID" :editMode="editMode" @updateContent="updateContent")
-      //- .menuBtn.d-flex.flex-row()
-      //-   sites-builder-speed-menu.ml-auto(style="margin-top:-55px; margin-right: 20px")
-      //- sites-builder-add-block.ignored(
-        v-if="showAdd" 
-        :position="index",
-        @addBlock="addBlock",
-        :blockList="Layouts")
+      component(:is="component.component" :data="component" :pageId="pageID" :editMode="editMode" @updateContent="updateBlockContent" @addChild="updateLayout")
       .add-block.ignored(v-if="showAdd")
         v-btn.btn-add.ignored(@click="addBlock(index + 1, 'OneColumn')" variant="text" icon="mdi-plus-circle-outline")
     .pt-10.ignored(v-if="userComponents.length === 0")
       .d-flex.flex-column.align-center.justify-center.ignored(
         style="height: 100px; border: 0.5px dashed #d0d0d0;")
-        //- hr(
-          style="border: 0.5px dashed #d0d0d0; width: 100%")
-        //- sites-builder-add-block(
-          :position="-1",
-          @addBlock="addBlock",
-          :blockList="Layouts")
         .add-block()
           v-btn.btn-add.ignored(@click="addBlock(0, 'OneColumn')" variant="text" icon="mdi-plus-circle-outline")
-  sites-builder-edit-module(v-model="openEdit" :data="onEditComponent" @updateCSS="updateCSS" @deleteBlock="deleteBlock")
+  sites-builder-edit-module(v-model="openEdit" :data="onEditComponent" @updateCSS="updateLayout" @deleteBlock="deleteBlock")
 </template>
 <script setup>
 import { useDisplay } from "vuetify";
@@ -32,13 +19,16 @@ import Layouts from "~/components/sites/components/layouts";
 
 const { width } = useDisplay();
 const route = useRoute();
+const supabase = useSupabaseAuthClient()
+const userStore = useStoreUser()
+
+const company_id = ref('')
 const editMode = ref(true)
 const openEdit = ref(false)
 const clickedEl = ref(null)
 const onEditComponent = ref(null)
 const showAdd = ref(true)
 
-const userPages = ref([]);
 const userComponents = ref([]);
 const pageID = ref("");
 const pageTitle = ref("");
@@ -50,15 +40,9 @@ definePageMeta({
 
 onMounted(() => {
   pageID.value = route.params.id;
-  userPages.value = JSON.parse(window.localStorage.getItem("userPages"));
-  if (userPages.value.length > 0) {
-    userPages.value.forEach((item) => {
-      if (item.id === pageID.value) {
-        userComponents.value = item.components;
-        pageTitle.value = item.title;
-      }
-    });
-  }
+  userStore.getUser()
+  company_id.value = userStore.user.current_company.id
+  getPage()
   document.getElementById("builder").addEventListener('click', (e) => {
     const el = e.target
     // const classList = el.classList.value.split(" ")
@@ -123,6 +107,17 @@ watch(openEdit, (newOpenEdit) => {
   }
 })
 
+const getPage = async () => {
+  let { data: page, error, count } = await supabase
+    .from('pages')
+    .select('*', { count: "exact" })
+    .eq('company_id', company_id.value)
+    .eq('slug', pageID.value)
+    .single()
+  userComponents.value = page.components;
+  pageTitle.value = page.title;
+}
+
 const removeDuplicateBlock = (e) => {
   const uniqueBlock = Array.from(
     e.reduce((map, obj) => map.set(obj.reuseBlockID, obj), new Map()).values()
@@ -140,7 +135,7 @@ const removeBlock = (id) => {
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
 };
 
-const updateContent = (e) => {
+const updateBlockContent = async (e) => {
   userComponents.value.forEach((component, index) => {
     if (component._uid === e.parentId) {
       const comps = userComponents.value[index].childBlock
@@ -152,31 +147,26 @@ const updateContent = (e) => {
     }
   });
   // console.log(userComponents.value);
-  userPages.value.forEach((item) => {
-    if (item.id === pageID.value) {
-      item.components = userComponents.value;
-      const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-    }
-  });
-  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
+  
+  const { data, error } = await supabase
+    .from('pages')
+    .update({ components: userComponents.value, updated_at: 'now()' })
+    .eq('company_id', company_id.value)
+    .eq('slug', pageID.value)
 };
 
-const updateCSS = (e) => {
+const updateLayout = async (e) => {
   userComponents.value.forEach((component, index) => {
     if (component._uid === e._uid) {
       component = e
     }
   });
   // console.log(userComponents.value);
-  userPages.value.forEach((item) => {
-    if (item.id === pageID.value) {
-      item.components = userComponents.value;
-      const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-    }
-  });
-  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
+  const { data, error } = await supabase
+    .from('pages')
+    .update({ components: userComponents.value, updated_at: 'now()' })
+    .eq('company_id', company_id.value)
+    .eq('slug', pageID.value)
 }
 
 const toggleAdd = (e) => {
@@ -186,12 +176,10 @@ const toggleAdd = (e) => {
 const addBlock = (pos, block) => {
   const name = block.replace(" ", "");
   const newBlockID = randID(10);
-  // const reuseBlockID = randNum(5)
   let newBlock = {
     _uid: newBlockID,
     component: name,
     name: name,
-    // reuseBlockID: reuseBlockID,
     config: {
       css: {
         padding: {
@@ -205,15 +193,6 @@ const addBlock = (pos, block) => {
     childBlock: [],
   };
   userComponents.value.splice(pos, 0, newBlock);
-  userPages.value.forEach((item) => {
-    if (item.id === pageID.value) {
-      item.components = userComponents.value;
-      const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
-        }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-    }
-  });
-  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
 };
 
 const deleteBlock = (id) => {
@@ -230,58 +209,43 @@ const deleteBlock = (id) => {
   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
 }
 
-const reuseBlock = (pos, blockData) => {
-  let block = JSON.parse(blockData);
-  block._uid = randID(10);
-  userComponents.value.splice(pos, 0, block);
-  userPages.value.forEach((item) => {
-    if (item.id === pageID.value) {
-      item.components = userComponents.value;
-      const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
-        }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-    }
-  });
-  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
-};
+// const moveBlockUp = (id, index) => {
+//   if (index === 0) {
+//     alert("Already on top");
+//     return;
+//   }
+//   const element = userComponents.value[index];
+//   userComponents.value.splice(index, 1);
+//   userComponents.value.splice(index - 1, 0, element);
+//   userPages.value.forEach((item) => {
+//     if (item.id === pageID.value) {
+//       item.components = userComponents.value;
+//       const d = new Date();
+//       item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
+//         }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+//     }
+//   });
+//   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
+// };
 
-const moveBlockUp = (id, index) => {
-  if (index === 0) {
-    alert("Already on top");
-    return;
-  }
-  const element = userComponents.value[index];
-  userComponents.value.splice(index, 1);
-  userComponents.value.splice(index - 1, 0, element);
-  userPages.value.forEach((item) => {
-    if (item.id === pageID.value) {
-      item.components = userComponents.value;
-      const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
-        }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-    }
-  });
-  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
-};
-
-const moveBlockDown = (id, index) => {
-  if (index === userComponents.value.length - 1) {
-    alert("Already at bottom");
-    return;
-  }
-  const element = userComponents.value[index];
-  userComponents.value.splice(index, 1);
-  userComponents.value.splice(index + 1, 0, element);
-  userPages.value.forEach((item) => {
-    if (item.id === pageID.value) {
-      item.components = userComponents.value;
-      const d = new Date();
-      item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
-        }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-    }
-  });
-  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
-};
+// const moveBlockDown = (id, index) => {
+//   if (index === userComponents.value.length - 1) {
+//     alert("Already at bottom");
+//     return;
+//   }
+//   const element = userComponents.value[index];
+//   userComponents.value.splice(index, 1);
+//   userComponents.value.splice(index + 1, 0, element);
+//   userPages.value.forEach((item) => {
+//     if (item.id === pageID.value) {
+//       item.components = userComponents.value;
+//       const d = new Date();
+//       item.lastUpdate = `${d.getFullYear()}-${d.getMonth() + 1
+//         }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+//     }
+//   });
+//   window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
+// };
 
 const randID = (len) => {
   var length = len;

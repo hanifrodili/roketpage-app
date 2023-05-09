@@ -1,6 +1,6 @@
 <template lang="pug">
-button.mx-auto(:id="data._uid" title="button" :style="{fontFamily:css?.font.family, fontSize:css?.font.size,fontWeight:css?.font.weight, color:css?.font.color}")
-  span(:contenteditable="editable") {{ content }}
+button.mx-auto.py-2.px-4(:id="data._uid" title="button" :style="{fontFamily:css?.font.family, fontSize:css?.font.size,fontWeight:css?.font.weight, color:css?.font.color}")
+  span(:contenteditable="editable" spellcheck="false") {{ content }}
 </template>
 
 <script setup>
@@ -32,8 +32,7 @@ onMounted(() => {
 button{
   min-width: 80px;
   min-height: 35px;
-  padding: 8px 16px;
-  background-color: red;
+  background-color: rgb(var(--v-theme-primary));
   border-radius: 8px;
 }
 </style>
