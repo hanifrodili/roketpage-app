@@ -116,7 +116,9 @@ function deleteOption(index) {
 
 function addField() {
   let obj = field.value
-  obj.options = optionsList.value
+  if (field.value.type === 'dropdown') {
+    obj.options = optionsList.value
+  }
   emits('updateField', obj)
   dialog.value = false
 }

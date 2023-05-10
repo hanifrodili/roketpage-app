@@ -41,7 +41,7 @@ v-card(flat)
           template(v-slot:append)
             v-icon.mr-2 {{ `mdi-${item.mdi}` }}
           v-list-item-title {{ item.label }}
-    //- product-create-product(@add-product="addProduct")
+    sites-create-new-page
 </template>
 
 <script setup>
