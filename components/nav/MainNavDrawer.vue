@@ -9,7 +9,7 @@ v-app
         template( v-slot:activator="{ props }" ) 
           v-list-item.py-3(
             v-bind="props"
-            :prepend-avatar="company_logo"
+            :prepend-avatar="user_avatar"
             :title="company_name"
             append-icon=""
           )
@@ -64,7 +64,7 @@ v-app
       template( v-slot:activator="{ props }" )
         v-btn.elevation-0.bg-transparent(icon="mdi-account" size="small" variant="outlined" v-bind="props")
       v-list.pa-0
-        v-list-item(@click="openSelectCompany = true")
+        v-list-item(@click="$router.push('/companies')")
           template(v-slot:prepend)
             v-icon.mr-2.icon-nav mdi-swap-horizontal
           v-list-item-title {{ $t('switchaccount') }}
@@ -159,7 +159,7 @@ const drawer = ref(false)
 const openSelectLanguage = ref(false)
 const openSelectCompany = ref(false)
 const user = ref({})
-const company_logo = ref('')
+const user_avatar = ref('')
 const company_name = ref('')
 
 onMounted(async () => {
@@ -167,7 +167,7 @@ onMounted(async () => {
   theme.global.name.value = window.localStorage.getItem('preferredTheme') || 'light'
   userStore.getUser()
   user.value = userStore.user
-  company_logo.value = userStore.user.user_metadata.avatar_url
+  user_avatar.value = userStore.user.user_metadata.avatar_url
   company_name.value = userStore.user.current_company.name
 })
 

@@ -3,28 +3,27 @@ div
   v-row.pa-3
     v-col.pa-2(cols="12" )
       v-row(style="position:relative")
-        v-btn.text-capitalize( @click="$router.push('/settings/account')" rounded size="small" variant="tonal" color="info" style="position:absolute; top:10px; right:10px;" )
+        v-btn.text-capitalize( @click="$router.push('settings/account')" rounded size="small" variant="tonal" color="info" style="position:absolute; top:10px; right:10px;" )
           v-icon mdi-account-edit
           p Edit
-        v-col.align-self-center.mb-3(cols="12" md="2")
-          div.pa-4.bg-primary.rounded-circle.overflow-hidden.mx-auto.mx-md-0(style="width:fit-content")
-            v-img(:aspect-ratio="1/1" width="60" src="/img/logo.svg" )
+        v-col.align-self-center(cols="12" md="2")
+          v-img.mx-auto.rounded-circle(:aspect-ratio="1/1" width="150" :src="user?.profile.avatar_url" )
         v-col(cols="12" md="5")
           div.d-flex.flex-column.w-100()
             .d-flex.flex-row.justify-space-between(style="gap:20px")
               div.content
                 p.label Name
-                p.text Mohd Hanif Bin Mohamod Rodili
+                p.text.text-capitalize {{ user?.profile.full_name }}
               div.content
                 p.label Role
-                p.text Owner
+                p.text.text-capitalize {{ user?.current_company.role.name }}
             .d-flex.flex-row.justify-space-between(style="gap:20px")
               div.content
                 p.label Email
-                p.text hanif_rodili@yahoo.com
+                p.text {{ user?.email }}
               div.content
                 p.label Phone
-                p.text +60123456789
+                p.text {{ user?.profile.phone_number || 'n/a'  }}
           
     v-col.pa-0(cols="12")
       v-card.card()
@@ -36,6 +35,11 @@ div
 </template>
 
 <script setup>
+import { useStoreUser } from '~/store/storeMerchant'
+const userStore = useStoreUser()
+const supabase = useSupabaseAuthClient()
+
+const user = ref(null) 
 const settingsList = ref([
   {
     label: 'company',
@@ -63,6 +67,11 @@ const settingsList = ref([
     mdi: 'account-credit-card'
   }
 ])
+
+onMounted( async () => {
+  await userStore.getUser()
+  user.value = userStore.user
+})
 </script>
 
 <style lang="scss" scoped>

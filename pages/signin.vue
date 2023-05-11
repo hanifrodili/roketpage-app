@@ -119,11 +119,6 @@ async function signin() {
   })
   
   if (data.session) {
-    let user = data.user
-    user.current_company = {
-      name: "",
-      id: null
-    }
     userStore.setUser(data.user)
     router.push('/companies')
     loading.value = false

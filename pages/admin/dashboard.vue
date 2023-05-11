@@ -16,7 +16,6 @@ definePageMeta({
 })
 
 onMounted(() => {
-  console.log(route);
   userStore.getUser()
   if (!userStore.user.current_company) {
     router.push('/companies')
