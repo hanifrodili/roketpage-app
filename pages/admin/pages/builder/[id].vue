@@ -1,7 +1,9 @@
 <template lang="pug">
 .mypage-builder
   sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" @toggleAdd="toggleAdd" style="width:100%;")
-  div.pb-3.ignored(id="builder" style="height:calc(100vh - 64px - 48px); overflow-y:scroll")
+  div(style="height:100vh" v-if="loading")
+    general-lottie-loading
+  div.pb-3.ignored(v-else id="builder" style="height:calc(100vh - 64px - 48px); overflow-y:scroll")
     template(v-for="(component, index) in userComponents" :key="component._uid")
       component(:is="component.component" :data="component" :pageId="pageID" :editMode="editMode" @updateContent="updateBlockContent" @addChild="updateLayout")
       .add-block.ignored(v-if="showAdd")
@@ -32,17 +34,18 @@ const showAdd = ref(true)
 const userComponents = ref([]);
 const pageID = ref("");
 const pageTitle = ref("");
+const loading = ref(true)
 
 definePageMeta({
   middleware: 'auth',
   name: 'builder'
 })
 
-onMounted(() => {
+onMounted(async () => {
   pageID.value = route.params.id;
   userStore.getUser()
   company_id.value = userStore.user.current_company.id
-  getPage()
+  await getPage()
   document.getElementById("builder").addEventListener('click', (e) => {
     const el = e.target
     // const classList = el.classList.value.split(" ")
@@ -116,6 +119,7 @@ const getPage = async () => {
     .single()
   userComponents.value = page.components;
   pageTitle.value = page.title;
+  loading.value = false
 }
 
 const removeDuplicateBlock = (e) => {

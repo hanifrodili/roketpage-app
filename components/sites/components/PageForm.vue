@@ -3,9 +3,8 @@
   v-divider.mb-4
   p.font-weight-bold Fill form below
   template(v-for="(input, index) in inputs" :key="index")
-    //- p {{ input }}
-    v-text-field(v-if="input.published && input.field_type !== 'dropdown'"  variant="outlined" :label="input.field_name" :type="input.field_type" density="compact" hide-details="auto")
-    v-select(v-if="input.published && input.field_type === 'dropdown'"  variant="outlined" :label="input.field_name" :items="input.field_option" density="compact" hide-details="auto")
+    v-text-field(v-if="input?.published && input?.field_type !== 'dropdown'"  variant="outlined" :label="input?.field_name" :type="input?.field_type" density="compact" hide-details="auto")
+    v-select(v-if="input?.published && input?.field_type === 'dropdown'"  variant="outlined" :label="input?.field_name" :items="input?.field_option" density="compact" hide-details="auto")
 
   div.d-flex.flex-column.product-card(v-for="(id, index) in products" :key="index")
     div.d-flex.flex-row
@@ -32,12 +31,13 @@ const productList = ref([])
 const company_id = ref("")
 const inputs = ref([])
 
-onMounted(() => {
+onMounted(async () => {
   userStore.getUser()
   company_id.value = userStore.user.current_company.id
-
-  getProducts()
-  sortInput()
+  await getProducts()
+  setTimeout(() => {
+    sortInput()
+  }, 500);
 })
 
 const getProducts = async () => {

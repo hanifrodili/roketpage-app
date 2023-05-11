@@ -1,15 +1,17 @@
 <template lang="pug">
 .page-content
   sites-filter-sites.mb-4
-  v-row(dense v-if="userPages.length")
-    v-col(cols="12" sm="6" md="4", v-for="page in userPages", :key="page.id")
-      sites-page-form-card(:data="page" :products="products" @delete="deletePage")
-  v-row.mt-10(v-else)
-    v-col(cols="12")
-      .d-flex.flex-row.align-center.justify-center(style="gap:4px; height:40px")
-        p Click
-        sites-create-new-page(style="height:100%")
-        p to create new page.
+  general-lottie-loading(v-if="loading")
+  div(v-else)
+    v-row(dense v-if="userPages.length")
+      v-col(cols="12" sm="6" md="4", v-for="page in userPages", :key="page.id")
+        sites-page-form-card(:data="page" :products="products" @delete="deletePage")
+    v-row.mt-10(v-else)
+      v-col(cols="12")
+        .d-flex.flex-row.align-center.justify-center(style="gap:4px; height:40px")
+          p Click
+          sites-create-new-page(style="height:100%")
+          p to create new page.
 </template>
 
 <script setup>
@@ -23,6 +25,7 @@ const router = useRouter()
 const userPages = ref([])
 const products = ref([])
 const company_id = ref('')
+const loading =  ref(true)
 
 definePageMeta({
   middleware: 'auth',
@@ -32,8 +35,8 @@ definePageMeta({
 onMounted(async () => {
   userStore.getUser()
   company_id.value = userStore.user.current_company.id
-  getProducts()
-  getPages()
+  await getProducts()
+  await getPages()
 })
 
 const getPages = async () => {
@@ -43,6 +46,7 @@ const getPages = async () => {
     .eq('company_id', company_id.value)
     // .eq('published', true)
   userPages.value = pages
+  loading.value = false
 }
 
 const getProducts = async () => {

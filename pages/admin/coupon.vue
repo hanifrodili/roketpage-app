@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  b Coupon
+  p Coupon
 </template>
 
 <script setup>

@@ -108,6 +108,11 @@ export default defineNuxtConfig({
       }),
     ],
   },
+  vue: {  
+    compilerOptions: {
+      isCustomElement: (tag) => ['lottie-player'].includes(tag),
+    },
+  },
   runtimeConfig: {
     // The private keys which are only available within server-side
     secret: "",
