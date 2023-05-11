@@ -3,9 +3,10 @@ div
   div.d-flex.pa-2.pa-md-4.flex-column(style="font-size:13px")
     div.d-flex.flex-row()
       div.d-flex.flex-column.w-100
-        div.d-flex.flex-row.font-weight-bold.justify-space-between.mb-2(style="" )
+        div.d-flex.flex-row.font-weight-bold.mb-2(style="" )
           p {{ `#${order.id}` }} {{ order.name }}
-          v-chip.text-capitalize(style="width:fit-content; height: 20px; font-weight:bold; font-size:10px" :ripple="false" :color="statusColor(order.status)") {{ order.status }}
+          v-spacer
+          v-chip.text-capitalize(style="max-width:fit-content; width:100%; height: 20px; font-weight:bold; font-size:10px" :ripple="false" :color="statusColor(order.status)") {{ order.status }}
         div.d-flex.flex-row.flex-wrap.w-100(style="gap:5px;" )
           p {{ order.phone }}
           img(src="/img/ver-divider.svg" )

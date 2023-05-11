@@ -5,9 +5,8 @@ v-layout
 </template>
 
 <script setup>
-// definePageMeta({
-//   middleware: 'auth',
-//   name: 'companies'
-// })
+definePageMeta({
+  layout: "nonav",
+})
 </script>
 <style lang="scss" scoped></style>

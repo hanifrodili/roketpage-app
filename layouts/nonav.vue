@@ -1,7 +1,6 @@
 <template lang="pug">
 .app
-  nav-main-nav-drawer()
-    slot
+  slot
 </template>
 
 <script setup>

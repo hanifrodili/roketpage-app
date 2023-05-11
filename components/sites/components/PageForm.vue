@@ -3,8 +3,8 @@
   v-divider.mb-4
   p.font-weight-bold Fill form below
   template(v-for="(input, index) in inputs" :key="index")
-    v-text-field(v-if="input?.published && input?.field_type !== 'dropdown'"  variant="outlined" :label="input?.field_name" :type="input?.field_type" density="compact" hide-details="auto")
-    v-select(v-if="input?.published && input?.field_type === 'dropdown'"  variant="outlined" :label="input?.field_name" :items="input?.field_option" density="compact" hide-details="auto")
+    v-text-field.mb-2(v-if="input?.published && input?.field_type !== 'dropdown'"  variant="outlined" :label="input?.field_name" :type="input?.field_type" density="compact" hide-details="auto")
+    v-select.mb-2(v-if="input?.published && input?.field_type === 'dropdown'"  variant="outlined" :label="input?.field_name" :items="input?.field_option" density="compact" hide-details="auto")
 
   div.d-flex.flex-column.product-card(v-for="(id, index) in products" :key="index")
     div.d-flex.flex-row
@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['form', 'products', 'type'])
+const props = defineProps(['form', 'products', 'type', 'company'])
 const supabase = useSupabaseAuthClient()
 const userStore = useStoreUser()
 
@@ -33,7 +33,7 @@ const inputs = ref([])
 
 onMounted(async () => {
   userStore.getUser()
-  company_id.value = userStore.user.current_company.id
+  company_id.value = props.company
   await getProducts()
   setTimeout(() => {
     sortInput()
@@ -78,7 +78,7 @@ const  fCurrency = (cent) => {
 <style lang="scss" scoped>
 .PageForm{
   gap: 16px;
-  padding: 40px 16px;
+  padding: 20px 16px;
   max-width: 800px;
   margin: auto;
 }

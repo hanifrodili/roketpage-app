@@ -1,5 +1,5 @@
 <template lang="pug">
-div
+div.mx-auto(style="max-width:800px; width:100%; height:-webkit-fill-available")
   h1.page-title.mb-4 Choose company
   template(v-for="(item,index) in companies" :key="index")
     v-card.general-card.mb-3(style="min-height:40px")

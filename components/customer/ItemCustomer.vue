@@ -1,10 +1,11 @@
 <template lang="pug">
 .pa-2.pa-md-4
   .d-flex.flex-column
-    .d-flex.flex-row.justify-space-between.mb-2
+    .d-flex.flex-row.mb-2
       b {{ `#${customer.id}` }} {{ customer.name }}
+      v-spacer
       v-chip.text-capitalize(
-        style="width: fit-content; height: 20px; font-weight: bold; font-size: 10px",
+        style="max-width: fit-content; width:100%; height: 20px; font-weight: bold; font-size: 10px",
         :ripple="false",
         :color="statusColor(customer.status)") {{ customer.status }}
     .d-flex.flex-row.flex-wrap(style="gap: 5px")

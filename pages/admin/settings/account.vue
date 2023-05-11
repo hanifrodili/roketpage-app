@@ -11,7 +11,7 @@ div.page-content
         p.mb-3(style="font-size:14px; font-weight:600; color: #767676") User Info
         v-row
           v-col.py-2(cols="12")
-            v-text-field(v-model="account.avatar_url" label="Avatar URL" variant="outlined" density="compact" hide-details="auto" )
+            v-text-field(v-model="account.avatar_url" label="Avatar URL" variant="outlined" density="compact" hide-details="auto" clearable)
         v-row
           v-col.py-2(cols="12")
             v-text-field(v-model="account.name" label="Name" variant="outlined" density="compact" hide-details="auto" )
@@ -84,7 +84,8 @@ const save = async () => {
     .from('profiles')
     .update({
       full_name: account.value.name,
-      phone_number: account.value.phone_number
+      phone_number: account.value.phone_number,
+      avatar_url: account.value.avatar_url
     })
     .eq('id', userStore.user.id)
 

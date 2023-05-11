@@ -165,10 +165,10 @@ const company_name = ref('')
 onMounted(async () => {
   locale.value = window.localStorage.getItem('preferredLanguage') || 'en'
   theme.global.name.value = window.localStorage.getItem('preferredTheme') || 'light'
-  userStore.getUser()
+  await userStore.getUser()
   user.value = userStore.user
-  user_avatar.value = userStore.user.user_metadata.avatar_url
-  company_name.value = userStore.user.current_company.name
+  user_avatar.value = user.value.profile.avatar_url
+  company_name.value = user.value.current_company.name
 })
 
 watch(drawer, (newDrawerVal) => {

@@ -68,6 +68,10 @@ import { useDisplay } from 'vuetify'
 import { useStoreUser } from '~/store/storeMerchant'
 import { storeToRefs } from 'pinia'
 
+definePageMeta({
+  layout: "nonav",
+})
+
 const supabase = useSupabaseAuthClient();
 
 const router = useRouter()

@@ -51,6 +51,10 @@ v-layout.lighten-4.min-height
 <script setup>
 import { useDisplay } from 'vuetify'
 
+definePageMeta({
+  layout: "nonav",
+})
+
 const { lgAndDown, xs } = useDisplay()
 
 const form = ref({

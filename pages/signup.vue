@@ -116,6 +116,10 @@ v-layout.lighten-4.min-height.d-flex.justify-center.align-center
 import { useDisplay } from 'vuetify'
 const supabase = useSupabaseAuthClient();
 
+definePageMeta({
+  layout: "nonav",
+})
+
 const { xs } = useDisplay()
 const router = useRouter()
 const snackbar = useSnackbar()

@@ -17,6 +17,10 @@ const supabase = useSupabaseAuthClient();
 const route = useRoute()
 const router = useRouter()
 
+definePageMeta({
+  layout: "nonav",
+})
+
 const email = ref('')
 onMounted(async () => {
   if (!route.query.user) {
