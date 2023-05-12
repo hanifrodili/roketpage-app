@@ -32,6 +32,8 @@ definePageMeta({
 
 onMounted(async () => {
   pageID.value = route.params.id;
+  // const subdomain = /:\/\/([^\/]+)/.exec(window.location.href)[1].split(".")[0];
+  // console.log(subdomain);
   // await userStore.getUser()
   // company_id.value = userStore.user.current_company.id
   await getPage()
