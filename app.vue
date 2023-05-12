@@ -16,12 +16,12 @@ onMounted( async () => {
     if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
       // delete cookies on sign out
       const expires = new Date(0).toUTCString()
-      document.cookie += `app-access-token=; Domain=${config.public.domain}; path=/; expires=${expires}; SameSite=Lax; secure`
-      document.cookie += `app-refresh-token=; Domain=${config.public.domain}; path=/; expires=${expires}; SameSite=Lax; secure`
+      document.cookie = `app-access-token=; Domain=${config.public.domain}; path=/; expires=${expires}; SameSite=Lax; secure`
+      document.cookie = `app-refresh-token=; Domain=${config.public.domain}; path=/; expires=${expires}; SameSite=Lax; secure`
     } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
       const maxAge = 100 * 365 * 24 * 60 * 60 // 100 years, never expires
-      document.cookie += `app-access-token=${session.access_token}; Domain=${config.public.domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`
-      document.cookie += `app-refresh-token=${session.refresh_token}; Domain=${config.public.domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`
+      document.cookie = `app-access-token=${session.access_token}; Domain=${config.public.domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`
+      document.cookie = `app-refresh-token=${session.refresh_token}; Domain=${config.public.domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure`
     }
     console.log(document.cookie);
   })
