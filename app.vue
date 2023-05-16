@@ -9,21 +9,20 @@ const supabase = useSupabaseAuthClient()
 const config = useRuntimeConfig()
 
 onMounted( async () => {
-  // console.log(supabase);
   // console.log(config);
   supabase.auth.onAuthStateChange((event, session) => {
-    console.log(event);
+    // console.log(event);
     
     if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
-      console.log(config.public.domain);
+      // console.log(config.public.domain);
       // delete cookies on sign out
       const expires = new Date(0).toUTCString()
-      console.log(expires);
+      // console.log(expires);
       document.cookie = `app-access-token=; path=/; expires=${expires};`
       document.cookie = `app-refresh-token=; path=/; expires=${expires};`
     } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
       // console.log(session);
-      console.log(config.public);
+      // console.log(config.public);
       const maxAge = 100 * 365 * 24 * 60 * 60 // 100 years, never expires
       document.cookie = `app-access-token=${session.access_token}; Domain=${config.public.domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure;`
       document.cookie = `app-refresh-token=${session.refresh_token}; Domain=${config.public.domain}; path=/; max-age=${maxAge}; SameSite=Lax; secure;`

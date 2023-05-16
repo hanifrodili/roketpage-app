@@ -18,7 +18,7 @@ div
             )
   general-dialog-type-b(v-model="openManage" :persistent="true")
     template( v-slot:title )
-      p Edit Bank
+      p Edit Shipping
     template( v-slot:content )
       v-form(ref="form" fast-fail)
         v-row
