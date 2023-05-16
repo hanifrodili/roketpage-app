@@ -4,7 +4,6 @@ node_modules
 .nitro
 .cache
 .output
-.env
 dist
 .DS_Store
 pagebuilder
@@ -14,3 +13,4 @@ test
 PhoneInput.vue
 flags
 phoneCodeCountries.js
+.env
