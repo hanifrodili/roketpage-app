@@ -7,7 +7,7 @@ div
     p Add Shipping
   general-dialog-type-a(v-model="addShippingDialog" :persistent="true")
     template( v-slot:title )
-      p Add Bank
+      p Add Shipping
     template( v-slot:content )
       v-form(ref="form" fast-fail)
         v-row
@@ -15,15 +15,18 @@ div
             v-combobox(v-model="bankForm.courier_name" variant="outlined" label="Courier Name" :items="couriers" item-title="name" item-value="name" density="compact" hide-details="auto")
         v-row
           v-col(cols="12")
+            v-select(v-model="bankForm.region" variant="outlined" label="Courier Name" :items="regions" item-title="name" item-value="code" density="compact" hide-details="auto")
+        v-row
+          v-col(cols="12")
             v-textarea(v-model="bankForm.description" variant="outlined" label="Description" density="compact" hide-details="auto" :rules="rules.not_empty")
-        v-row.my-4(v-for="(rate, index) in rateList" :key="index" dense)
+        v-row.my-4(v-for="(rate, index) in bankForm.rates" :key="index" dense)
           v-col(cols="4")
-            v-text-field(v-model="rate.min" variant="outlined" label="Min (KG)" density="compact" hide-details="auto" :rules="rules.not_empty")
+            v-text-field(v-model="bankForm.rates[index].min" variant="outlined" label="Min (KG)" density="compact" hide-details="auto" :rules="rules.not_empty")
           v-col(cols="4")
-            v-text-field(v-model="rate.max" variant="outlined" label="Max (KG)" density="compact" hide-details="auto" :rules="rules.not_empty")
+            v-text-field(v-model="bankForm.rates[index].max" variant="outlined" label="Max (KG)" density="compact" hide-details="auto" :rules="rules.not_empty")
           v-col(cols="4")
-            v-text-field(v-model="rate.rate" variant="outlined" label="Rate (RM)" density="compact" hide-details="auto" :rules="rules.not_empty")
-        v-btn.text-capitalize.my-4(variant="tonal" rounded size="small" color="info" prepend-icon="mdi-plus" @click="()=>{rateList.push({min:null, max:null, rate:null})}") Add Bank
+            v-text-field(v-model="bankForm.rates[index].rate" variant="outlined" label="Rate (RM)" density="compact" hide-details="auto" :rules="rules.not_empty")
+        v-btn.text-capitalize.my-4(variant="tonal" rounded size="small" color="info" prepend-icon="mdi-plus" @click="()=>{rateList.push({min:null, max:null, rate:null})}") Add Rate
     template( v-slot:action )
       v-btn( @click="addShippingDialog = false" variant="text") Cancel
       v-btn( @click="addShipping" variant="tonal" color="info" :loading="loading") Add
@@ -43,12 +46,14 @@ const shippingList = ref([])
 const onEdit = ref(null)
 const loading = ref(false)
 const company_id = ref('')
-const ratesCount = ref(1)
-const rateList = ref([
+const regions = ref([
   {
-    min: 0.1,
-    max: 1,
-    rate: 0,
+    name: "Semenanjung Malaysia",
+    code: "sm"
+  },
+  {
+    name: "Sabah & Sarawak",
+    code: "ss"
   }
 ])
 
@@ -57,8 +62,14 @@ const form = ref(null)
 const bankForm = ref({
   courier_name: '',
   description: '',
-  rates_sm: [],
-  rates_ss: []
+  region: '',
+  rates: [
+    {
+      min: 0.1,
+      max: 1,
+      rate: 0,
+    }
+  ]
 })
 
 const rules = ref(
