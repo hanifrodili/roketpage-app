@@ -60,7 +60,7 @@ const toggleBank = async () => {
   let { data:bank, error } = await supabase
     .from('bank_details')
     .update({ enabled: bankForm.value.enabled })
-    .eq('account_number', bankForm.value.account_number)
+    .eq('id', props.data.id)
 }
 </script>
 <style lang="scss" scoped>

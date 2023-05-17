@@ -4,44 +4,79 @@ div
     v-card-text.pa-1()
       div.d-flex.flex-row.align-center.align-start
         div.d-flex.flex-row.flex-grow-1
-          p.font-weight-bold {{ data.name }}
+          p.font-weight-bold {{ data.courier_name }}
+            span.text-uppercase.font-weight-regular(v-if="data.region" style="color:#ababab")  | {{ data.region }}
+          
         div.d-flex.flex-row.align-center(style="gap:10px")
           v-btn.text-capitalize(variant="tonal" rounded size="x-small" color="info" @click="openManage = true" icon="mdi-file-cog-outline")
           v-switch(
-            v-model="bankForm.enabled"
+            v-model="courierForm.enabled"
             inset
             hide-details="auto"
             color="primary"
             :value='true'
             density="compact"
-            @update:modelValue="toggleBank"
+            @update:modelValue="toggleShipping"
             )
   general-dialog-type-b(v-model="openManage" :persistent="true")
     template( v-slot:title )
       p Edit Shipping
     template( v-slot:content )
       v-form(ref="form" fast-fail)
+        v-checkbox.mb-5(v-model="isCOD", label="Cash on Delivery (COD)" density="compact" hide-details="auto" @update:model-value="autoSetCourier" style="width:100%; max-width:fit-content")
+        v-row(v-if="!isCOD")
+          v-col(cols="12")
+            v-select(v-model="courierForm.courier_name" variant="outlined" label="Courier Name" :items="couriers" item-title="name" item-value="name" density="compact" hide-details="auto")
+        v-row(v-if="!isCOD")
+          v-col(cols="12")
+            v-select(v-model="courierForm.region" variant="outlined" label="Delivery Region" :items="regions" item-title="name" item-value="code" density="compact" hide-details="auto")
+        v-row(v-if="isCOD")
+          v-col(cols="6")
+            v-combobox(v-model="state" :items="postcode.getStates()" variant="outlined" label="State" density="compact" hide-details="auto" @update:model-value="getLocation" single-line)
+          v-col(cols="6")
+            v-combobox(v-model="city" :items="postcode.getCities(state || '')" variant="outlined" label="City/Town" density="compact" hide-details="auto" @update:model-value="getLocation" single-line)
+          v-col(cols="12")
+            v-combobox(v-model="courierForm.area" :items="locations" variant="outlined" label="COD Area" density="compact" hide-details="auto" multiple chips closable-chips)
         v-row
           v-col(cols="12")
-            v-select(v-model="bankForm.name" variant="outlined" label="Bank" :items="bank" item-title="name" item-value="name" density="compact" hide-details="auto")
-        v-row
-          v-col(cols="12")
-            v-text-field(v-model="bankForm.account_number" variant="outlined" label="Account Number" density="compact" hide-details="auto" :rules="rules.not_empty")
-        v-row
-          v-col(cols="12")
-            v-text-field(v-model="bankForm.account_holder_name" variant="outlined" label="Account Holder Name" density="compact" hide-details="auto" :rules="rules.not_empty")
+            v-textarea(v-model="courierForm.description" variant="outlined" label="Description" density="compact" hide-details="auto" :rules="rules.not_empty")
+        v-row.my-4(v-for="(rate, index) in courierForm.rates" :key="index" dense)
+          v-col(cols="4")
+            v-text-field(v-model="courierForm.rates[index].min" variant="outlined" :label="`Min (${isCOD ? 'KM' : 'KG'})`" density="compact" hide-details="auto")
+          v-col(cols="4")
+            v-text-field(v-model="courierForm.rates[index].max" variant="outlined" :label="`Max (${isCOD ? 'KM' : 'KG'})`" density="compact" hide-details="auto")
+          v-col(cols="4")
+            v-text-field(v-model="courierForm.rates[index].rate" variant="outlined" label="Rate (RM)" density="compact" hide-details="auto")
+        v-btn.text-capitalize.my-4(variant="tonal" rounded size="small" color="info" prepend-icon="mdi-plus" @click="()=>{courierForm.rates.push({min:null, max:null, rate:null})}") Add Rate
     template( v-slot:action )
       v-btn( @click="openManage = false" variant="text") Cancel
-      v-btn( @click="" variant="tonal" color="info") Update
+      v-btn( @click="updateShipping" variant="tonal" color="info") Update
 </template>
 
 <script setup>
-import bank from '@/src/bankList.json'
+import postcode from "@/src/postcode";
 
 const supabase = useSupabaseAuthClient();
+const snackbar = useSnackbar()
 
-const props = defineProps(['data'])
+const props = defineProps(['data','couriers'])
+const emit = defineEmits(['updated'])
+
 const openManage = ref(false)
+const isCOD = ref(false)
+const locations = ref([])
+const state = ref(null)
+const city = ref(null)
+const regions = ref([
+  {
+    name: "Semenanjung Malaysia",
+    code: "sm"
+  },
+  {
+    name: "Sabah & Sarawak",
+    code: "ss"
+  }
+])
 
 const rules = ref(
   {
@@ -49,18 +84,84 @@ const rules = ref(
   }
 )
 
-const bankForm = ref({
-  name: props.data.name,
-  account_number: props.data.account_number,
-  account_holder_name: props.data.account_holder_name,
-  enabled: props.data.enabled,
+const courierForm = ref({
+  courier_name: props.data.courier_name,
+  description: props.data.description,
+  region: props.data.region,
+  area: props.data.area,
+  rates: props.data.rates,
+  enabled: props.data.enabled
 })
 
-const toggleBank = async () => {
-  let { data:bank, error } = await supabase
-    .from('bank_details')
-    .update({ enabled: bankForm.value.enabled })
-    .eq('account_number', bankForm.value.account_number)
+onMounted( async () => {
+  if(props.data.region !== 'sm' && props.data.region !== 'ss'){
+    isCOD.value = true
+  }
+})
+
+const getLocation = async ()=>{
+  let { data:location, error } = await supabase
+    .from('location')
+    .select("location")
+    .ilike('city', `%${city.value}%`)
+    .ilike('state', `%${state.value}%`)
+  
+  // console.log(location);
+  locations.value = []
+  location.forEach(item => {
+    if (!locations.value.includes(item.location)) {
+      locations.value.push(item.location)
+    }
+  });
+}
+
+const toggleShipping = async () => {
+  let resp = await supabase
+    .from('shipping_details')
+    .update({ enabled: courierForm.value.enabled })
+    .eq('id', props.data.id)
+}
+
+const updateShipping = async () => {
+  
+  const resp = await supabase
+    .from('shipping_details')
+    .update(
+      {
+        courier_name: courierForm.value.courier_name,
+        description: courierForm.value.description,
+        region: courierForm.value.region,
+        area: courierForm.value.area,
+        rates: courierForm.value.rates
+      }
+    )
+    .eq('id', props.data.id)
+
+    if (resp.status === 204) {
+    snackbar.add({
+      type: 'success',
+      text: `${courierForm.value.courier_name} updated!`
+    })
+  }
+
+  if (resp.error) {
+    snackbar.add({
+      type: 'error',
+      text: resp.error.message
+    })
+  }
+  emit('updated')
+  openManage.value = false
+}
+
+const autoSetCourier = () => {
+  if (isCOD.value) {
+    courierForm.value.courier_name = 'Cash on Delivery'
+    courierForm.value.region = ''
+  }else{
+    courierForm.value.courier_name = props.data.courier_name
+    courierForm.value.region = props.data.region
+  }
 }
 </script>
 <style lang="scss" scoped>

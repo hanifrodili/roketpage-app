@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['company_id'])
+const props = defineProps(['data'])
 const emit = defineEmits(['update'])
 const supabase = useSupabaseAuthClient();
 
@@ -49,17 +49,18 @@ const selectPassFee = ref([
 const form = ref(null)
 
 const tpForm = ref({
-  secret_key: '',
-  category_code: '',
-  bill_validity: 1,
-  fpx: true,
-  card: false,
-  pass_tx_fee: '',
-  tx_fee: 100
+  id: props.data.id,
+  secret_key: props.data?.secret_key,
+  category_code: props.data?.category_code,
+  bill_validity:  props.data?.bill_validity,
+  fpx: props.data?.fpx ,
+  card: props.data?.card ,
+  pass_tx_fee: props.data?.pass_tx_fee ,
+  tx_fee: props.data?.tx_fee || 100
 })
 
 onMounted( async () => {
-  await getGateway()
+  // await getGateway()
 })
 
 const updateForm = async () => {
@@ -70,21 +71,22 @@ const updateForm = async () => {
   emit('update', tpForm.value)
 }
 
-const getGateway = async () => {
-  let { data: toyyibpay_gateway, error } = await supabase
-    .from('toyyibpay_gateway')
-    .select('*')
-    .eq('company_id', props.company_id)
-    .single()
-  // console.log(toyyibpay_gateway);
-  tpForm.value.secret_key = toyyibpay_gateway.secret_key
-  tpForm.value.category_code = toyyibpay_gateway.category_code
-  tpForm.value.bill_validity = toyyibpay_gateway.bill_validity
-  tpForm.value.fpx = toyyibpay_gateway.fpx
-  tpForm.value.card = toyyibpay_gateway.card
-  tpForm.value.pass_tx_fee = toyyibpay_gateway.pass_tx_fee
-  tpForm.value.tx_fee = toyyibpay_gateway.tx_fee
-}
+// const getGateway = async () => {
+//   let { data: toyyibpay_gateway, error } = await supabase
+//     .from('toyyibpay_gateway')
+//     .select('*')
+//     .eq('company_id', props.company_id)
+//     .single()
+//   // console.log(toyyibpay_gateway);
+//   tpForm.value.secret_key = toyyibpay_gateway.secret_key
+//   tpForm.value.category_code = toyyibpay_gateway.category_code
+//   tpForm.value.bill_validity = toyyibpay_gateway.bill_validity
+//   tpForm.value.fpx = toyyibpay_gateway.fpx
+//   tpForm.value.card = toyyibpay_gateway.card
+//   tpForm.value.pass_tx_fee = toyyibpay_gateway.pass_tx_fee
+//   tpForm.value.tx_fee = toyyibpay_gateway.tx_fee
+//   tpForm.value.id = toyyibpay_gateway.id
+// }
 </script>
 
 <style lang="scss" scoped>
