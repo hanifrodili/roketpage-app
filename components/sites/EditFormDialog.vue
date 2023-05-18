@@ -78,7 +78,7 @@
           v-card.general-card
             v-card-text.pa-0
               template(v-for="(field, index) in formFields" :key="index")
-                p {{ field }}
+                //p {{ field }}
                 sites-form-field(:field="field" @delete="deleteField(index)" @updateField="updateField")
                 v-divider(v-if="index < formFields.length-1")
               sites-add-form-field.mt-3(@addField="addField")
