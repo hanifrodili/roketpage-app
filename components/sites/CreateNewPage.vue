@@ -65,7 +65,8 @@
           hide-details="auto"
           density="compact"
           multiple
-          variant="outlined")
+          variant="outlined"
+          closable-chips)
         //- v-checkbox.mb-1(v-model="hasShipping", label="Has shipping" density="compact" hide-details="auto")
         v-select.mb-5(
           v-if="formType === 'Payment'",
@@ -73,12 +74,13 @@
           chips,
           label="Choose Shipping Options",
           :items="shippingOptions"
-          item-title="name"
+          item-title="courier_name"
           item-value="id"
           hide-details="auto"
           density="compact"
           multiple
-          variant="outlined")
+          variant="outlined"
+          closable-chips)
         div(v-if="formType === 'Leads'",)
           p.font-weight-bold.mt-4.mb-1 Customer Info
           v-card.general-card
@@ -121,44 +123,35 @@ const paymentOptions = ref([
   },
   {
     id: 2,
+    name: "Card",
+  },
+  {
+    id: 3,
     name: "Bank Transfer",
   },
   {
-    id: 3,
+    id: 4,
     name: "Cash on Delivery",
   }
 ])
-const shippingOptions = ref([
-  {
-    id: 1,
-    name: "PosLaju",
-  },
-  {
-    id: 2,
-    name: "NinjaVan",
-  },
-  {
-    id: 3,
-    name: "J&T",
-  }
-])
+const shippingOptions = ref([])
 const defaultFormFields = ref([
   {
-    name: 'name',
-    type: 'text',
-    options: null,
+    field_name: 'name',
+    field_type: 'text',
+    field_options: null,
     enabled: true
   },
   {
-    name: 'phone',
-    type: 'tel',
-    options: null,
+    field_name: 'phone',
+    field_type: 'tel',
+    field_options: null,
     enabled: true
   },
   {
-    name: 'email',
-    type: 'email',
-    options: null,
+    field_name: 'email',
+    field_type: 'email',
+    field_options: null,
     enabled: true
   }
 ])
@@ -167,8 +160,20 @@ const formFields = ref([])
 onMounted(async () => {
   userStore.getUser()
   company_id.value = userStore.user.current_company.id
-  getProducts()
+  await getProducts()
+  await getShippings()
 })
+
+const getShippings = async () => {
+
+  let { data: shipping_details, error } = await supabase
+    .from('shipping_details')
+    .select('*')
+    .order('courier_name', { ascending: true })
+    .eq('company_id', company_id.value)
+
+  shippingOptions.value = shipping_details
+}
 
 const getProducts = async () => {
   let { data: product, error, count } = await supabase
@@ -411,17 +416,18 @@ const createNewPage = async () => {
   // console.log(resp);
 
   if (resp.status === 201) {
-    formFields.value.forEach(async (field) => {
+    formFields.value.forEach(async (field, index) => {
       await supabase
         .from('page_form')
         .insert([
           {
             company_id: company_id.value,
             page_slug: id,
-            field_name: field.name,
-            field_type: field.type,
-            field_option: field.options,
-            published: field.enabled
+            field_name: field.field_name,
+            field_position: index,
+            field_type: field.field_type,
+            field_option: field.field_options,
+            enabled: field.enabled
           },
         ])
     });

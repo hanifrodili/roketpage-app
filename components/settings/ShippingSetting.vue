@@ -21,22 +21,25 @@ div
           v-col(cols="6")
             v-combobox(v-model="state" :items="postcode.getStates()" variant="outlined" label="State" density="compact" hide-details="auto" single-line)
           v-col(cols="6")
-            v-combobox(v-model="city" :items="postcode.getCities(state || '')" variant="outlined" label="City/Town" density="compact" hide-details="auto" @update:model-value="getLocation" single-line)
+            v-combobox(v-model="city" :items="postcode.getCities(state || '')" variant="outlined" label="City/Town" density="compact" hide-details="auto" @update:model-value="getLocation" single-line clearable)
           v-col(cols="12")
             v-combobox(v-model="courierForm.area" :items="locations" variant="outlined" label="COD Area" density="compact" hide-details="auto" multiple chips closable-chips)
-        v-row
+        //- v-row
           v-col(cols="12")
             v-textarea(v-model="courierForm.description" variant="outlined" label="Description" density="compact" hide-details="auto" :rules="rules.not_empty")
-        v-row.my-4(v-for="(rate, index) in courierForm.rates" :key="index" dense)
+        v-row.my-4(v-if="!isCOD"  v-for="(rate, index) in courierForm.rates" :key="index" dense)
           v-col(cols="4")
             v-text-field(v-model="courierForm.rates[index].min" variant="outlined" :label="`Min (${isCOD ? 'KM' : 'KG'})`" density="compact" hide-details="auto")
           v-col(cols="4")
             v-text-field(v-model="courierForm.rates[index].max" variant="outlined" :label="`Max (${isCOD ? 'KM' : 'KG'})`" density="compact" hide-details="auto")
           v-col(cols="4")
             v-text-field(v-model="courierForm.rates[index].rate" variant="outlined" label="Rate (RM)" density="compact" hide-details="auto")
-        v-btn.text-capitalize.my-4(variant="tonal" rounded size="small" color="info" prepend-icon="mdi-plus" @click="()=>{courierForm.rates.push({min:null, max:null, rate:null})}") Add Rate
+        v-row.my-4(v-if="isCOD" dense)
+          v-col(cols="4")
+            v-text-field(v-model="courierForm.rates[0].rate" variant="outlined" label="Rate (RM)" density="compact" hide-details="auto" @update:model-value="courierForm.rates[0].min = 0, courierForm.rates[0].max = 0")
+        v-btn.text-capitalize.my-1(v-if="!isCOD" variant="tonal" rounded size="small" color="info" prepend-icon="mdi-plus" @click="()=>{courierForm.rates.push({min:null, max:null, rate:null})}") Add Rate
     template( v-slot:action )
-      v-btn( @click="addShippingDialog = false" variant="text") Cancel
+      v-btn( @click="addShippingDialog = false, form.reset()" variant="text") Cancel
       v-btn( @click="addShipping" variant="tonal" color="info" :loading="loading") Add
 
       
@@ -103,13 +106,13 @@ onMounted(async () => {
 
 const getShippings = async () => {
 
-  let { data: bank_details, error } = await supabase
+  let { data: shipping_details, error } = await supabase
     .from('shipping_details')
     .select('*')
     .order('courier_name', { ascending: true })
     .eq('company_id', company_id.value)
 
-  shippingList.value = bank_details
+  shippingList.value = shipping_details
 }
 
 const getLocation = async ()=>{

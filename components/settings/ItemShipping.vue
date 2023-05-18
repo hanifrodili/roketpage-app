@@ -4,8 +4,10 @@ div
     v-card-text.pa-1()
       div.d-flex.flex-row.align-center.align-start
         div.d-flex.flex-row.flex-grow-1
-          p.font-weight-bold {{ data.courier_name }}
-            span.text-uppercase.font-weight-regular(v-if="data.region" style="color:#ababab")  | {{ data.region }}
+          div
+            p.font-weight-bold {{ data.courier_name }}
+            p.text-capitalize.font-weight-regular(v-if="data.region" style="color:#ababab; font-size:10px") {{ filterRegion(data.region) }}
+            p.text-capitalize.font-weight-regular(v-if="data.area.length" style="color:#ababab; font-size:10px") {{ filterArea(data.area) }}
           
         div.d-flex.flex-row.align-center(style="gap:10px")
           v-btn.text-capitalize(variant="tonal" rounded size="x-small" color="info" @click="openManage = true" icon="mdi-file-cog-outline")
@@ -34,20 +36,23 @@ div
           v-col(cols="6")
             v-combobox(v-model="state" :items="postcode.getStates()" variant="outlined" label="State" density="compact" hide-details="auto" @update:model-value="getLocation" single-line)
           v-col(cols="6")
-            v-combobox(v-model="city" :items="postcode.getCities(state || '')" variant="outlined" label="City/Town" density="compact" hide-details="auto" @update:model-value="getLocation" single-line)
+            v-combobox(v-model="city" :items="postcode.getCities(state || '')" variant="outlined" label="City/Town" density="compact" hide-details="auto" @update:model-value="getLocation" single-line clearable)
           v-col(cols="12")
             v-combobox(v-model="courierForm.area" :items="locations" variant="outlined" label="COD Area" density="compact" hide-details="auto" multiple chips closable-chips)
-        v-row
+        //- v-row
           v-col(cols="12")
             v-textarea(v-model="courierForm.description" variant="outlined" label="Description" density="compact" hide-details="auto" :rules="rules.not_empty")
-        v-row.my-4(v-for="(rate, index) in courierForm.rates" :key="index" dense)
+        v-row.my-4(v-if="!isCOD" v-for="(rate, index) in courierForm.rates" :key="index" dense)
           v-col(cols="4")
             v-text-field(v-model="courierForm.rates[index].min" variant="outlined" :label="`Min (${isCOD ? 'KM' : 'KG'})`" density="compact" hide-details="auto")
           v-col(cols="4")
             v-text-field(v-model="courierForm.rates[index].max" variant="outlined" :label="`Max (${isCOD ? 'KM' : 'KG'})`" density="compact" hide-details="auto")
           v-col(cols="4")
             v-text-field(v-model="courierForm.rates[index].rate" variant="outlined" label="Rate (RM)" density="compact" hide-details="auto")
-        v-btn.text-capitalize.my-4(variant="tonal" rounded size="small" color="info" prepend-icon="mdi-plus" @click="()=>{courierForm.rates.push({min:null, max:null, rate:null})}") Add Rate
+        v-row.my-4(v-if="isCOD" dense)
+          v-col(cols="4")
+            v-text-field(v-model="courierForm.rates[0].rate" variant="outlined" label="Rate (RM)" density="compact" hide-details="auto" @update:model-value="courierForm.rates[0].min = 0, courierForm.rates[0].max = 0")
+        v-btn.text-capitalize.my-1(v-if="!isCOD" variant="tonal" rounded size="small" color="info" prepend-icon="mdi-plus" @click="()=>{courierForm.rates.push({min:null, max:null, rate:null})}") Add Rate
     template( v-slot:action )
       v-btn( @click="openManage = false" variant="text") Cancel
       v-btn( @click="updateShipping" variant="tonal" color="info") Update
@@ -55,9 +60,11 @@ div
 
 <script setup>
 import postcode from "@/src/postcode";
+import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const supabase = useSupabaseAuthClient();
 const snackbar = useSnackbar()
+const display = useDisplay()
 
 const props = defineProps(['data','couriers'])
 const emit = defineEmits(['updated'])
@@ -158,9 +165,43 @@ const autoSetCourier = () => {
   if (isCOD.value) {
     courierForm.value.courier_name = 'Cash on Delivery'
     courierForm.value.region = ''
+    courierForm.value.area = props.data.area
+    courierForm.value.rates = [{
+      min: props.data.rates[0].min,
+      max: props.data.rates[0].max,
+      rate: props.data.rates[0].rate
+    }]
   }else{
     courierForm.value.courier_name = props.data.courier_name
     courierForm.value.region = props.data.region
+    courierForm.value.area = []
+    courierForm.value.rates = props.data.rates
+  }
+}
+
+const filterRegion = (e) => {
+  let name = ''
+  regions.value.forEach(region => {
+    if (region.code === e) {
+      name = region.name
+    }
+  });
+
+  return name
+}
+
+const filterArea = (e) => {
+  return truncateText(e.join(), 30)
+}
+
+function truncateText(text, limit) {
+  if (display.width.value > 430) {
+    limit += 50
+  }
+  if (text.length > limit) {
+    return `${text.substring(0, limit)}...`
+  }else{
+    return text
   }
 }
 </script>

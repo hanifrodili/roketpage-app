@@ -8,7 +8,7 @@
       | Add Field
     template(#content)
       v-text-field.mb-4(
-        v-model="field.name",
+        v-model="field.field_name",
         label="Field Name",
         variant="outlined",
         hide-details="auto",
@@ -16,7 +16,7 @@
         clearable
       )
       v-select.mb-4(
-        v-model="field.type",
+        v-model="field.field_type",
         label="Field Type",
         variant="outlined",
         :items="fieldType"
@@ -25,7 +25,7 @@
         hide-details="auto",
         density="compact"
       )
-      div(v-if="field.type && field.type === 'dropdown'" )
+      div(v-if="field.field_type && field.field_type === 'dropdown'" )
         .d-flex.flex-row
           v-text-field(
             v-model="newOption"
@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-const emits = defineEmits(['updateField'])
+const emits = defineEmits(['addField'])
 
 const dialog = ref(false)
 const fieldType = ref([
@@ -90,16 +90,16 @@ const field = ref(null)
 onMounted(() => {
   optionsList.value = []
   field.value = {
-    name: '',
-    type: null
+    field_name: '',
+    field_type: null
   }
 })
 
 function openDialog() {
   dialog.value = true
   field.value = {
-    name: '',
-    type: null
+    field_name: '',
+    field_type: null
   }
 }
 
@@ -116,10 +116,10 @@ function deleteOption(index) {
 
 function addField() {
   let obj = field.value
-  if (field.value.type === 'dropdown') {
-    obj.options = optionsList.value
+  if (field.value.field_type === 'dropdown') {
+    obj.field_options = optionsList.value
   }
-  emits('updateField', obj)
+  emits('addField', obj)
   dialog.value = false
 }
 </script>

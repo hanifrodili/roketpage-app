@@ -22,12 +22,14 @@ v-card.page-card.h-100
     div.d-flex.flex-row.align-center(style="gap:10px; padding-top:10px")
       v-btn.delete-button(variant="text" icon="mdi-trash-can-outline" color="#DA4453" size="small" height="28" width="28" @click="dialogDelete=true")
       //- v-btn.delete-button(variant="text" icon="mdi-share-variant" size="small" height="28" width="28")
-      v-btn.text-capitalize.flex-grow-1(variant="outlined" color="#4E4E4E" size="small" rounded="lg") Edit Form
+      v-btn.text-capitalize.flex-grow-1(variant="outlined" color="#4E4E4E" size="small" rounded="lg" @click="dialogEdit = true") Edit Form
       v-btn.text-capitalize.flex-grow-1(variant="outlined" color="#4E4E4E" size="small" rounded="lg" @click="$router.push(`/admin/pages/builder/${data.slug}`)") Edit Page
 
     v-btn.text-capitalize(variant="flat" color="#11ed9a" size="small" rounded="lg" @click="$router.push(`/admin/pages/preview/${data.slug}`)") Preview Page
 
     p.font-italic(style="font-size:10px; color:#ababab") Last update: {{ fTime(data.updated_at) }}
+
+sites-edit-form-dialog(v-model="dialogEdit" :data="data" :products="products")
 
 general-dialog-type-a(v-model="openShare")
   template(v-slot:title)
@@ -49,6 +51,7 @@ v-dialog(v-model="dialogDelete" scrollable persistent max-width="300px")
 
 <script setup>
 const dialogDelete = ref(false)
+const dialogEdit = ref(false)
 const props = defineProps(['data', 'products'])
 const emit = defineEmits(['delete'])
 const openShare = ref(false)
