@@ -13,4 +13,4 @@ test
 PhoneInput.vue
 flags
 phoneCodeCountries.js
-# .env
+.env
