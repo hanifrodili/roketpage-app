@@ -70,7 +70,7 @@
       v-btn(
         @click="updateField",
         variant="tonal",
-        color="info") Add
+        color="info") Update
 </template>
 
 <script setup>
@@ -101,6 +101,7 @@ const fieldType = ref([
 ])
 
 const fieldForm = ref({
+  id: props.field.id,
   field_name: props.field.field_name,
   field_type: props.field.field_type,
   field_option: props.field.field_option
@@ -122,11 +123,6 @@ function deleteOption(index) {
 }
 
 const updateField = () => {
-  // console.log(fieldForm.value);
-  // const { data, error } = await supabase
-  //   .from('page_form')
-  //   .update({ other_column: 'otherValue' })
-  //   .eq('some_column', 'someValue')
   emits('updateField', fieldForm.value)
   dialog.value = false
 }

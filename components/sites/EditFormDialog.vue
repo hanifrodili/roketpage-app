@@ -192,24 +192,26 @@ const updateForm = async () => {
     )
     .eq('id', props.data.id)
 
-  console.log(resp);
+  // console.log(resp);
 
   if (resp.status === 204) {
     formFields.value.forEach(async (field, index) => {
-      await supabase
+      const resp = await supabase
         .from('page_form')
         .upsert(
           {
-            id: props.data.id,
+            id: field.id,
             company_id: props.data.company_id,
             page_slug: props.data.page_slug,
             field_name: field.field_name,
             field_position: index,
             field_type: field.field_type,
-            field_option: field.field_options,
+            field_option: field.field_option,
             enabled: field.enabled
           },
         )
+
+        console.log(resp);
     });
 
     snackbar.add({
@@ -235,7 +237,20 @@ const addField = (e) => {
 }
 
 const updateField = (e) => {
-  console.log(e); 
+  // console.log(e);
+  formFields.value.forEach(field => {
+    if (field.id === e.id) {
+      field.field_name = e.field_name
+      field.field_type = e.field_type
+      field.field_option = e.field_option
+    }
+  });
+
+  // console.log(formFields.value);
+}
+
+function deleteField(index) {
+  formFields.value.splice(index, 1)
 }
 </script>
 

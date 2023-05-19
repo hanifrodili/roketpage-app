@@ -87,9 +87,9 @@
             v-card-text.pa-0
               template(v-for="(field, index) in formFields" :key="index")
                 //- p {{ field }}
-                sites-form-field(:field="field" @delete="deleteField(index)")
+                sites-form-field(:field="field" @delete="deleteField(index)" @updateField="updateField")
                 v-divider(v-if="index < formFields.length-1")
-              sites-add-form-field.mt-3(@updateField="updateField")
+              sites-add-form-field.mt-3(@addField="addField")
     template(#action)
       v-spacer
       v-btn(variant="text", color="secondary", @click="dialogAdd = false") Close
@@ -462,10 +462,23 @@ const randID = (len) => {
   return result;
 };
 
-function updateField(e) {
+function addField(e) {
   let obj = e
   obj.enabled = true
   formFields.value.push(obj)
+}
+
+const updateField = (e) => {
+  // console.log(e);
+  formFields.value.forEach(field => {
+    if (field.id === e.id) {
+      field.field_name = e.field_name
+      field.field_type = e.field_type
+      field.field_option = e.field_option
+    }
+  });
+
+  // console.log(formFields.value);
 }
 
 function deleteField(index) {
