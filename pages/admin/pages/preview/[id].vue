@@ -50,6 +50,7 @@ const getPage = async () => {
     .eq('company_id', company_id.value)
     .eq('slug', pageID.value)
     .single()
+  console.log(page);
   pageForm.value = page.page_form
   pageProducts.value = page.products
   formType.value = page.formType

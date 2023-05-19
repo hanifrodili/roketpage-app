@@ -2,9 +2,9 @@
 .PageForm.d-flex.flex-column()
   v-divider.mb-4
   p.font-weight-bold Fill form below
-  template(v-for="(input, index) in inputs" :key="index")
-    v-text-field.mb-2(v-if="input?.published && input?.field_type !== 'dropdown'"  variant="outlined" :label="input?.field_name" :type="input?.field_type" density="compact" hide-details="auto")
-    v-select.mb-2(v-if="input?.published && input?.field_type === 'dropdown'"  variant="outlined" :label="input?.field_name" :items="input?.field_option" density="compact" hide-details="auto")
+  template(v-for="(input, index) in inputFields" :key="index")
+    v-text-field.mb-2(v-model="inputs[index].field_value" v-if="input?.enabled && input?.field_type !== 'dropdown'"  variant="outlined" :label="input?.field_name" :type="input?.field_type" density="compact" hide-details="auto")
+    v-select.mb-2(v-model="inputs[index].field_value" v-if="input?.enabled && input?.field_type === 'dropdown'"  variant="outlined" :label="input?.field_name" :items="input?.field_option" density="compact" hide-details="auto")
 
   div.d-flex.flex-column.product-card(v-for="(id, index) in products" :key="index")
     div.d-flex.flex-row
@@ -15,10 +15,11 @@
     div.d-flex.flex-row.px-5.py-3.justify-space-between.align-center
       p.font-weight-bold {{ fCurrency(getProduct(id)?.base_price) }}
       general-count-input-normal(min="0")
+  //- p {{ inputs }}
   div.d-flex.flex-row.justify-space-between.align-center(style="gap:12px")
     v-btn.flex-grow-1.text-capitalize(variant="flat" color="#25d366" prepend-icon="mdi-whatsapp") WhatsApp
     v-btn.flex-grow-1.text-capitalize(v-if="type === 'Payment'" variant="flat" color="light-blue-darken-2" prepend-icon="mdi-cash-register") Checkout
-    v-btn.flex-grow-1.text-capitalize(v-else variant="flat" color="light-blue-darken-2" prepend-icon="mdi-send") Submit
+    v-btn.flex-grow-1.text-capitalize(v-else variant="flat" color="light-blue-darken-2" prepend-icon="mdi-send" @click="submit") Submit
     
 </template>
 
@@ -29,7 +30,9 @@ const userStore = useStoreUser()
 
 const productList = ref([])
 const company_id = ref("")
+const inputFields = ref([])
 const inputs = ref([])
+
 
 onMounted(async () => {
   userStore.getUser()
@@ -65,13 +68,42 @@ const sortInput = () => {
       arr.push(input)
     }
   });
-
-  inputs.value = arr
+  inputFields.value = arr
+  inputs.value = []
+  arr.forEach(input => {
+    inputs.value.push({
+      company_id: input.company_id,
+      page_slug: input.page_slug,
+      field_name: input.field_name,
+      field_type: input.field_type,
+      field_value: null,
+      field_position: input.field_position
+    })
+  });
 }
 
 const  fCurrency = (cent) => {
   const amount = cent / 100
   return amount.toLocaleString('en-MY', { style: 'currency', currencyDisplay: 'symbol', currency: 'myr' });
+}
+
+const submit = () => {
+  console.log(inputs.value);
+  // inputs.value.forEach(async (field, index) => {
+  //   await supabase
+  //     .from('page_form')
+  //     .insert([
+  //       {
+  //         company_id: company_id.value,
+  //         page_slug: id,
+  //         field_name: field.field_name,
+  //         field_position: index,
+  //         field_type: field.field_type,
+  //         field_option: field.field_options,
+  //         enabled: field.enabled
+  //       },
+  //     ])
+  // });
 }
 </script>
 
