@@ -27,12 +27,14 @@ const sticky = ref(0)
 onMounted(async () => {
   await getData()
   orderfilter.value = document.getElementById("order-filter");
+  const main = document.querySelector('.main-content')
   sticky.value = orderfilter.value.offsetTop
-  window.addEventListener('scroll', stickyScroll)
+  main.addEventListener('scroll', stickyScroll)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', stickyScroll)
+  const main = document.querySelector('.main-content')
+  main.removeEventListener('scroll', stickyScroll)
 })
 
 
@@ -40,9 +42,9 @@ watch(page, async (updatedPage) => {
   await getData()
 })
 
-function stickyScroll() {
-  const parent = document.querySelector('.main-order')
-  if (window.pageYOffset > (sticky.value - 10)) {
+const stickyScroll = () => {
+  const parent = document.querySelector('.index')
+  if (parent.getBoundingClientRect().top < (sticky.value - 10)) {
     orderfilter.value.classList.add("sticky");
     orderfilter.value.style.maxWidth = `${parent.clientWidth + 2}px`
   } else {

@@ -93,4 +93,24 @@ function addProduct(e) {
   emits("addProduct", e);
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.v-slide-group__content) {
+  justify-content: flex-start;
+}
+
+:deep(.v-slide-group__next),
+:deep(.v-slide-group__prev) {
+  min-width: 20px !important;
+  max-width: 20px !important;
+
+  .v-icon {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  :deep(.v-slide-group__content) {
+    // justify-content: center;
+  }
+}
+</style>

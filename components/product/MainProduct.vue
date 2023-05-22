@@ -75,8 +75,10 @@ async function getProducts() {
   }
 
   if (searchKeyword.value && searchKeyword.value !== "") {
-    query.ilike('name', `%${searchKeyword.value}%`)
-    query.ilike('description', `%${searchKeyword.value}%`)
+    let search = ''
+    const col_name = `name.ilike.%${searchKeyword.value}%`
+    const col_description = `description.ilike.%${searchKeyword.value}%`
+    query.or(search.concat(col_name, ',', col_description))
   }
 
   let { data: product, error, count } = await query.range(from, to)

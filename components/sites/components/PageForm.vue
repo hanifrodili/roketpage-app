@@ -2,9 +2,10 @@
 .PageForm.d-flex.flex-column()
   v-divider.mb-4
   p.font-weight-bold Fill form below
-  template(v-for="(input, index) in inputFields" :key="index")
-    v-text-field.mb-2(v-model="inputs[index].field_value" v-if="input?.enabled && input?.field_type !== 'dropdown'"  variant="outlined" :label="input?.field_name" :type="input?.field_type" density="compact" hide-details="auto")
-    v-select.mb-2(v-model="inputs[index].field_value" v-if="input?.enabled && input?.field_type === 'dropdown'"  variant="outlined" :label="input?.field_name" :items="input?.field_option" density="compact" hide-details="auto")
+  v-form(ref="form")
+    template(v-for="(input, index) in inputFields" :key="index")
+      v-text-field.mb-4(v-model="inputs[index].field_value" v-if="input?.enabled && input?.field_type !== 'dropdown'"  variant="outlined" :label="input?.field_name" :type="input?.field_type" density="compact" hide-details="auto" :prefix="input?.field_type === 'tel' ? '+60' : ''" :rules="input?.field_type === 'number' ? rules.not_zero : rules.not_empty")
+      v-select.mb-4(v-model="inputs[index].field_value" v-if="input?.enabled && input?.field_type === 'dropdown'"  variant="outlined" :label="input?.field_name" :items="input?.field_option" density="compact" hide-details="auto" :rules="rules.not_empty")
 
   div.d-flex.flex-column.product-card(v-for="(id, index) in products" :key="index")
     div.d-flex.flex-row
@@ -14,12 +15,12 @@
         p.description {{ getProduct(id)?.description }}
     div.d-flex.flex-row.px-5.py-3.justify-space-between.align-center
       p.font-weight-bold {{ fCurrency(getProduct(id)?.base_price) }}
-      general-count-input-normal(min="0")
+      general-count-input-normal(v-model="selectedProducts[index].quantity" min="0")
   //- p {{ inputs }}
   div.d-flex.flex-row.justify-space-between.align-center(style="gap:12px")
-    v-btn.flex-grow-1.text-capitalize(variant="flat" color="#25d366" prepend-icon="mdi-whatsapp") WhatsApp
-    v-btn.flex-grow-1.text-capitalize(v-if="type === 'Payment'" variant="flat" color="light-blue-darken-2" prepend-icon="mdi-cash-register") Checkout
-    v-btn.flex-grow-1.text-capitalize(v-else variant="flat" color="light-blue-darken-2" prepend-icon="mdi-send" @click="submit") Submit
+    v-btn.flex-grow-1.text-capitalize(variant="flat" color="#25d366" prepend-icon="mdi-whatsapp" :loading="loading") WhatsApp
+    v-btn.flex-grow-1.text-capitalize(v-if="type === 'Payment'" variant="flat" color="light-blue-darken-2" prepend-icon="mdi-cash-register" :loading="loading") Checkout
+    v-btn.flex-grow-1.text-capitalize(v-else variant="flat" color="light-blue-darken-2" prepend-icon="mdi-send" @click="submit" :loading="loading") Submit
     
 </template>
 
@@ -27,16 +28,44 @@
 const props = defineProps(['form', 'products', 'type', 'company'])
 const supabase = useSupabaseAuthClient()
 const userStore = useStoreUser()
-
+const snackbar = useSnackbar()
+const form = ref(null)
 const productList = ref([])
 const company_id = ref("")
 const inputFields = ref([])
 const inputs = ref([])
+const loading = ref(false)
+const selectedProducts = ref([
+  {
+    id: null,
+    quantity: 0
+  }
+])
+
+const rules = ref(
+  {
+    not_empty: [(val) => (val || '').length > 0 || 'This field is required'],
+    not_zero: [(val) => val > 0 || 'This field is required']
+  }
+)
 
 
 onMounted(async () => {
   userStore.getUser()
   company_id.value = props.company
+  props.products.forEach((product, index) => {
+    if (selectedProducts.value[index]) {
+      selectedProducts.value[index].id = product
+    }else{
+      selectedProducts.value.push(
+        {
+          id: product,
+          quantity: 0
+        }
+      )
+    }
+  });
+  console.log(selectedProducts.value);
   await getProducts()
   setTimeout(() => {
     sortInput()
@@ -87,23 +116,92 @@ const  fCurrency = (cent) => {
   return amount.toLocaleString('en-MY', { style: 'currency', currencyDisplay: 'symbol', currency: 'myr' });
 }
 
-const submit = () => {
-  console.log(inputs.value);
-  // inputs.value.forEach(async (field, index) => {
-  //   await supabase
-  //     .from('page_form')
-  //     .insert([
-  //       {
-  //         company_id: company_id.value,
-  //         page_slug: id,
-  //         field_name: field.field_name,
-  //         field_position: index,
-  //         field_type: field.field_type,
-  //         field_option: field.field_options,
-  //         enabled: field.enabled
-  //       },
-  //     ])
-  // });
+const submit = async () => {
+  loading.value = true
+  const name = inputs.value[0]
+  const phone = inputs.value[1]
+  const email = inputs.value[2]
+
+  const validation = await form.value.validate()
+  if (!validation.valid) {
+    loading.value = false
+    return
+  }
+
+  if (selectedProducts.value[0].quantity < 1) {
+    snackbar.add({
+      type: 'error',
+      text: 'Please choose product quantity!'
+    })
+    loading.value = false
+    return
+  }
+
+  const resp = await supabase
+    .from('customers')
+    .upsert([
+      { 
+        created_at: 'now()',
+        status: 'new',
+        name: name.field_value,
+        phone: sanitizePhoneNumber(phone.field_value),
+        email: email.field_value,
+        paid: false,
+        company_id: company_id.value,
+        page_slug: name.page_slug,
+        products: selectedProducts.value
+      }
+    ])
+    .select()
+
+  // console.log(resp);
+
+  if (resp.status === 201) {
+    inputs.value.forEach(async (field, index) => {
+      if (field.field_position > 2) {
+        await supabase
+          .from('customers_extra_field')
+          .insert([
+            {
+              customer_id: resp.data[0].id,
+              company_id: field.company_id,
+              page_slug: field.page_slug,
+              field_name: field.field_name,
+              field_position: index,
+              field_type: field.field_type,
+              field_value: field.field_value
+            },
+          ])
+      }
+    });
+    snackbar.add({
+      type: 'success',
+      text: 'Submitted!'
+    })
+  }
+
+  form.value.reset()
+  loading.value = false
+}
+
+const sanitizePhoneNumber = (phoneNumber) => {
+  // Remove any non-digit characters
+  const sanitizedNumber = phoneNumber.replace(/\D/g, '');
+
+  // Check if the number starts with "+60"
+  if (sanitizedNumber.startsWith('+60')) {
+    return sanitizedNumber;
+  } else if (sanitizedNumber.startsWith('0')) {
+    // Remove the leading '0' and add "+60" to the beginning of the number
+    return '+60' + sanitizedNumber.slice(1);
+  } else {
+    // Add "+60" to the beginning of the number
+    return '+60' + sanitizedNumber;
+  }
+}
+
+const testLog = (e) => {
+  console.log(e); 
 }
 </script>
 

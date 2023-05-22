@@ -1,6 +1,7 @@
 <template lang="pug">
 .page-content
-  customer-main-customer
+  .index
+    customer-main-customer
 </template>
 
 <script setup>

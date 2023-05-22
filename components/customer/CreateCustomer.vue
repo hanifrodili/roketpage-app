@@ -168,18 +168,6 @@ function removeProduct(e) {
 }
 
 async function getProduct() {
-  let url = `${config.public.apiUrl}/items/product_test?lfields[]=*&sort[]=id&filter[status]=true`;
-
-  await axios
-    .get(url)
-    .then((response) => {
-      // Handle successful response
-      products.value = response.data.data;
-    })
-    .catch((error) => {
-      // Handle error
-      console.log(error);
-    });
 }
 
 function getCityState() {
@@ -193,32 +181,9 @@ async function addOrder() {
   if (!validation.valid) {
     return;
   }
-  let url = `https://api-test.roketpage.com/items/order_test`;
 
-  // await axios.post(url,{
-  //   name: orderForm.value.name,
-  //   description: orderForm.value.description,
-  //   base_price: orderForm.value.price,
-  //   base_stock: orderForm.value.stock,
-  //   base_weight: orderForm.value.weight,
-  //   image: orderForm.value.image_url
-  // })
-  //   .then(response => {
-  //     // Handle successful response
-  //     snackbar.add({
-  //       type: 'success',
-  //       text: 'New order added !'
-  //     })
-  //     emits('addProduct', response.data.data)
-  //   })
-  //   .catch(error => {
-  //     // Handle error
-  //     snackbar.add({
-  //       type: 'error',
-  //       text: error.response.data.errors[0].message
-  //     })
-  //     console.log(error.response.data.errors[0].message);
-  //   });
+
+
   form.value.reset();
   dialog.value = false;
   loading.value = false;

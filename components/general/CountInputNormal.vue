@@ -13,6 +13,7 @@
       :max="maxInput"
       :step="stepInput"
       style="width: 60px"
+      @update:model-value="$emit('update:modelValue', number)"
     )
   div
     v-icon(@click="increase") mdi-plus

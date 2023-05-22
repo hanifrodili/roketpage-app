@@ -1,12 +1,13 @@
 <template lang="pug">
 v-dialog(
+  :class="fullscreen ? 'mx-0' : 'mx-3'"
   v-model="dialog",
   width="100%",
   max-width="500",
   scrollable,
   :persistent="persistent",
-  :fullscreen="$vuetify.display.width < 450 ? true : false",
-  :scrim="$vuetify.display.width < 450 ? false : true",
+  :fullscreen="$vuetify.display.width < 450 && fullscreen",
+  :scrim="scrim",
   transition="dialog-bottom-transition")
   v-card.rounded-lg
     v-card-title.d-flex.flex-row.align-center.justify-start.pa-5.font-weight-bold(

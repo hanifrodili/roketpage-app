@@ -1,13 +1,15 @@
 <template lang="pug">
 .main-customer
-  customer-filter-customer#customer-filter.mb-2(
+  customer-filter-customer.mb-2(
+    id="customer-filter"
     @search="search",
     @filter="filter",
     @sort="sort")
   v-card.card
-    v-card-text.d-flex.flex-column.justify-space-between.pa-0
+    v-card-text.d-flex.flex-column.pa-0
       template(v-for="(customer, index) in customers", :key="customer.id")
-        customer-item-customer(:customer="customer")
+        customer-item-customer(:customer="customer" :productList="productList" @delete="deleteCutomer")
+      v-spacer
       general-pagination.mt-5(
         v-model="page",
         @limit="limit",
@@ -16,30 +18,40 @@
 </template>
 
 <script setup>
-import axios from "axios";
+const userStore = useStoreUser()
+const supabase = useSupabaseAuthClient();
+const snackbar = useSnackbar()
 
-const config = useRuntimeConfig();
-
-const page = ref(1);
-const maxPage = ref(1);
-const customers = ref([]);
-const totalOrders = ref(0);
-const searchKeyword = ref(null);
-const filters = ref([]);
-const queryLimit = ref(10);
-const sortOrder = ref("id");
-const orderfilter = ref(null);
+const customers = ref([])
+const page = ref(1)
+const maxPage = ref(1)
+const totalCustomers = ref(0)
+const searchKeyword = ref('')
+const filters = ref([])
+const queryLimit = ref(10)
+const sortCustomer = ref({
+  column: 'id',
+  ascending: true
+})
+const customerfilter = ref(null)
 const sticky = ref(0);
+const company_id = ref('')
+const productList = ref([])
 
 onMounted(async () => {
-  await getData();
-  orderfilter.value = document.getElementById("customer-filter");
-  sticky.value = orderfilter.value.offsetTop;
-  window.addEventListener("scroll", stickyScroll);
+  userStore.getUser()
+  company_id.value = userStore.user.current_company.id
+  await getData()
+  await getProducts()
+  customerfilter.value = document.getElementById("customer-filter");
+  const main = document.querySelector('.main-content')
+  sticky.value = customerfilter.value.offsetTop
+  main.addEventListener('scroll', stickyScroll)
 });
 
 onUnmounted(() => {
-  window.removeEventListener("scroll", stickyScroll);
+  const main = document.querySelector('.main-content')
+  main.removeEventListener('scroll', stickyScroll)
 });
 
 watch(page, async (updatedPage) => {
@@ -47,62 +59,87 @@ watch(page, async (updatedPage) => {
 });
 
 function stickyScroll() {
-  const parent = document.querySelector(".main-customer");
-  if (window.pageYOffset > sticky.value - 10) {
-    orderfilter.value.classList.add("sticky");
-    orderfilter.value.style.maxWidth = `${parent.clientWidth + 2}px`;
+  const parent = document.querySelector('.index')
+  if (parent.getBoundingClientRect().top < (sticky.value - 10)) {
+    customerfilter.value.classList.add("sticky");
+    customerfilter.value.style.maxWidth = `${parent.clientWidth + 2}px`;
   } else {
-    orderfilter.value.classList.remove("sticky");
+    customerfilter.value.classList.remove("sticky");
   }
 }
 
 async function getData() {
-  let url = `${config.public.apiUrl}/items/order_test?limit=${queryLimit.value}&fields[]=*&sort[]=${sortOrder.value}&page=${page.value}`;
+  const from = (page.value - 1) * queryLimit.value
+  const to = page.value * (queryLimit.value - 2)
+  let query = supabase
+    .from('customers')
+    .select('*, customers_extra_field(*), pages(title)', { count: "exact" })
+    .order(sortCustomer.value.column, { ascending: sortCustomer.value.ascending })
+    .eq('company_id', company_id.value)
 
-  if (searchKeyword.value) {
-    url += `&search=${searchKeyword.value}`;
-  }
-
-  if (filters.value) {
-    filters.value.forEach((filter) => {
-      if (filter.value) {
-        url += `&filter[${filter.field}]=${filter.value}`;
-      }
+  // console.log(filters.value.length);
+  if (filters.value.length) {
+    filters.value.forEach(filter => {
+      query.in(filter.field, filter.value)
     });
   }
 
-  await axios
-    .get(url)
-    .then((response) => {
-      // Handle successful response
-      customers.value = response.data.data;
-    })
-    .catch((error) => {
-      // Handle error
-      console.log(error);
-    });
+  if (searchKeyword.value && searchKeyword.value !== "") {
+    let search = ''
+    const col_name = `name.ilike.%${searchKeyword.value}%`
+    const col_phone = `phone.ilike.%${searchKeyword.value}%`
+    const col_email = `email.ilike.%${searchKeyword.value}%`
+    query.or(search.concat(col_name, ',', col_phone, ',', col_email))
+  }
+
+  let { data: customer, error, count } = await query.range(from, to)
+  customers.value = customer
 
   // Get total customers
   if (page.value === 1) {
-    await axios
-      .get(url + "&aggregate[countDistinct]=id")
-      .then((response) => {
-        // Handle successful response
-        totalOrders.value = response.data.data[0].countDistinct.id;
-      })
-      .catch((error) => {
-        // Handle error
-        console.log(error);
-      });
-
-    maxPage.value = Math.ceil(totalOrders.value / queryLimit.value);
+    totalCustomers.value = count
+    maxPage.value = Math.ceil(totalCustomers.value / queryLimit.value) ? Math.ceil(totalCustomers.value / queryLimit.value) : 1
   }
+}
+
+const getProducts = async () => {
+  let { data: product, error, count } = await supabase
+    .from('product')
+    .select('*', { count: "exact" })
+    .eq('company_id', company_id.value)
+    .eq('published', true)
+
+  productList.value = product
+}
+
+const deleteCutomer = async (id) => {
+  // console.log(id);
+
+  const { status, error } = await supabase
+    .from('customers')
+    .delete()
+    .eq('id', id)
+
+  if (status === 204) {
+    snackbar.add({
+      type: 'warning',
+      text: 'Customer deleted!'
+    })
+    await getData()
+  }
+
+}
+
+const getProduct = (id) => {
+  return productList.value.find(x => x.id === id)
 }
 
 async function search(e) {
   searchKeyword.value = e;
   page.value = 1;
-  await getData();
+  if (e) {
+    await getData();
+  }
 }
 
 async function filter(e) {

@@ -6,9 +6,9 @@ v-card(flat)
         flat,
         size="small",
         rounded,
-        :color="status == item.value ? 'primary' : ''",
-        :class="status == item.value ? 'bg-primary' : 'bg-grey-lighten-2'",
-        @click="(status = item.value), $emit('filter', { field: 'status', value: status })")
+        :color="status == item.label ? 'primary' : ''",
+        :class="status == item.label ? 'bg-primary' : 'bg-grey-lighten-2'",
+        @click="(status = item.label), $emit('filter', { field: 'status', value: item.value })")
         b {{ item.label }}
   .d-flex.flex-row(style="gap: 8px")
     v-text-field(
@@ -47,7 +47,7 @@ v-card(flat)
 <script setup>
 const emit = defineEmits(["search", "sort", "filter"]);
 
-const status = ref("");
+const status = ref("All");
 const searchInput = ref("");
 const sortDialog = ref(false);
 const sort = ref("id");
@@ -78,16 +78,44 @@ const sortList = ref([
 const statusList = ref([
   {
     label: "All",
-    value: "",
+    value: ['new', 'follow up', 'rejected', 'closed'],
   },
   {
     label: "New",
-    value: "new",
+    value: ["new"],
+  },
+  {
+    label: "Follow up",
+    value: ["follow up"],
+  },
+  {
+    label: "Rejected",
+    value: ["rejected"],
   },
   {
     label: "Closed",
-    value: "closed",
+    value: ["closed"],
   },
 ]);
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.v-slide-group__content) {
+  justify-content: flex-start;
+}
+
+:deep(.v-slide-group__next),
+:deep(.v-slide-group__prev) {
+  min-width: 20px !important;
+  max-width: 20px !important;
+
+  .v-icon {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  :deep(.v-slide-group__content) {
+    justify-content: center;
+  }
+}
+</style>
