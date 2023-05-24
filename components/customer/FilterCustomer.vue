@@ -23,7 +23,8 @@ v-card(flat)
       density="compact",
       @keyup="$emit('search', searchInput)",
       @click:clear="$emit('search', searchInput)")
-    v-btn#sort.px-0(
+    v-btn.px-0(
+      id="sort"
       @click="sortDialog = true",
       variant="outlined",
       rounded="lg",
@@ -36,16 +37,16 @@ v-card(flat)
         v-list-item(
           v-for="(item, index) in sortList",
           :key="index",
-          @click="$emit('sort', item.value), (sort = item.value)",
-          :class="sort == item.value ? 'bg-primary' : ''")
+          @click="$emit('sort', item), (sort = item)",
+          :class="sort == item ? 'bg-primary' : ''")
           template(v-slot:append)
             v-icon.mr-1 {{ item.icon }}
           small {{ item.label }}
-    customer-create-customer
+    customer-create-customer(@add-customer="$emit('addCustomer')")
 </template>
 
 <script setup>
-const emit = defineEmits(["search", "sort", "filter"]);
+const emit = defineEmits(["search", "sort", "filter", "addCustomer"]);
 
 const status = ref("All");
 const searchInput = ref("");
@@ -55,25 +56,29 @@ const sort = ref("id");
 const sortList = ref([
   {
     label: "Newest",
-    value: "id",
-    icon: "mdi-sort-ascending",
+    column: "id",
+    ascending: false,
+    mdi: "sort-descending"
   },
   {
     label: "Oldest",
-    value: "-id",
-    icon: "mdi-sort-descending",
+    column: "id",
+    ascending: true,
+    mdi: "sort-ascending"
   },
   {
     label: "Name: A-Z",
-    value: "name",
-    icon: "mdi-sort-alphabetical-ascending",
+    column: "name",
+    ascending: true,
+    mdi: "sort-alphabetical-ascending"
   },
   {
     label: "Name: Z-A",
-    value: "-name",
-    icon: "mdi-sort-alphabetical-descending",
-  },
-]);
+    column: "name",
+    ascending: false,
+    mdi: "sort-alphabetical-descending"
+  }
+])
 
 const statusList = ref([
   {

@@ -13,14 +13,21 @@
       :max="maxInput"
       :step="stepInput"
       style="width: 60px"
-      @update:model-value="$emit('update:modelValue', number)"
+      @update:model-value="$emit('update:modelValue', parseFloat(number))"
     )
   div
     v-icon(@click="increase") mdi-plus
 </template>
 
 <script setup>
-const props = defineProps(['modelValue', 'min', 'max', 'step'])
+const props = defineProps(
+  {
+    modelValue: Number,
+    min: String,
+    max: String,
+    step: String
+  }
+)
 const emits = defineEmits(['update:modelValue', 'remove'])
 
 const minInput = ref(0)
@@ -29,10 +36,11 @@ const stepInput = ref(0)
 const number = ref(0)
 
 onMounted(() => {
-  number.value = props.modelValue > parseFloat(props.min) ? props.modelValue : parseFloat(props.min)
+  number.value = parseFloat(props.modelValue) > parseFloat(props.min) ? parseFloat(props.modelValue) : parseFloat(props.min)
   minInput.value = props.min ? parseFloat(props.min) : 1
   maxInput.value = props.max ? parseFloat(props.max) : null
   stepInput.value = props.step ? parseFloat(props.step) : 1
+  emits('update:modelValue', number.value)
 })
 
 

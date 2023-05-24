@@ -19,8 +19,7 @@
   //- p {{ inputs }}
   div.d-flex.flex-row.justify-space-between.align-center(style="gap:12px")
     v-btn.flex-grow-1.text-capitalize(variant="flat" color="#25d366" prepend-icon="mdi-whatsapp" :loading="loading") WhatsApp
-    v-btn.flex-grow-1.text-capitalize(v-if="type === 'Payment'" variant="flat" color="light-blue-darken-2" prepend-icon="mdi-cash-register" :loading="loading") Checkout
-    v-btn.flex-grow-1.text-capitalize(v-else variant="flat" color="light-blue-darken-2" prepend-icon="mdi-send" @click="submit" :loading="loading") Submit
+    v-btn.flex-grow-1.text-capitalize(variant="flat" color="light-blue-darken-2" :prepend-icon="type === 'Payment' ? 'mdi-cash-register' :'mdi-send'" @click="submit" :loading="loading") {{ type === 'Payment' ? 'Checkout' :'Submit' }}
     
 </template>
 
@@ -29,6 +28,7 @@ const props = defineProps(['form', 'products', 'type', 'company'])
 const supabase = useSupabaseAuthClient()
 const userStore = useStoreUser()
 const snackbar = useSnackbar()
+const router = useRouter()
 const form = ref(null)
 const productList = ref([])
 const company_id = ref("")
@@ -139,7 +139,7 @@ const submit = async () => {
 
   const resp = await supabase
     .from('customers')
-    .upsert([
+    .insert([
       { 
         created_at: 'now()',
         status: 'new',
@@ -174,6 +174,22 @@ const submit = async () => {
           ])
       }
     });
+
+    if (props.type === 'Payment') {
+      const orderID = randID(7)
+      await supabase
+        .from('order')
+        .insert([
+          {
+            customer_id: resp.data[0].id,
+            company_id: company_id.value,
+            order_id: orderID
+          },
+        ])
+      
+      router.push(`/checkout/${orderID}`)
+    }
+
     snackbar.add({
       type: 'success',
       text: 'Submitted!'
@@ -183,6 +199,18 @@ const submit = async () => {
   form.value.reset()
   loading.value = false
 }
+
+const randID = (len) => {
+  var length = len;
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
 
 const sanitizePhoneNumber = (phoneNumber) => {
   // Remove any non-digit characters

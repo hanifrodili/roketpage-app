@@ -10,10 +10,6 @@ div.d-flex.align-center.justify-center(style="height:-webkit-fill-available")
   )
 </template>
 
-<script>
-export default {
-  name: 'LottieLoading'
-}
-</script>
+<script setup></script>
 
 <style lang="scss" scoped></style>

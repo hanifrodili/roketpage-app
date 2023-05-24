@@ -44,14 +44,14 @@ div
             v-textarea(v-model="courierForm.description" variant="outlined" label="Description" density="compact" hide-details="auto" :rules="rules.not_empty")
         v-row.my-4(v-if="!isCOD" v-for="(rate, index) in courierForm.rates" :key="index" dense)
           v-col(cols="4")
-            v-text-field(v-model="courierForm.rates[index].min" variant="outlined" :label="`Min (${isCOD ? 'KM' : 'KG'})`" density="compact" hide-details="auto")
+            v-text-field(v-model="courierForm.rates[index].min" variant="outlined" :label="`Min (${isCOD ? 'KM' : 'KG'})`" density="compact" type="number" hide-details="auto")
           v-col(cols="4")
-            v-text-field(v-model="courierForm.rates[index].max" variant="outlined" :label="`Max (${isCOD ? 'KM' : 'KG'})`" density="compact" hide-details="auto")
+            v-text-field(v-model="courierForm.rates[index].max" variant="outlined" :label="`Max (${isCOD ? 'KM' : 'KG'})`" density="compact" type="number" hide-details="auto")
           v-col(cols="4")
-            v-text-field(v-model="courierForm.rates[index].rate" variant="outlined" label="Rate (RM)" density="compact" hide-details="auto")
+            v-text-field(v-model="courierForm.rates[index].rate" variant="outlined" label="Rate (RM)" density="compact" type="number" hide-details="auto")
         v-row.my-4(v-if="isCOD" dense)
           v-col(cols="4")
-            v-text-field(v-model="courierForm.rates[0].rate" variant="outlined" label="Rate (RM)" density="compact" hide-details="auto" @update:model-value="courierForm.rates[0].min = 0, courierForm.rates[0].max = 0")
+            v-text-field(v-model="courierForm.rates[0].rate" variant="outlined" label="Rate (RM)" density="compact" type="number" hide-details="auto" @update:model-value="courierForm.rates[0].min = 0, courierForm.rates[0].max = 0")
         v-btn.text-capitalize.my-1(v-if="!isCOD" variant="tonal" rounded size="small" color="info" prepend-icon="mdi-plus" @click="()=>{courierForm.rates.push({min:null, max:null, rate:null})}") Add Rate
     template( v-slot:action )
       v-btn( @click="openManage = false" variant="text") Cancel
@@ -104,6 +104,19 @@ onMounted( async () => {
   if(props.data.region !== 'sm' && props.data.region !== 'ss'){
     isCOD.value = true
   }
+
+  let convertedRates = []
+  courierForm.value.rates.forEach((rate) => {
+    convertedRates.push(
+      {
+        min: rate.min / 1000,
+        max: rate.max / 1000,
+        rate: rate.rate / 100
+      }
+    )
+  });
+
+  courierForm.value.rates = convertedRates
 })
 
 const getLocation = async ()=>{
@@ -130,6 +143,17 @@ const toggleShipping = async () => {
 }
 
 const updateShipping = async () => {
+
+  let convertedRates = []
+  courierForm.value.rates.forEach((rate) => {
+    convertedRates.push(
+      {
+        min: rate.min * 1000,
+        max: rate.max * 1000,
+        rate: rate.rate * 100
+      }
+    )
+  });
   
   const resp = await supabase
     .from('shipping_details')
@@ -139,7 +163,7 @@ const updateShipping = async () => {
         description: courierForm.value.description,
         region: courierForm.value.region,
         area: courierForm.value.area,
-        rates: courierForm.value.rates
+        rates: convertedRates
       }
     )
     .eq('id', props.data.id)

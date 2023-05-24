@@ -25,9 +25,12 @@ div
               @update:modelValue="$emit('updatePublish',{id:product.id, value: productPublished })"
             )
           div.d-flex.flex-row.justify-end
-            v-btn(icon="mdi-trash-can-outline" variant="text" size="small" color="red")
-            v-btn(icon="mdi-file-edit-outline" variant="text" size="small")
+            v-btn(icon="mdi-trash-can-outline" variant="text" size="small" color="red" @click="dialogDelete = true")
+            //- v-btn(icon="mdi-file-edit-outline" variant="text" size="small")
+            product-edit-product(:product="product" @update-product="$emit('update')")
   v-divider.py-1
+
+  general-dialog-delete(v-model="dialogDelete" @delete="$emit('delete', product.id)")
     
 </template>
 
@@ -35,9 +38,10 @@ div
 import { useDisplay } from "vuetify/lib/framework.mjs"
 
 const props = defineProps(['product'])
-const emits = defineEmits(['updatePublish'])
+const emits = defineEmits(['updatePublish', 'delete', 'update'])
 const display = useDisplay()
 const productPublished = ref(false)
+const dialogDelete = ref(false)
 
 onMounted(() => {
   productPublished.value = props.product.published

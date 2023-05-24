@@ -1,6 +1,6 @@
 <template lang="pug">
-.index
-  p Blank
+.index(style="height:100vh")
+  general-lottie-empty
 </template>
 
 <script setup></script>

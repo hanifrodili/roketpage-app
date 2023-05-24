@@ -1,5 +1,7 @@
 <template lang="pug">
 .toyyibpay
+  div.mb-5
+    a(href="https://toyyibpay.com/e/9168067289452871" target="_blank" style="color:#767676; font-size:12px; letter-spacing:0em") Click here to register
   v-form(ref="form")
     v-row
       v-col(cols="12")
@@ -12,10 +14,18 @@
         v-text-field(v-model="tpForm.bill_validity" variant="outlined" label="Bill Validity" density="compact" hide-details="auto" type="number" min="1" suffix="Day(s)" @update:model-value="updateForm" :rules="rules.not_zero")
     v-row
       v-col(cols="12")
-        p Payment Chanel
+        p Payment Channel
         div.d-flex.flex-row
           v-checkbox(v-model="tpForm.fpx" label="FPX" :value="true" hide-details="auto" density="compact" @update:model-value="updateForm")
-          v-checkbox(v-model="tpForm.card" label="Credit/Debit Card" :value="true" hide-details="auto" density="compact" @update:model-value="updateForm")
+          div.d-flex.flex-row
+            v-checkbox(v-model="tpForm.card" label="Credit/Debit Card" :value="true" hide-details="auto" density="compact" @update:model-value="updateForm")
+            v-btn(icon="mdi-help-circle-outline" variant="text" size="small" @click="cardDetails=true")
+            general-dialog-type-a(v-model="cardDetails")
+              template(#title)
+                p About card payment
+              template(#content)
+                settings-gateway-toyyibpay-card-details
+              
     v-row
       v-col(cols="12" md="6")
         v-select(v-model="tpForm.pass_tx_fee" variant="outlined" label="Pass Transaction Fee" :items="selectPassFee" item-title="label" item-value="value"  density="compact" hide-details="auto" hint="Only for transaction via FPX." persistent-hint @update:model-value="updateForm")
@@ -27,6 +37,8 @@
 const props = defineProps(['data'])
 const emit = defineEmits(['update'])
 const supabase = useSupabaseAuthClient();
+
+const cardDetails = ref(false)
 
 const rules = ref(
   {

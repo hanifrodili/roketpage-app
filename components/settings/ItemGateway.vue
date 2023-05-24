@@ -17,7 +17,7 @@ div
             @update:modelValue="toggleGateway"
             )
   
-  general-dialog-type-b(v-model="openManage" :persistent="true")
+  general-dialog-type-b(v-model="openManage" :persistent="true" :fullscreen="true")
     template( v-slot:title )
       p {{ data.name }}
     template( v-slot:content )

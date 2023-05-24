@@ -28,19 +28,10 @@
       color="red"
       @click="dialogDelete = true"
     )
-    v-btn(icon="mdi-file-edit-outline", variant="text", size="small")
+    customer-edit-customer(:customer="customer" :productList="productList" @updateCustomer="$emit('update')")
   v-divider
 
-  v-dialog(v-model="dialogDelete" scrollable persistent max-width="300px")
-    v-card()
-      v-card-text.pa-4
-        div
-          p Confirm Delete?
-          p.font-weight-bold This action can't be undo
-      v-card-actions.pa-4
-        v-spacer
-        v-btn(variant="text" color="secondary" @click="$emit('delete',customer.id), dialogDelete = false") Yes
-        v-btn.elevation-0(color="red" variant="tonal" @click="dialogDelete=false") No
+  general-dialog-delete(v-model="dialogDelete" @delete="$emit('delete',customer.id)")
 
   general-dialog-type-b(v-model="openMore" :persistent="false" :fullscreen="false" :scrim="true")
     template(#title)
@@ -79,7 +70,7 @@
 
 <script setup>
 const props = defineProps(["customer","productList"]);
-const emit = defineEmits(['delete'])
+const emit = defineEmits(['delete', 'update'])
 
 const itemsToShow = ref(2);
 const itemsLength = ref(1);
@@ -130,7 +121,7 @@ function fTime(datetime) {
   return formattedTime;
 }
 
-function statusColor(value) {
+const statusColor = (value) => {
   let color = "";
   switch (value) {
     case "new":
@@ -140,7 +131,7 @@ function statusColor(value) {
       color = "#2196F3";
       break;
     case "rejected":
-      color = "#9C27B0";
+      color = "#ec3a3a";
       break;
     case "closed":
       color = "#009688";

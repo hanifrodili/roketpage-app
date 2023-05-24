@@ -2,13 +2,15 @@
 .main-customer
   customer-filter-customer.mb-2(
     id="customer-filter"
+    @addCustomer="getData()"
     @search="search",
     @filter="filter",
     @sort="sort")
   v-card.card
     v-card-text.d-flex.flex-column.pa-0
+      general-lottie-empty(v-if="customers.length === 0")
       template(v-for="(customer, index) in customers", :key="customer.id")
-        customer-item-customer(:customer="customer" :productList="productList" @delete="deleteCutomer")
+        customer-item-customer(:customer="customer" :productList="productList" @delete="deleteCutomer" @update="getData()")
       v-spacer
       general-pagination.mt-5(
         v-model="page",
@@ -31,7 +33,7 @@ const filters = ref([])
 const queryLimit = ref(10)
 const sortCustomer = ref({
   column: 'id',
-  ascending: true
+  ascending: false
 })
 const customerfilter = ref(null)
 const sticky = ref(0);
@@ -45,7 +47,7 @@ onMounted(async () => {
   await getProducts()
   customerfilter.value = document.getElementById("customer-filter");
   const main = document.querySelector('.main-content')
-  sticky.value = customerfilter.value.offsetTop
+  sticky.value = customerfilter.value.getBoundingClientRect().top
   main.addEventListener('scroll', stickyScroll)
 });
 
@@ -60,7 +62,7 @@ watch(page, async (updatedPage) => {
 
 function stickyScroll() {
   const parent = document.querySelector('.index')
-  if (parent.getBoundingClientRect().top < (sticky.value - 10)) {
+  if (parent.getBoundingClientRect().top < (sticky.value)) {
     customerfilter.value.classList.add("sticky");
     customerfilter.value.style.maxWidth = `${parent.clientWidth + 2}px`;
   } else {
@@ -167,7 +169,7 @@ async function limit(e) {
 }
 
 async function sort(e) {
-  sortOrder.value = e;
+  sortCustomer.value = e;
   await getData();
 }
 </script>

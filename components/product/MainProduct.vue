@@ -4,7 +4,7 @@ div.main-product
   v-card.general-card
     v-card-text.d-flex.flex-column.justify-space-between.pa-0
       template(v-for="(product, index) in products" :key="product.id")
-        product-item-product(:product="product" @update-publish="updatePublish")
+        product-item-product(:product="product" @update-publish="updatePublish" @delete="deleteProduct" @update="getProducts()")
       general-pagination.mt-5(v-model="page" @limit="limit" :limit="queryLimit" :maxPage="maxPage")
 </template>
 
@@ -90,6 +90,24 @@ async function getProducts() {
     totalProducts.value = count
     maxPage.value = Math.ceil(totalProducts.value / queryLimit.value) ? Math.ceil(totalProducts.value / queryLimit.value) : 1
   }
+}
+
+const deleteProduct = async (id) => {
+  // console.log(id);
+
+  const { status, error } = await supabase
+    .from('product')
+    .delete()
+    .eq('id', id)
+
+  if (status === 204) {
+    snackbar.add({
+      type: 'warning',
+      text: 'Product deleted!'
+    })
+    await getProducts()
+  }
+
 }
 
 async function search(e) {

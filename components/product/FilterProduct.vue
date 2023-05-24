@@ -27,7 +27,7 @@ v-card(flat)
       v-icon(style="font-size:24px") mdi-{{ sort.mdi }} 
     v-menu(activator="#sort")
       v-list.pa-0(rounded="lg")
-        v-list-item(v-for="(item, index) in sortList" :key="index" @click="$emit('sort', item), sort = item" :class="sort.label === item.label ? 'bg-primary' : ''")
+        v-list-item(v-for="(item, index) in sortList" :key="index" @click="$emit('sort', item), sort = item" :class="sort === item ? 'bg-primary' : ''")
           template(v-slot:append)
             v-icon.mr-2 {{ `mdi-${item.mdi}` }}
           v-list-item-title {{ item.label }}
@@ -71,6 +71,18 @@ const sortList = ref([
     column: "name",
     ascending: false,
     mdi: "sort-alphabetical-descending"
+  },
+  {
+    label: "Price: Low-High",
+    column: "base_price",
+    ascending: true,
+    mdi: "sort-numeric-ascending"
+  },
+  {
+    label: "Price: High-Low",
+    column: "base_price",
+    ascending: false,
+    mdi: "sort-numeric-descending"
   }
 ])
 
