@@ -9,7 +9,7 @@ div(style="min-height:100vh; background-color:#dfede8;")
         div.d-flex.flex-row.w-100.align-center.mb-4
           p.mb-4 Recipient Details
           v-spacer
-          v-btn(v-if="recipient_completed"  @click="editRecipient = !editRecipient" :icon="editRecipient ? 'mdi-close' : 'mdi-pencil'" variant="outlined" size="small")
+          v-btn(v-if="recipient_completed"  @click="editRecipient = !editRecipient" :icon="editRecipient ? 'mdi-close' : 'mdi-pencil'" variant="outlined" size="x-small")
         div(v-if="!editRecipient && recipient_completed")
           v-row.mb-3(no-gutters="")
             v-col(cols="3")
@@ -45,7 +45,7 @@ div(style="min-height:100vh; background-color:#dfede8;")
         div.d-flex.flex-row.w-100.align-center.mb-4
           p.mb-4 Shipping Address
           v-spacer
-          v-btn(v-if="shipping_completed"  @click="editShipping = !editShipping" :icon="editShipping ? 'mdi-close' : 'mdi-pencil'" variant="outlined" size="small")
+          v-btn(v-if="shipping_completed"  @click="editShipping = !editShipping" :icon="editShipping ? 'mdi-close' : 'mdi-pencil'" variant="outlined" size="x-small")
         div(v-if="!editShipping && shipping_completed")
           v-row.mb-3(no-gutters="")
             v-col(cols="3")
@@ -92,42 +92,65 @@ div(style="min-height:100vh; background-color:#dfede8;")
             v-col.py-0(cols="12")
               v-btn.w-100.text-capitalize.bg-primary(variant="outlined" color="black" @click="submitShipping") Save
 
-    v-card.general-card(  )
+    v-card.general-card.mb-5(  )
+      v-card-text
+        div.d-flex.flex-row.w-100.align-center.mb-4
+          p.mb-4 Payment Channel
+        //- p {{ paymentChannel }}
+        v-radio-group(v-model="selectedPayment" @update:model-value="submitPaymentMethod")
+          v-radio(v-for="(channel, index) in paymentChannel" :key="index" :value="channel.id")
+            template(v-slot:label)
+              v-img(v-if="channel.id ===1" src="/img/gateway/toyyibpay.svg" max-width="100")
+              div.d-flex.flex-row(v-if="channel.id === 3")
+                p.mr-3 {{ channel.name }}
+                v-icon mdi-bank-transfer
+
+    v-card.general-card.mb-5(  )
       v-card-text
         div.d-flex.flex-row.w-100.align-center.mb-4
           p.mb-4 Order Details
-          //- v-spacer
-          //- v-btn(v-if="shipping_completed"  @click="editShipping = !editShipping")
+          v-spacer
+          v-btn(@click="editProduct = !editProduct" :icon="editProduct ? 'mdi-close' : 'mdi-pencil'" variant="outlined" size="x-small")
         
-        template(v-for="(item, index) in products" :key="index")
+        template(v-for="(product, index) in products" :key="index")
           div.d-flex.flex-row.w-100.justify-space-between
             div.d-flex.flex-row.flex-grow-1
-              v-img.mr-3( :src="item.image"
+              v-img.mr-3( :src="product.image"
                   max-width="50"
                   width="100%"
                   cover
                   style="aspect-ratio:1"
                 )
               div
-                p.font-weight-medium {{ item.name }}
-                p.font-weight-light(style="font-size:12px") {{ item.base_weight/1000 }}KG
+                p.font-weight-medium {{ product.name }}
+                p.font-weight-light(style="font-size:12px") {{ product.base_weight/1000 }}KG
             //- v-spacer
-            div.d-flex.flex-row.justify-space-between(style="width: 120px")
+            div.d-flex.flex-row.justify-space-between(style="width: 120px" v-if="!editProduct")
               p 
                 span.font-weight-light x
-                |  {{ item.quantity }}
-              p.font-weight-medium {{ fCurrency(item.base_price) }}
-      //- v-row
-      //-   v-col.py-0(cols="12")
-      //-     .d-flex.flex-row.justify-space-between.align-center.pa-2.px-md-5.rounded-lg(
-      //-       v-for="(product, index) in products",
-      //-       :key="product.id"
-      //-       style="background-color:#ececec"
-      //-     )
-      //-       p {{ product.name }}
-      //-       general-count-input-normal(,
-      //-         min="1"
-      //-       )
+                |  {{ product.quantity }}
+              p.font-weight-medium {{ fCurrency(product.base_price) }}
+            general-count-input-normal(
+              v-if="editProduct" 
+              v-model="customerForm.products[index].quantity"
+              min="1"
+              @update:model-value="updateProduct(product)"
+            )
+        v-divider.my-5
+        .d-flex.flex-row.align-center
+          p.title Subtotal:
+          v-spacer
+          p {{ fCurrency(subTotal) }}
+        .d-flex.flex-row.align-center
+          p.title Shipping:
+          v-spacer
+          p {{ fCurrency(shippingForm.shipping_fee) }}
+        v-divider.my-5
+        .d-flex.flex-row.align-center
+          p.font-weight-bold Total:
+          v-spacer
+          p.font-weight-bold {{ fCurrency(subTotal+shippingForm.shipping_fee) }}
+    v-btn.w-100.text-capitalize.bg-primary(variant="outlined" color="black" append-icon="mdi-progress-check") Proceed to Pay
 </template>
 
 <script setup>
@@ -135,6 +158,7 @@ import postcode from '@/src/postcode'
 
 const route = useRoute();
 const supabase = useSupabaseAuthClient()
+const snackbar = useSnackbar()
 
 const company_id = ref("")
 const customer_id = ref("")
@@ -142,14 +166,19 @@ const orderID = ref("");
 const loading = ref(true)
 const editRecipient = ref(false)
 const editShipping = ref(false)
+const editProduct = ref(false)
 const stateList = ref([])
 const recipient_completed = ref(false)
 const shipping_completed = ref(false)
 const region = ref('')
 const products = ref([])
 const totalWeight = ref(0)
+const subTotal = ref(0)
+const total = ref(0)
 const courierList = ref([])
+const paymentChannel = ref([])
 const mainOrder = ref(null)
+const selectedPayment = ref(null)
 const rules = ref(
   {
     not_empty: [(val) => (val || '').length > 0 || 'This field is required']
@@ -159,11 +188,11 @@ const rules = ref(
 const paymentOptions = ref([
   {
     id: 1,
-    name: "FPX",
+    name: "toyyibPay",
   },
   {
     id: 2,
-    name: "Card",
+    name: "billPlz",
   },
   {
     id: 3,
@@ -180,6 +209,7 @@ const customerForm = ref(
     name: '',
     phone: '',
     email: '',
+    products: []
   }
 )
 
@@ -228,10 +258,19 @@ const getOrder = async () => {
     .eq('order_id', orderID.value)
     .single()
 
-    console.log(order);
+    // console.log(order);
     mainOrder.value = order
 
+    for (let index = 0; index < paymentOptions.value.length; index++) {
+      const option = paymentOptions.value[index];
+      if (order.customers.pages.paymentOptions.includes(option.id)) {
+        paymentChannel.value.push(option)
+      }
+    }
+
     await getProducts(order.customers.products)
+
+    selectedPayment.value = order.payment_method
 
     customer_id.value = order.customers.id
     company_id.value = order.company_id
@@ -239,6 +278,7 @@ const getOrder = async () => {
     customerForm.value.name = order.customers.name
     customerForm.value.phone = removePhonePrefix(order.customers.phone)
     customerForm.value.email = order.customers.email
+    customerForm.value.products = order.customers.products
 
     if (customerForm.value.name && customerForm.value.phone && customerForm.value.email) {
       recipient_completed.value = true
@@ -265,14 +305,14 @@ const getOrder = async () => {
     }
 
     if (shippingForm.value.address_1 && shippingForm.value.postcode && shippingForm.value.city && shippingForm.value.state) {
-    shipping_completed.value = true
-  }else{
-    editShipping.value = true
-  }
+      shipping_completed.value = true
+    }else{
+      editShipping.value = true
+    }
 }
 
 const submitRecipient = async () => {
-  console.log(customerForm.value); 
+  // console.log(customerForm.value); 
   const resp = await supabase
     .from('customers')
     .update([
@@ -290,7 +330,6 @@ const submitRecipient = async () => {
 }
 
 const submitShipping = async () => {
-  console.log(shippingForm.value);
   const resp = await supabase
     .from('order')
     .update([
@@ -306,24 +345,105 @@ const submitShipping = async () => {
       }
     ])
     .eq('order_id', orderID.value)
-  console.log(resp);
+  // console.log(resp);
   if (resp.status === 204) {
     editShipping.value = false
   }
 }
 
+const submitPaymentMethod = async () => {
+  // console.log(customerForm.value); 
+  const resp = await supabase
+    .from('order')
+    .update([
+      {
+        payment_method: selectedPayment.value,
+        payment: subTotal.value + shippingForm.value.shipping_fee
+      }
+    ])
+    .eq('order_id', orderID.value)
+}
+
+const updateProduct = async (current) => {
+  for (let index = 0; index < customerForm.value.products.length; index++) {
+    const prod = customerForm.value.products[index];
+    if (prod.id === current.id) {
+      if (prod.quantity && prod.quantity !== current.quantity) {
+        products.value[index].quantity = prod.quantity
+        getSubTotal(products.value)
+        const resp = await supabase
+          .from('customers')
+          .update([
+            {
+              products: customerForm.value.products
+            }
+          ])
+          .eq('id', customer_id.value)
+        // console.log(resp);
+        if (resp.status === 204) {
+          getTotalWeight(products.value)
+          await getCourier()
+          for (let index = 0; index < courierList.value.length; index++) {
+            const courier = courierList.value[index];
+            if (courier.name === shippingForm.value.courier) {
+              shippingForm.value.shipping_fee = courier.rate
+            }
+          }
+
+          const resp = await supabase
+            .from('order')
+            .update([
+              {
+                shipping_fee: shippingForm.value.shipping_fee,
+              }
+            ])
+            .eq('order_id', orderID.value)
+          if (resp.status === 204) {
+            snackbar.add({
+              type: 'success',
+              text: `${current.name} updated!`
+            })
+          }
+        }
+      }
+    }
+  }
+}
+
 const getProducts = async (data) => {
-  data.forEach(async (prod) => {
+  let temp = []
+  for (let index = 0; index < data.length; index++) {
+    const prod = data[index];
     let { data: product } = await supabase
       .from('product')
       .select('*')
       .eq('id', prod.id)
       .single()
+    
+    product.quantity = prod.quantity
+    temp.push(product)
+  }
+  products.value = temp
+  getTotalWeight(temp)
+  getSubTotal(temp)
+}
 
-      product.quantity = prod.quantity
-      products.value.push(product)
-      totalWeight.value += product.base_weight
-  });
+const getTotalWeight = (products) => {
+  let weight = 0
+  for (let index = 0; index < products.length; index++) {
+    const prod = products[index]
+    weight += (prod.base_weight * prod.quantity)
+  }
+  totalWeight.value = weight
+}
+
+const getSubTotal = (products) => {
+  let total = 0
+  for (let index = 0; index < products.length; index++) {
+    const prod = products[index]
+    total += (prod.base_price * prod.quantity)
+  }
+  subTotal.value = total
 }
 
 const fCurrency = (cent) => {
@@ -339,19 +459,20 @@ const getCourier = async () => {
     .eq('region', region.value)
     .eq('enabled', true)
   courierList.value  = []
-  courier.forEach(item => {
+  for (let index = 0; index < courier.length; index++) {
+    const item = courier[index];
     if (mainOrder.value.customers.pages.shippingOptions.includes(item.id)) {
-      item.rates.forEach(rate => {
-        if (rate.min < totalWeight.value && totalWeight.value < rate.max) {
+      for (let index = 0; index < item.rates.length; index++) {
+        const rate = item.rates[index];
+        if (rate.min <= totalWeight.value && totalWeight.value <= rate.max) {
           courierList.value.push({
             name: item.courier_name,
             rate: rate.rate
           })
         }
-      });
+      }
     }
-  });
-
+  }
 }
 
 const getCityState = (e) => {

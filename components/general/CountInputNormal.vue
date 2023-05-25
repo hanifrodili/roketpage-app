@@ -13,7 +13,6 @@
       :max="maxInput"
       :step="stepInput"
       style="width: 60px"
-      @update:model-value="$emit('update:modelValue', parseFloat(number))"
     )
   div
     v-icon(@click="increase") mdi-plus
@@ -28,20 +27,25 @@ const props = defineProps(
     step: String
   }
 )
-const emits = defineEmits(['update:modelValue', 'remove'])
+const emit = defineEmits(['update:modelValue'])
 
 const minInput = ref(0)
 const maxInput = ref(0)
 const stepInput = ref(0)
-const number = ref(0)
+const number = ref(props.modelValue);
 
 onMounted(() => {
-  number.value = parseFloat(props.modelValue) > parseFloat(props.min) ? parseFloat(props.modelValue) : parseFloat(props.min)
+  if (number.value < parseFloat(props.min)) {
+    number.value = parseFloat(props.min)
+  }
   minInput.value = props.min ? parseFloat(props.min) : 1
   maxInput.value = props.max ? parseFloat(props.max) : null
   stepInput.value = props.step ? parseFloat(props.step) : 1
-  emits('update:modelValue', number.value)
 })
+
+// watch(number, (newNumber) => {
+//   console.log(`x is ${newNumber}`)
+// })
 
 
 function increase() {
@@ -52,14 +56,14 @@ function increase() {
   if (!maxInput.value) {
     number.value += stepInput.value
   }
-  emits('update:modelValue', number.value)
+  emit('update:modelValue', number.value)
 }
 
 function decrease() {
   if (number.value > minInput.value) {
     number.value -= stepInput.value
   } 
-  emits('update:modelValue', number.value)
+  emit('update:modelValue', number.value)
 }
 </script>
 

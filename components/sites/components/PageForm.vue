@@ -181,6 +181,7 @@ const submit = async () => {
         .from('order')
         .insert([
           {
+            created_at: 'now()',
             customer_id: resp.data[0].id,
             company_id: company_id.value,
             order_id: orderID

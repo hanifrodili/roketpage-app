@@ -50,7 +50,7 @@
           v-if="pageForm.formType === 'Payment'",
           v-model="pageForm.paymentOptions",
           chips,
-          label="Choose Payment Options",
+          label="Choose Payment Channel",
           :items="paymentOptions"
           item-title="name"
           item-value="id"
@@ -78,7 +78,7 @@
           v-card.general-card
             v-card-text.pa-0
               template(v-for="(field, index) in formFields" :key="index")
-                //p {{ field }}
+                //- p {{ field }}
                 sites-form-field(:field="field" @delete="deleteField(index)" @updateField="updateField")
                 v-divider(v-if="index < formFields.length-1")
               sites-add-form-field.mt-3(@addField="addField")
@@ -111,6 +111,7 @@ const dialog = computed({
 onMounted( async () => {
   await getShippings()
   await getFormField()
+  await getPaymentChannel()
 })
 
 const pageProducts = ref([])
@@ -135,24 +136,8 @@ const formTypeList = ref([
   'Payment',
   'Leads',
 ])
-const paymentOptions = ref([
-  {
-    id: 1,
-    name: "FPX",
-  },
-  {
-    id: 2,
-    name: "Card",
-  },
-  {
-    id: 3,
-    name: "Bank Transfer",
-  },
-  {
-    id: 4,
-    name: "Cash on Delivery",
-  }
-])
+
+const paymentOptions = ref([])
 
 const getShippings = async () => {
 
@@ -163,6 +148,57 @@ const getShippings = async () => {
     .eq('company_id', props.data.company_id)
 
   shippingList.value = shipping_details
+}
+
+const getPaymentChannel = async () => {
+
+  let { data:toyyibpay } = await supabase
+    .from('toyyibpay_gateway')
+    .select('enabled')
+    .eq('company_id', props.data.company_id)
+    .single()
+
+  if (toyyibpay.enabled) {
+    paymentOptions.value.push(
+      {
+        id: 1,
+        name: 'toyyibPay'
+      }
+    )
+  }
+
+  let { data: banks } = await supabase
+    .from('bank_details')
+    .select('enabled')
+    .eq('company_id', props.data.company_id)
+  
+  if (banks.length) {
+    paymentOptions.value.push(
+      {
+        id: 3,
+        name: 'Bank Transfer'
+      }
+    )
+  }
+
+  paymentOptions.value.push(
+    {
+      id: 4,
+        name: "Cash on Delivery",
+    }
+  )
+
+
+  // {
+  //   id: 3,
+  //     name: "Bank Transfer",
+  //       enabled: true
+  // },
+  // {
+  //   id: 4,
+  //     name: "Cash on Delivery",
+  //       enabled: true
+  // }
 }
 
 const getFormField = async () => {
