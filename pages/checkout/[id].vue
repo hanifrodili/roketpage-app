@@ -10,7 +10,23 @@ div(style="min-height:100vh; background-color:#dfede8;")
           p.mb-4 Recipient Details
           v-spacer
           v-btn(v-if="recipient_completed"  @click="editRecipient = !editRecipient" :icon="editRecipient ? 'mdi-close' : 'mdi-pencil'" variant="outlined" size="x-small")
-        div(v-if="!editRecipient && recipient_completed")
+        div(v-if="gettingData")
+          v-row.mb-3()
+            v-col.py-0(cols="3")
+              div.skeleton.skeleton-text()
+            v-col.py-0(cols="9")
+              div.skeleton.skeleton-text()
+          v-row.mb-3()
+            v-col.py-0(cols="3")
+              div.skeleton.skeleton-text()
+            v-col.py-0(cols="9")
+              div.skeleton.skeleton-text()
+          v-row()
+            v-col.py-0(cols="3")
+              div.skeleton.skeleton-text()
+            v-col.py-0(cols="9")
+              div.skeleton.skeleton-text()
+        div(v-if="!editRecipient && recipient_completed && !gettingData")
           v-row.mb-3(no-gutters="")
             v-col(cols="3")
               p.title Name:
@@ -26,7 +42,7 @@ div(style="min-height:100vh; background-color:#dfede8;")
               p.title Email:
             v-col(cols="9")
               p {{ customerForm.email }}
-        v-form(ref="formCustomer" v-if="editRecipient || !recipient_completed" )
+        v-form(ref="formCustomer" v-if="editRecipient || !recipient_completed && !gettingData" )
           v-row
             v-col.py-0(cols="12")
               v-text-field.mb-2(v-model="customerForm.name" variant="outlined" density="compact" hide-details="auto" placeholder="Name")
@@ -46,7 +62,24 @@ div(style="min-height:100vh; background-color:#dfede8;")
           p.mb-4 Shipping Address
           v-spacer
           v-btn(v-if="shipping_completed"  @click="editShipping = !editShipping" :icon="editShipping ? 'mdi-close' : 'mdi-pencil'" variant="outlined" size="x-small")
-        div(v-if="!editShipping && shipping_completed")
+        div(v-if="gettingData")
+          v-row.mb-3()
+            v-col.py-0(cols="3")
+              div.skeleton.skeleton-text()
+            v-col.py-0(cols="9")
+              div.skeleton.skeleton-text()
+          v-row.mb-3()
+            v-col.py-0(cols="3")
+              div.skeleton.skeleton-text()
+            v-col.py-0(cols="9")
+              div.skeleton.skeleton-text()
+          v-row()
+            v-col.py-0(cols="3")
+              div.skeleton.skeleton-text()
+            v-col.py-0(cols="9")
+              div.skeleton.skeleton-text()
+
+        div(v-if="!editShipping && shipping_completed && !gettingData")
           v-row.mb-3(no-gutters="")
             v-col(cols="3")
               p.title Address:
@@ -63,7 +96,7 @@ div(style="min-height:100vh; background-color:#dfede8;")
               p.title Courier:
             v-col(cols="9")
               p {{ shippingForm.courier }} - {{ fCurrency(shippingForm.shipping_fee) }}
-        v-form(ref="formShipping" v-if="editShipping || !shipping_completed")
+        v-form(ref="formShipping" v-if="editShipping || !shipping_completed && !gettingData")
           v-row
             v-col.py-0(cols="12")
               v-text-field.mb-2(v-model="shippingForm.address_1" hide-details="auto" variant="outlined" placeholder="Address 1" density="compact" :rules='rules.not_empty')
@@ -100,10 +133,11 @@ div(style="min-height:100vh; background-color:#dfede8;")
         v-radio-group(v-model="selectedPayment" @update:model-value="submitPaymentMethod")
           v-radio(v-for="(channel, index) in paymentChannel" :key="index" :value="channel.id")
             template(v-slot:label)
-              v-img(v-if="channel.id ===1" src="/img/gateway/toyyibpay.svg" max-width="100")
+              v-img(v-if="channel.id === 1" src="/img/gateway/toyyibpay.svg" max-width="100")
               div.d-flex.flex-row(v-if="channel.id === 3")
-                p.mr-3 {{ channel.name }}
+                p.mr-3(style="color: black") {{ channel.name }}
                 v-icon mdi-bank-transfer
+            
 
     v-card.general-card.mb-5(  )
       v-card-text
@@ -138,22 +172,23 @@ div(style="min-height:100vh; background-color:#dfede8;")
             )
         v-divider.my-5
         .d-flex.flex-row.align-center
-          p.title Subtotal:
+          p.title Subtotal
           v-spacer
           p {{ fCurrency(subTotal) }}
         .d-flex.flex-row.align-center
-          p.title Shipping:
+          p.title Shipping
           v-spacer
           p {{ fCurrency(shippingForm.shipping_fee) }}
         v-divider.my-5
         .d-flex.flex-row.align-center
-          p.font-weight-bold Total:
+          p.font-weight-bold Total
           v-spacer
           p.font-weight-bold {{ fCurrency(subTotal+shippingForm.shipping_fee) }}
-    v-btn.w-100.text-capitalize.bg-primary(variant="outlined" color="black" append-icon="mdi-progress-check") Proceed to Pay
+    v-btn.w-100.text-capitalize.bg-primary(variant="outlined" color="black" append-icon="mdi-progress-check" @click="proceedPayment") Proceed to Pay
 </template>
 
 <script setup>
+import axios from "axios"
 import postcode from '@/src/postcode'
 
 const route = useRoute();
@@ -163,7 +198,8 @@ const snackbar = useSnackbar()
 const company_id = ref("")
 const customer_id = ref("")
 const orderID = ref("");
-const loading = ref(true)
+const loading = ref(false)
+const gettingData = ref(true)
 const editRecipient = ref(false)
 const editShipping = ref(false)
 const editProduct = ref(false)
@@ -179,6 +215,7 @@ const courierList = ref([])
 const paymentChannel = ref([])
 const mainOrder = ref(null)
 const selectedPayment = ref(null)
+const toyyibPay_details = ref(null)
 const rules = ref(
   {
     not_empty: [(val) => (val || '').length > 0 || 'This field is required']
@@ -252,6 +289,7 @@ onMounted(async () => {
 });
 
 const getOrder = async () => {
+  // gettingData.value = true
   let { data: order, error } = await supabase
     .from('order')
     .select('*, customers(*, pages(paymentOptions, shippingOptions))')
@@ -309,6 +347,7 @@ const getOrder = async () => {
     }else{
       editShipping.value = true
     }
+  gettingData.value = false
 }
 
 const submitRecipient = async () => {
@@ -326,6 +365,9 @@ const submitRecipient = async () => {
   // console.log(resp);
   if (resp.status === 204) {
     editRecipient.value = false
+    if (customerForm.value.name && customerForm.value.phone && customerForm.value.email) {
+      recipient_completed.value = true
+    }
   }
 }
 
@@ -348,6 +390,9 @@ const submitShipping = async () => {
   // console.log(resp);
   if (resp.status === 204) {
     editShipping.value = false
+    if (shippingForm.value.address_1 && shippingForm.value.postcode && shippingForm.value.city && shippingForm.value.state) {
+      shipping_completed.value = true
+    }
   }
 }
 
@@ -475,6 +520,75 @@ const getCourier = async () => {
   }
 }
 
+const proceedPayment = async () => {
+  console.log(selectedPayment.value);
+  if (selectedPayment.value === 1) {
+    let { data: toyyibpay } = await supabase
+      .from('toyyibpay_gateway')
+      .select('*')
+      .eq('company_id', company_id.value)
+      .single()
+
+    console.log(toyyibpay);
+    let headersList = {
+      "Accept": "*/*",
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+
+    let bodyContent = `userSecretKey=${toyyibpay.secret_key}`
+    bodyContent +=`&categoryCode=${toyyibpay.category_code}`
+    bodyContent += `&billName=Product Payment`
+    bodyContent += `&billDescription=Payment by ${customerForm.value.name}`
+    bodyContent += `&billPriceSetting=1`
+    bodyContent += `&billPayorInfo=1`
+    bodyContent += `&billAmount=${subTotal.value + shippingForm.value.shipping_fee}`
+    bodyContent += `&billReturnUrl=http://localhost:3000/payment_complete`
+    bodyContent += `&billCallbackUrl=http://localhost:3000/payment_complete`
+    bodyContent += `&billExternalReferenceNo=${customer_id.value}`
+    bodyContent += `&billTo=${customerForm.value.name}`
+    bodyContent += `&billEmail=${customerForm.value.email}`
+    bodyContent += `&billPhone=0${customerForm.value.phone}`
+    bodyContent += `&billSplitPayment=0`
+    bodyContent += `&billSplitPaymentArgs=`
+    let c = null
+    if (toyyibpay.fpx) {
+      c = 0
+    }
+    else if (!toyyibpay.fpx && toyyibpay.card) {
+      c = 1
+    }
+    else if(toyyibpay.fpx && toyyibpay.card) {
+      c = 2
+    }
+    bodyContent += `&billPaymentChannel=${c}`
+    bodyContent += `&billContentEmail=Thank you for purchasing our product!`
+    bodyContent += `&billChargeToCustomer=${toyyibpay.pass_tx_fee}`
+    bodyContent += `&billExpiryDate=`
+    bodyContent += `&billExpiryDays=${toyyibpay.bill_validity}`
+
+    let reqOptions = {
+      url: "https://dev.toyyibpay.com/index.php/api/createBill",
+      method: "POST",
+      headers: headersList,
+      data: bodyContent,
+    }
+
+    let response = await axios.request(reqOptions);
+    console.log(response);
+    if (response.status === 200) {
+      await supabase
+        .from('customers')
+        .update([
+          {
+            bill_code: response.data[0].BillCode
+          }
+        ])
+        .eq('id', customer_id.value)
+      window.location.replace(`https://dev.toyyibpay.com/${response.data[0].BillCode}`)
+    }
+  }
+}
+
 const getCityState = (e) => {
   if (e.length === 5) {
     shippingForm.value.city = postcode.findPostcode(e).city
@@ -518,5 +632,9 @@ const removePhonePrefix = (phoneNumber) => {
 <style lang="scss" scoped>
 p.title {
   color: #767676
+}
+
+:deep(.v-radio) > * {
+  opacity: 1;
 }
 </style>
