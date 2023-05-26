@@ -39,7 +39,7 @@ definePageMeta({
 const query = ref(route.query)
 
 const updatePayment = async () => {
-  if (query.status_id === 1) {
+  if (query.status_id === "1") {
     const resp = await supabase
       .from('customers')
       .update([
