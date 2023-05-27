@@ -11,9 +11,10 @@
 }
 
 body {
-  font-family: "Open Sans";
+  font-family: "Poppins";
   color: rgb(var(--v-theme-neutral));
   background-color: rgb(var(--v-theme-bodyBg));
+  letter-spacing: -0.005em !important;
 }
 
 h1,
@@ -22,33 +23,36 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Open Sans";
+  font-family: "Poppins";
+  letter-spacing: -0.005em !important;
 }
 
 // overwrite vuetify classes
 .v-btn {
   letter-spacing: -0.005em !important;
 }
-.v-application {
-  .text-h1,
-  .text-h2,
-  .text-h3,
-  .text-h4,
-  .text-h5,
-  .text-h6,
-  .text-button,
-  .text-subtitle-1,
-  .text-subtitle-2,
-  .text-body-1,
-  .text-body-2,
-  .text-caption,
-  .text-overline {
-    letter-spacing: -0.005em !important;
-    word-break: break-word;
-  }
+
+.text-h1,
+.text-h2,
+.text-h3,
+.text-h4,
+.text-h5,
+.text-h6,
+.text-button,
+.text-subtitle-1,
+.text-subtitle-2,
+.text-body-1,
+.text-body-2,
+.text-caption,
+.text-overline {
+  letter-spacing: -0.005em !important;
+  word-break: break-word;
+  font-family: "Poppins" !important;
 }
-.v-text-field {
+
+.v-label {
   font-size: small !important;
+  letter-spacing: -0.005em !important;
 }
 
 // new class
@@ -96,7 +100,7 @@ h6 {
   overflow-y: scroll;
 }
 
-.page-title{
+.page-title {
   font-size: 18px;
   font-weight: 700;
   line-height: 24px;
@@ -117,7 +121,7 @@ h6 {
   box-shadow: none;
   min-height: 40px;
   height: fit-content;
-  border: .5px solid #ababab;
+  border: 0.5px solid #ababab;
   border-radius: 8px;
 }
 

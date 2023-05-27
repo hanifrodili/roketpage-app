@@ -9,7 +9,13 @@ export default defineNuxtConfig({
       viewport: "width=device-width, initial-scale=1",
       title: "RoketPage",
       titleTemplate: "%s | Help your sales to the moon 🚀",
-      link: [{ rel: "icon", type: "image/svg", href: "/icon.svg" }],
+      link: [
+        { rel: "icon", type: "image/svg", href: "/icon.svg" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.cdnfonts.com/css/poppins",
+        },
+      ],
       meta: [
         { charset: "utf-8" },
         {
@@ -70,7 +76,7 @@ export default defineNuxtConfig({
     },
   },
   imports: {
-    dirs: ['store'],
+    dirs: ["store"],
   },
   modules: ["@pinia/nuxt", "nuxt-snackbar", "@nuxtjs/supabase"],
   snackbar: {
@@ -79,11 +85,11 @@ export default defineNuxtConfig({
     dense: true,
   },
   routeRules: {
-    "/": { redirect: "/signin" }
+    "/": { redirect: "/signin" },
   },
   devServer: {
     port: process.env.PORT,
-    host: "0"
+    host: "0",
   },
 
   css: [
@@ -108,9 +114,9 @@ export default defineNuxtConfig({
       }),
     ],
   },
-  vue: {  
+  vue: {
     compilerOptions: {
-      isCustomElement: (tag) => ['lottie-player'].includes(tag),
+      isCustomElement: (tag) => ["lottie-player"].includes(tag),
     },
   },
   runtimeConfig: {
