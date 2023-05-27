@@ -59,7 +59,7 @@ const updatePayment = async () => {
             status: 'new'
           }
         ])
-        .eq('id', query.order_id)
+        .eq('customer_id', query.order_id)
     }
   }
 }

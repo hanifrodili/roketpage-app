@@ -6,9 +6,9 @@ v-card(flat)
         flat,
         size="small",
         rounded,
-        :color="status == item.value ? 'primary' : ''",
-        :class="status == item.value ? 'bg-primary' : 'bg-grey-lighten-2'",
-        @click="(status = item.value), $emit('filter', { field: 'status', value: status })")
+        :color="status == item.label ? 'primary' : ''",
+        :class="status == item.label ? 'bg-primary' : 'bg-grey-lighten-2'",
+        @click="(status = item.label), $emit('filter', { field: 'status', value: item.value })")
         b {{ item.label }}
   .d-flex.flex-row(style="gap: 8px")
     v-text-field(
@@ -41,13 +41,13 @@ v-card(flat)
           template(v-slot:append)
             v-icon.mr-2 {{ `mdi-${item.mdi}` }}
           v-list-item-title {{ item.label }}
-    order-create-order
+    //- order-create-order
 </template>
 
 <script setup>
 const emit = defineEmits(["search", "sort", "filter"]);
 
-const status = ref("");
+const status = ref("All");
 const searchInput = ref("");
 const sortDialog = ref(false);
 const sort = ref("id");
@@ -55,46 +55,66 @@ const sort = ref("id");
 const sortList = ref([
   {
     label: "Newest",
-    value: "id",
-    mdi: "sort-ascending",
+    column: "id",
+    ascending: true,
+    mdi: "sort-ascending"
   },
   {
     label: "Oldest",
-    value: "-id",
-    mdi: "sort-descending",
+    column: "id",
+    ascending: false,
+    mdi: "sort-descending"
   },
   {
     label: "Name: A-Z",
-    value: "name",
-    mdi: "sort-alphabetical-ascending",
+    column: "name",
+    ascending: true,
+    mdi: "sort-alphabetical-ascending"
   },
   {
     label: "Name: Z-A",
-    value: "-name",
-    mdi: "sort-alphabetical-descending",
+    column: "name",
+    ascending: false,
+    mdi: "sort-alphabetical-descending"
   },
-]);
+  {
+    label: "Payment: Low-High",
+    column: "payment",
+    ascending: true,
+    mdi: "sort-numeric-ascending"
+  },
+  {
+    label: "Payment: High-Low",
+    column: "payment",
+    ascending: false,
+    mdi: "sort-numeric-descending"
+  }
+])
 
 const statusList = ref([
   {
     label: "All",
-    value: "",
+    value: ['new', 'processing', 'shipping', 'completed', 'cancelled'],
   },
   {
     label: "New",
-    value: "new",
+    value: ["new"],
   },
   {
     label: "Processing",
-    value: "processing",
+    value: ["processing"],
   },
   {
     label: "Shipping",
-    value: "shipping",
+    value: ["shipping"],
   },
   {
     label: "Completed",
-    value: "completed",
+    value: ["completed"],
+  },
+  {
+    label: "Cancelled",
+    value: ["cancelled"],
   },
 ]);
 </script>

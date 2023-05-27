@@ -3,62 +3,80 @@ div
   div.d-flex.pa-2.pa-md-4.flex-column(style="font-size:13px")
     div.d-flex.flex-row()
       div.d-flex.flex-column.w-100
-        div.d-flex.flex-row.font-weight-bold.mb-2(style="" )
-          p {{ `#${order.id}` }} {{ order.name }}
+        div.d-flex.flex-row.mb-2(style="" )
+          p
+            span.text-decoration-none(style="color:#767676") {{ `#${order.id}` }}
+            |  
+            span.text-decoration-underline.font-weight-bold {{ order.customers.name }}
           v-spacer
           v-chip.text-capitalize(style="max-width:fit-content; width:100%; height: 20px; font-weight:bold; font-size:10px" :ripple="false" :color="statusColor(order.status)") {{ order.status }}
         div.d-flex.flex-row.flex-wrap.w-100(style="gap:5px;" )
-          p {{ order.phone }}
+          p {{ order.customers.phone }}
           img(src="/img/ver-divider.svg" )
-          p {{ order.email }}
+          p {{ order.customers.email }}
 
-    div.d-flex.justify-space-between(:class="$vuetify.display.width < 1020 ? 'flex-column' : 'flex-row'")
-      p.mt-auto.mb-1(style="color:#767676; font-size:12px") {{ fDate(order.date_created) }} at {{ fTime(order.date_created) }}
+    div.d-flex.justify-space-between.flex-column
+      p.mb-1(style="color:#767676; font-size:12px") {{ fDate(order.created_at) }} at {{ fTime(order.created_at) }}
       div.d-flex.flex-column.flex-grow-1.justify-start()
         v-expansion-panels(variant="accordion" plain)
           v-expansion-panel(plain)
-            v-expansion-panel-title.pa-0(expand-icon="" collapse-icon="" style="min-height:32px !important; width:fit-content !important;" :class="$vuetify.display.width < 1020 ? 'mr-auto' : 'ml-auto'")
+            v-expansion-panel-title.pa-0(expand-icon="" collapse-icon="" style="min-height:32px !important; width:fit-content !important;")
               span.d-flex.flex-row.align-center.w-100(style="gap:4px; font-size:13px")
                 v-icon.expand-icon mdi-chevron-down
                 p {{ itemsLength }} {{ itemsLength > 1 ? 'items' : 'item' }} for
-                p.font-weight-bold RM{{ totalPrice }}
-            v-expansion-panel-text(style="background-color: #ececec; font-size:12px")
+                p.font-weight-bold {{ fCurrency(totalPrice) }}
+            div.d-flex.flex-row.justify-end(style="margin-top: -38px;")
+              v-btn(icon="mdi-whatsapp" variant="text" size="small" color="#25d366")
+              v-menu()
+                template(v-slot:activator="{ props }")
+                  v-btn(icon="mdi-dots-vertical" variant="text" size="small" v-bind="props")
+                v-list(density="compact")
+                  v-list-item
+                    v-list-item-title( style="font-size:14px") Edit customer
+                  v-list-item(@click="dialogCancel=true")
+                    v-list-item-title( style="font-size:14px; color:#ec3a3a") Cancel order
+            v-expansion-panel-text.rounded-lg(style="background-color: #ececec; font-size:12px")
               p {{ products.length > 1 ? 'Items' : 'Item' }}
               template(v-for="(item, index) in products" :key="index")
                 div.d-flex.flex-row.justify-space-between.w-100
-                  p.font-weight-medium {{ item.name }}
+                  p.font-weight-medium {{ getProduct(item.id).name }}
                   div.d-flex.flex-row.justify-space-between(style="width: 100px")
-                    p x{{ item.quantity }}
-                    p.font-weight-medium RM{{ item.price }}
+                    p
+                      span.font-weight-light x
+                      |  {{ item.quantity }}
+                    p.font-weight-medium {{ fCurrency(getProduct(item.id).base_price) }}
                 hr(style="border: 0.5px solid #cecece; margin-top:4px")
               div.d-flex.flex-row.justify-space-between.w-100
                 p.font-weight-medium {{ $t('deliveryfee') }}
-                p.font-weight-medium RM{{ order.delivery_fee }}
-        div.d-flex.flex-row.justify-end()
-          v-btn(icon="mdi-trash-can-outline" variant="text" size="small" color="red")
-          v-btn(icon="mdi-file-edit-outline" variant="text" size="small")
-          v-btn(icon="mdi-open-in-new" variant="text" size="small" @click="$router.push(`/admin/order/${order.id}`)")
-  v-divider     
+                p.font-weight-medium {{ fCurrency(order.shipping_fee) }}
+  general-dialog-cancel(v-model="dialogCancel" @cancel="$emit('cancel',order.id)")
+  v-divider 
 </template>
 
 <script setup>
-const props = defineProps(['order'])
+const props = defineProps(['order', "productList"])
+const emit = defineEmits(['cancel', 'update'])
 
 const itemsToShow = ref(2)
 const itemsLength = ref(1)
 const products = ref([])
 const totalPrice = ref(0)
+const dialogCancel = ref(false)
 
 onMounted(() => {
-  products.value = JSON.parse(props.order.products)
+  products.value = props.order.customers.products
   itemsLength.value = products.value.length
-  products.value.forEach(item => {
-    let sub = 0
-    sub = item.price * item.quantity
-    totalPrice.value += sub
-  });
-  totalPrice.value += props.order.delivery_fee
+  totalPrice.value = props.order.payment
 })
+
+const getProduct = (id) => {
+  return props.productList.find(x => x.id === id)
+}
+
+const fCurrency = (cent) => {
+  const amount = cent / 100
+  return amount.toLocaleString('en-MY', { style: 'currency', currencyDisplay: 'symbol', currency: 'myr' });
+}
 
 function fDate(datetime){
   const date = new Date(datetime);
@@ -90,6 +108,9 @@ function statusColor(value) {
       break;
     case 'completed':
       color = "#009688"
+      break;
+    case "cancelled":
+      color = "#ec3a3a";
       break;
    
     default:

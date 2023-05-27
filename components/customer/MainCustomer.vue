@@ -70,7 +70,7 @@ function stickyScroll() {
   }
 }
 
-async function getData() {
+const getData =  async () => {
   const from = (page.value - 1) * queryLimit.value
   const to = page.value * (queryLimit.value - 2)
   let query = supabase
