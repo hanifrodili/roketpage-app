@@ -10,18 +10,13 @@ export default defineNuxtPlugin((nuxtApp) => {
     directives,
     treeShake: true,
     customVariables: ["@/public/variables.scss"],
-    defaultAssets: {
-      font: {
-        family: "Nunito",
-      },
-    },
     theme: {
       dark: true,
       themes: {
         light: {
           colors: {
             primary: "#13ED9A",
-            secondary: "#7E7E7E",
+            secondary: "#434242",
             accent: "#5099C2",
             neutralLight: "#000000",
             neutralDark: "#F7F7F7",
