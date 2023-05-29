@@ -3,6 +3,7 @@ div.main-order
   order-filter-order.mb-2(id="order-filter" @search="search" @filter="filter" @sort="sort")
   v-card.card
     v-card-text.d-flex.flex-column.justify-space-between.pa-0
+      general-lottie-empty(v-if="orders.length === 0")
       template(v-for="(order, index) in orders" :key="order.id")
         order-item-order-v2(:order="order" :productList="productList" @cancel="cancelOrder" @update="getData()")
       general-pagination.mt-5(v-model="page" @limit="limit" :limit="queryLimit" :maxPage="maxPage")

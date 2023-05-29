@@ -18,7 +18,7 @@
       general-count-input-normal(v-model="selectedProducts[index].quantity" min="0")
   //- p {{ inputs }}
   div.d-flex.flex-row.justify-space-between.align-center(style="gap:12px")
-    v-btn.flex-grow-1.text-capitalize(variant="flat" color="#25d366" prepend-icon="mdi-whatsapp" :loading="loading") WhatsApp
+    v-btn.flex-grow-1.text-capitalize(variant="flat" color="#25d366" v-if="company_phone"  prepend-icon="mdi-whatsapp" :loading="loading" @click="whatsappMerch") WhatsApp
     v-btn.flex-grow-1.text-capitalize(variant="flat" color="light-blue-darken-2" :prepend-icon="type === 'Payment' ? 'mdi-cash-register' :'mdi-send'" @click="submit" :loading="loading") {{ type === 'Payment' ? 'Checkout' :'Submit' }}
     
 </template>
@@ -32,6 +32,7 @@ const router = useRouter()
 const form = ref(null)
 const productList = ref([])
 const company_id = ref("")
+const company_phone = ref("")
 const inputFields = ref([])
 const inputs = ref([])
 const loading = ref(false)
@@ -53,6 +54,17 @@ const rules = ref(
 onMounted(async () => {
   userStore.getUser()
   company_id.value = props.company
+
+  let { data: company, } = await supabase
+    .from('company')
+    .select('phone_number')
+    .eq('id', company_id.value)
+    .single()
+  
+  if (company.phone_number) {
+    company_phone.value = sanitizePhoneNumber(company.phone_number)
+  }
+
   props.products.forEach((product, index) => {
     if (selectedProducts.value[index]) {
       selectedProducts.value[index].id = product
@@ -199,6 +211,75 @@ const submit = async () => {
 
   form.value.reset()
   loading.value = false
+}
+
+const whatsappMerch = async () => {
+  const url = `http://wa.me/${company_phone.value}` 
+  console.log(url);
+
+  loading.value = true
+  const name = inputs.value[0]
+  const phone = inputs.value[1]
+  const email = inputs.value[2]
+
+  const validation = await form.value.validate()
+  if (!validation.valid) {
+    loading.value = false
+    return
+  }
+
+  if (selectedProducts.value[0].quantity < 1) {
+    snackbar.add({
+      type: 'error',
+      text: 'Please choose product quantity!'
+    })
+    loading.value = false
+    return
+  }
+
+  const resp = await supabase
+    .from('customers')
+    .insert([
+      {
+        created_at: 'now()',
+        status: 'new',
+        name: name.field_value,
+        phone: sanitizePhoneNumber(phone.field_value),
+        email: email.field_value,
+        paid: false,
+        company_id: company_id.value,
+        page_slug: name.page_slug,
+        products: selectedProducts.value
+      }
+    ])
+    .select()
+
+  // console.log(resp);
+
+  if (resp.status === 201) {
+    inputs.value.forEach(async (field, index) => {
+      if (field.field_position > 2) {
+        await supabase
+          .from('customers_extra_field')
+          .insert([
+            {
+              customer_id: resp.data[0].id,
+              company_id: field.company_id,
+              page_slug: field.page_slug,
+              field_name: field.field_name,
+              field_position: index,
+              field_type: field.field_type,
+              field_value: field.field_value
+            },
+          ])
+      }
+    })
+  }
+
+  form.value.reset()
+  loading.value = false
+
+  window.location.href = url;
 }
 
 const randID = (len) => {

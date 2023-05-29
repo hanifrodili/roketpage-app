@@ -8,22 +8,26 @@ div
           p Edit
         v-col.align-self-center(cols="12" md="2")
           v-img.mx-auto.rounded-circle(:aspect-ratio="1/1" width="150" :src="user?.profile.avatar_url" )
-        v-col(cols="12" md="5")
+        v-col(cols="12" md="8")
           div.d-flex.flex-column.w-100()
-            .d-flex.flex-row.justify-space-between(style="gap:20px")
-              div.content
-                p.label Name
-                p.text.text-capitalize {{ user?.profile.full_name }}
-              div.content
-                p.label Role
-                p.text.text-capitalize {{ user?.current_company.role.name }}
-            .d-flex.flex-row.justify-space-between(style="gap:20px")
-              div.content
-                p.label Email
-                p.text {{ user?.email }}
-              div.content
-                p.label Phone
-                p.text {{ user?.profile.phone_number || 'n/a'  }}
+            v-row
+              v-col(cols="6")
+                div.content
+                  p.label Name
+                  p.text.text-capitalize {{ user?.profile.full_name }}
+              v-col(cols="6")
+                div.content
+                  p.label Role
+                  p.text.text-capitalize {{ user?.current_company.role.name }}
+            v-row
+              v-col(cols="6")
+                div.content
+                  p.label Email
+                  p.text {{ user?.email }}
+              v-col(cols="6")
+                div.content
+                  p.label Phone
+                  p.text {{ `+60${user?.profile.phone_number}` || 'n/a'  }}
           
     v-col.pa-0(cols="12")
       v-card.card()

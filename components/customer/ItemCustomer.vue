@@ -28,6 +28,8 @@
       color="red"
       @click="dialogDelete = true"
     )
+    a(:href="`https://wa.me/60${removePhonePrefix(customer.phone)}`" target="_blank") 
+      v-btn(icon="mdi-whatsapp" variant="text" size="small" color="#25d366")
     customer-edit-customer(:customer="customer" :productList="productList" @updateCustomer="$emit('update')")
   v-divider
 
@@ -142,6 +144,19 @@ const statusColor = (value) => {
       break;
   }
   return color;
+}
+
+const removePhonePrefix = (phoneNumber) => {
+  // Check if the number starts with "+60"
+  if (phoneNumber.startsWith('+60')) {
+    // Remove the "+60" prefix
+    return phoneNumber.slice(3);
+  } else if (phoneNumber.startsWith('0')) {
+    // Remove the leading '0'
+    return phoneNumber.slice(1);
+  } else {
+    return phoneNumber;
+  }
 }
 </script>
 <style lang="scss" scoped></style>

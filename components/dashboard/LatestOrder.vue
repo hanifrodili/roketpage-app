@@ -13,23 +13,27 @@ div.py-8
 </template>
 
 <script setup>
-import axios from 'axios'
-
-const config = useRuntimeConfig()
+const userStore = useStoreUser()
+const supabase = useSupabaseAuthClient();
 
 const orders = ref([])
+const company_id = ref('')
 
 onMounted(async () => {
-  await axios.get(`${config.public.apiUrl}/items/order_test?limit=5&fields[]=*&sort[]=id&filter[status]=new`)
-    .then(response => {
-      // Handle successful response
-      orders.value = response.data.data
-    })
-    .catch(error => {
-      // Handle error
-      console.log(error);
-    });
+  userStore.getUser()
+  company_id.value = userStore.user.current_company.id
+  await getData()
 })
+
+async function getData() {
+  let query = await supabase
+    .from('order')
+    .select('*, customers(name,phone,email,products)', { count: "exact" })
+    .order('id', { ascending: false })
+    .eq('company_id', company_id.value)
+    .eq('status', 'new')
+  orders.value = query.data
+}
 </script>
 <style lang="scss" scoped>
 .card{

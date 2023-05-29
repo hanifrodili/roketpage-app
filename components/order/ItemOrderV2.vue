@@ -26,7 +26,8 @@ div
                 p {{ itemsLength }} {{ itemsLength > 1 ? 'items' : 'item' }} for
                 p.font-weight-bold {{ fCurrency(totalPrice) }}
             div.d-flex.flex-row.justify-end(style="margin-top: -38px;")
-              v-btn(icon="mdi-whatsapp" variant="text" size="small" color="#25d366")
+              a(:href="`https://wa.me/+60${removePhonePrefix(order.customers.phone)}`" target="_blank") 
+                v-btn(icon="mdi-whatsapp" variant="text" size="small" color="#25d366")
               v-menu()
                 template(v-slot:activator="{ props }")
                   v-btn(icon="mdi-dots-vertical" variant="text" size="small" v-bind="props")
@@ -118,6 +119,19 @@ function statusColor(value) {
       break;
    }
   return color
+}
+
+const removePhonePrefix = (phoneNumber) => {
+  // Check if the number starts with "+60"
+  if (phoneNumber.startsWith('+60')) {
+    // Remove the "+60" prefix
+    return phoneNumber.slice(3);
+  } else if (phoneNumber.startsWith('0')) {
+    // Remove the leading '0'
+    return phoneNumber.slice(1);
+  } else {
+    return phoneNumber;
+  }
 }
 </script>
 <style lang="scss" scoped>

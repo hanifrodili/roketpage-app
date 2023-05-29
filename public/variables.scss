@@ -136,6 +136,13 @@ h6 {
   }
 }
 
+.v-text-field {
+  .v-select__selection-text,
+  .v-label{
+    font-size: unset !important;
+  }
+}
+
 .skeleton {
   animation: skeleton-loading 1s linear infinite alternate;
 }

@@ -2,11 +2,14 @@
 v-app
   v-navigation-drawer(v-model="drawer")
     v-list.pa-0.d-flex.flex-column.h-100
-      v-sheet.py-1(color="transparent", variant="flat")
-        v-card-text
-          .ml-4.text-body-1
-            b RoketPage
-
+      //- v-sheet.py-1(color="transparent", variant="flat")
+      //-   v-card-text
+      //-     .ml-4.text-body-1
+      //-       b RoketPage
+      v-list-item.py-3(
+        :prepend-avatar="user_avatar"
+        :title="company_name"
+      )
       v-divider
 
       v-list-item.px-5(
@@ -230,7 +233,7 @@ async function logout() {
   border-bottom: 2px solid transparent;
   cursor: pointer;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 500;
   vertical-align: middle;
 }
 
