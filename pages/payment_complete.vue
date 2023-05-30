@@ -44,8 +44,7 @@ onMounted(async() => {
 
 const updatePayment = async () => {
   console.log(query.value.status_id);
-  if (query.value.status_id === "1") {
-    console.log('done');
+  if (query.value.status_id === 1) {
     const resp = await supabase
       .from('customers')
       .update([
