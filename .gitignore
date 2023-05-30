@@ -4,8 +4,12 @@ node_modules
 .nitro
 .cache
 .output
-.env
 dist
 .DS_Store
 pagebuilder
 page-builder
+test.vue
+test
+PhoneInput.vue
+flags
+phoneCodeCountries.js

@@ -1,4 +1,7 @@
-// https://v3.nuxtjs.org/api/configuration/nuxt.config
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "url";
+import VueI18nVitePlugin from "@intlify/unplugin-vue-i18n/vite";
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -7,7 +10,11 @@ export default defineNuxtConfig({
       title: "RoketPage",
       titleTemplate: "%s | Help your sales to the moon 🚀",
       link: [
-        { rel: 'icon', type: 'image/svg', href: '/icon.svg' }
+        { rel: "icon", type: "image/svg", href: "/icon.svg" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.cdnfonts.com/css/poppins",
+        },
       ],
       meta: [
         { charset: "utf-8" },
@@ -68,19 +75,23 @@ export default defineNuxtConfig({
       ],
     },
   },
-  buildModules: [],
-  modules: [
-    "@pinia/nuxt",
-    "nuxt-snackbar"
-  ],
+  imports: {
+    dirs: ["store"],
+  },
+  modules: ["@pinia/nuxt", "nuxt-snackbar", "@nuxtjs/supabase"],
   snackbar: {
     top: true,
-    right: true,
-    duration: 3000
+    duration: 2000,
+    dense: true,
   },
-  server: {
+  routeRules: {
+    "/": { redirect: "/signin" },
+  },
+  devServer: {
     port: process.env.PORT,
+    host: "0",
   },
+
   css: [
     "vuetify/lib/styles/main.sass",
     "@mdi/font/css/materialdesignicons.min.css",
@@ -92,14 +103,33 @@ export default defineNuxtConfig({
     define: {
       "process.env.DEBUG": false,
     },
+    plugins: [
+      VueI18nVitePlugin({
+        include: [
+          resolve(
+            dirname(fileURLToPath(import.meta.url)),
+            "src/locales/*.json"
+          ),
+        ],
+      }),
+    ],
+  },
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => ["lottie-player"].includes(tag),
+    },
   },
   runtimeConfig: {
     // The private keys which are only available within server-side
     secret: "",
     // Keys within public, will be also exposed to the client-side
     public: {
+      domain: process.env.DOMAIN,
       baseUrl: process.env.BASE_URL,
       apiUrl: process.env.API_URL,
+      supabaseID: process.env.SUPABASE_ID,
+      supabaseURL: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_KEY,
     },
   },
 });

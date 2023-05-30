@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container.d-flex.flex-column.align-center.justify-center(style="height:100vh")
+v-container.d-flex.flex-column.align-center.justify-center(style="height:100%")
   v-card.my-2(
     min-height='200',
     max-width='500',

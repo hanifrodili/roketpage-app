@@ -11,9 +11,10 @@
 }
 
 body {
-  font-family: "Open Sans";
-  color:rgb(var(--v-theme-neutral));
+  font-family: "Poppins";
+  color: rgb(var(--v-theme-neutral));
   background-color: rgb(var(--v-theme-bodyBg));
+  letter-spacing: -0.005em !important;
 }
 
 h1,
@@ -22,33 +23,37 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Montserrat";
+  font-family: "Poppins";
+  letter-spacing: -0.005em !important;
 }
 
 // overwrite vuetify classes
 .v-btn {
   letter-spacing: -0.005em !important;
 }
-.v-application {
-  .text-h1,
-  .text-h2,
-  .text-h3,
-  .text-h4,
-  .text-h5,
-  .text-h6,
-  .text-button,
-  .text-subtitle-1,
-  .text-subtitle-2,
-  .text-body-1,
-  .text-body-2,
-  .text-caption,
-  .text-overline {
-    letter-spacing: -0.005em !important;
-    word-break: break-word;
-  }
+
+.text-h1,
+.text-h2,
+.text-h3,
+.text-h4,
+.text-h5,
+.text-h6,
+.text-button,
+.text-subtitle-1,
+.text-subtitle-2,
+.text-body-1,
+.text-body-2,
+.text-caption,
+.text-overline {
+  letter-spacing: -0.005em !important;
+  word-break: break-word;
+  font-family: "Poppins" !important;
 }
-.v-text-field {
+
+.v-select__selection-text,
+.v-label {
   font-size: small !important;
+  letter-spacing: -0.005em !important;
 }
 
 // new class
@@ -80,6 +85,81 @@ h6 {
 }
 
 .main-content {
-  padding: 30px 40px;
-  padding-top: 100px;
+  background-color: #fff;
+  height: 100%;
+  padding: 5% 5%;
+}
+
+.page-content {
+  // padding-top: 95px;
+  width: 100%;
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  height: calc(100vh - 64px);
+  overflow-y: scroll;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.03em;
+  text-transform: capitalize;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.general-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  position: relative;
+  box-shadow: none;
+  min-height: 40px;
+  height: fit-content;
+  border: 0.5px solid #ababab;
+  border-radius: 8px;
+}
+
+.v-text-field {
+  .v-field__outline__start {
+    border-radius: 8px 0 0 8px !important;
+  }
+
+  .v-field__outline__end {
+    border-radius: 0 8px 8px 0 !important;
+  }
+}
+
+.v-text-field {
+  .v-select__selection-text,
+  .v-label{
+    font-size: unset !important;
+  }
+}
+
+.skeleton {
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(200, 20%, 90%);
+  }
+
+  100% {
+    background-color: hsl(200, 20%, 100%);
+  }
+}
+
+.skeleton-text {
+  width: 100%;
+  height: 25px;
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
 }

@@ -1,55 +1,70 @@
 <template lang="pug">
-v-card.rounded-lg 
-  v-card-title
-    .text-h6.secondary-text
-      b 
-        b Share
-    v-spacer
-    v-btn(text, icon, @click='close', height)
-      v-icon mdi-close
-  v-card-text
-    div 
-      v-btn.text-caption.text-capitalize.mr-1.mb-1(
-        rounded,
-        small,
-        depressed,
-        block,
-        color='secondary',
-        @click='copy'
-      ) 
-        b Copy Link
-        v-icon(right) mdi-content-copy
-      v-btn.text-caption.text-capitalize.mr-1.mb-1(
-        rounded,
-        small,
-        depressed,
-        block,
-        color='success',
-        @click='whatsapp'
-      ) 
-        b Whatsapp
-        v-icon(right) mdi-whatsapp
-      v-btn.text-caption.text-capitalize.mr-1.mb-1(
-        rounded,
-        small,
-        depressed,
-        block,
-        color='info',
-        @click='telegram'
-      ) 
-        b Telegram
-        v-icon(right) mdi-send
+div.d-flex.flex-column(style="gap:10px")
+  v-btn.text-caption.text-capitalize(
+    rounded,
+    small,
+    depressed,
+    block,
+    color='secondary',
+    @click='copy'
+    append-icon="mdi-content-copy"
+  ) 
+    b Copy Link
+  v-btn.text-caption.text-capitalize(
+    rounded,
+    small,
+    depressed,
+    block,
+    color='success',
+    @click='whatsapp'
+    append-icon="mdi-whatsapp"
+  ) 
+    b WhatsApp
+  v-btn.text-caption.text-capitalize(
+    rounded,
+    small,
+    depressed,
+    block,
+    color='info',
+    @click='telegram'
+    append-icon="mdi-send-variant"
+  ) 
+    b Telegram
 </template>
+
+<script setup>
+const snackbar = useSnackbar()
+const props = defineProps(['url'])
+const emit = defineEmits(['close'])
+const shareDialog = ref(false)
+const msg = ref("")
+
+const close = () => {
+  emit('close')
+}
+const copy = () => {
+  navigator.clipboard.writeText(this.url)
+  snackbar.add({
+    type: 'info',
+    text: 'Link copied!'
+  })
+  close()
+}
+const whatsapp = () => {
+  const url = `https://wa.me/send?&text=${this.msg}${this.url}`
+  window.open(url, '_blank')
+  close()
+}
+const telegram = () => {
+  const msg = this.msg ? `&text=${this.msg}` : ''
+  const url = `https://t.me/share/url?url=${this.url}${msg}`
+  window.open(url, '_blank')
+  this.close()
+}
+</script>
   
   <script>
 export default {
-  props: ['url'],
-  data() {
-    return {
-      shareDialog: false,
-      msg: '',
-    }
-  },
   computed: {},
   methods: {
     close() {

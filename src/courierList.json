@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "PosLaju"
+  },
+  {
+    "id": 2,
+    "name": "DHL Express"
+  },
+  {
+    "id": 3,
+    "name": "J&T Express"
+  },
+  {
+    "id": 4,
+    "name": "GDex"
+  },
+  {
+    "id": 5,
+    "name": "City-Link Express"
+  },
+  {
+    "id": 6,
+    "name": "ABX Express"
+  },
+  {
+    "id": 7,
+    "name": "Skynet"
+  },
+  {
+    "id": 8,
+    "name": "Nationwide Express"
+  },
+  {
+    "id": 9,
+    "name": "FedEx"
+  },
+  {
+    "id": 10,
+    "name": "TNT Express"
+  },
+  {
+    "id": 11,
+    "name": "Ninja Van"
+  },
+  {
+    "id": 12,
+    "name": "Pgeon"
+  }
+]
