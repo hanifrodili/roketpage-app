@@ -5,6 +5,16 @@
       p Edit Form
     template(#content)
       div
+        v-select.mb-5(
+          v-model="pageForm.defaultPage",
+          label="Set as Main Page",
+          variant="outlined",
+          hide-details="auto",
+          density="compact"
+          :items="boolOption"
+          item-title="label"
+          item-value="value"
+          )
         v-text-field.mb-5(
           v-model="pageForm.slug",
           label="Site Url",
@@ -97,7 +107,7 @@ const props = defineProps({
   data: Object,
   products: Array
 });
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue","update"]);
 
 const dialog = computed({
   get() {
@@ -129,12 +139,24 @@ const pageForm = ref({
   formType: props.data.formType,
   products: props.data.products,
   paymentOptions: props.data.paymentOptions,
-  shippingOptions: props.data.shippingOptions
+  shippingOptions: props.data.shippingOptions,
+  defaultPage: props.data.defaultPage
 })
 
 const formTypeList = ref([
   'Payment',
   'Leads',
+])
+
+const boolOption = ref([
+  {
+    label: "No",
+    value: false,
+  },
+  {
+    label: "Yes",
+    value: true,
+  },
 ])
 
 const paymentOptions = ref([])
@@ -214,6 +236,16 @@ const getFormField = async () => {
 }
 
 const updateForm = async () => {
+  await supabase
+    .from('pages')
+    .update(
+      {
+        defaultPage: false
+      },
+    )
+    .eq('company_id', props.data.company_id)
+
+  console.log(props.data.id);
   const resp = await supabase
     .from('pages')
     .update(
@@ -224,6 +256,7 @@ const updateForm = async () => {
         products: pageForm.value.products,
         paymentOptions: pageForm.value.paymentOptions,
         shippingOptions: pageForm.value.shippingOptions,
+        defaultPage: pageForm.value.defaultPage
       },
     )
     .eq('id', props.data.id)
@@ -246,9 +279,9 @@ const updateForm = async () => {
             enabled: field.enabled
           },
         )
-
-        console.log(resp);
     });
+
+    emit('update')
 
     snackbar.add({
       type: 'success',

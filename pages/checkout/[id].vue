@@ -384,6 +384,7 @@ const submitShipping = async () => {
         country: shippingForm.value.country,
         courier: shippingForm.value.courier,
         shipping_fee: shippingForm.value.shipping_fee,
+        payment: subTotal.value + shippingForm.value.shipping_fee
       }
     ])
     .eq('order_id', orderID.value)

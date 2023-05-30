@@ -21,16 +21,17 @@
     p.mt-auto.mb-1(style="color: #767676; font-size: 12px") {{ fDate(customer.created_at) }} at {{ fTime(customer.created_at) }}
 
   .d-flex.justify-end
-    v-btn(
-      icon="mdi-trash-can-outline",
-      variant="text",
-      size="small",
-      color="red"
-      @click="dialogDelete = true"
-    )
     a(:href="`https://wa.me/60${removePhonePrefix(customer.phone)}`" target="_blank") 
       v-btn(icon="mdi-whatsapp" variant="text" size="small" color="#25d366")
     customer-edit-customer(:customer="customer" :productList="productList" @updateCustomer="$emit('update')")
+    v-menu()
+      template(v-slot:activator="{ props }")
+        v-btn(icon="mdi-dots-vertical" variant="text" size="small" v-bind="props")
+      v-list(density="compact")
+        v-list-item(v-if="orderID" @click="openInvoice=true")
+          v-list-item-title( style="font-size:14px") View invoice
+        v-list-item(@click="dialogDelete=true")
+          v-list-item-title( style="font-size:14px; color:#ec3a3a") Delete customer
   v-divider
 
   general-dialog-delete(v-model="dialogDelete" @delete="$emit('delete',customer.id)")
@@ -59,7 +60,12 @@
           span(style="color:#767676") Email:
           | 
           span {{ customer.email }}
-      //- p {{ productList }}
+      div.my-3(style="font-size:14px" v-if="customer.customers_extra_field.length")
+        template(v-for="item in customer.customers_extra_field" :key="item.id")
+          p.text-capitalize
+            span(style="color:#767676") {{ item.field_name }}:
+            | 
+            span {{ item.field_value }}
       div.pa-4(style="background-color: #ececec; font-size:12px")
         template(v-for="(item, index) in customer.products" :key="index")
           div.d-flex.flex-row.justify-space-between.w-100
@@ -68,20 +74,31 @@
             div.d-flex.flex-row.justify-space-between(style="width: 100px")
               p x{{ item.quantity }}
               p.font-weight-medium RM{{ getProduct(item.id).base_price/100 }}
+
+  general-dialog-type-b(v-model="openInvoice" :persistent="false" :fullscreen="false" :scrim="true")
+    template(#title)
+      p Invoice
+    template(#content)
+      customer-invoice(:orderid="orderID")
+      
 </template>
 
 <script setup>
 const props = defineProps(["customer","productList"]);
 const emit = defineEmits(['delete', 'update'])
 
+const supabase = useSupabaseAuthClient();
+
 const itemsToShow = ref(2);
 const itemsLength = ref(1);
 const products = ref([]);
 const totalPrice = ref(0);
 const openMore = ref(false)
+const openInvoice = ref(false)
 const dialogDelete = ref(false)
+const orderID = ref('')
 
-onMounted(() => {
+onMounted(async() => {
   // console.log(props.customer);
   products.value = props.customer.products;
   itemsLength.value = products.value.length;
@@ -91,10 +108,23 @@ onMounted(() => {
     totalPrice.value += sub;
   });
   totalPrice.value += props.customer.delivery_fee;
+  console.log(window.location.origin);
+  await getOrder()
 });
 
 const getProduct = (id) => {
   return props.productList.find(x => x.id === id)
+}
+
+const getOrder = async () => {
+  let query = await supabase
+    .from('order')
+    .select('*')
+    .eq('customer_id', props.customer.id)
+    .single()
+
+  // console.log(query);
+  orderID.value = query.data?.order_id
 }
 
 function fDate(datetime) {

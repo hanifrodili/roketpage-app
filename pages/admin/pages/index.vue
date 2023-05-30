@@ -5,7 +5,7 @@
   div(v-else)
     v-row(dense v-if="userPages.length")
       v-col(cols="12" sm="6" md="4", v-for="page in userPages", :key="page.id")
-        sites-page-form-card(:data="page" :products="products" @delete="deletePage")
+        sites-page-form-card(:data="page" :products="products" @delete="deletePage" @update="getPages()")
     v-row.mt-10(v-else)
       v-col(cols="12")
         .d-flex.flex-row.align-center.justify-center(style="gap:4px; height:40px")

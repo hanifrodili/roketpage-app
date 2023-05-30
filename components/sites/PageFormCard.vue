@@ -3,8 +3,9 @@ v-card.page-card.h-100
   v-card-text.pa-3.d-flex.flex-column.h-100(style="gap:12px")
     div.d-flex.flex-row.align-center()
       v-chip.text-capitalize.font-weight-medium(style="max-width:fit-content; width:100%; height:20px; font-weight:bold; font-size:10px" :ripple="false" :color="data.formType === 'Payment' ? '#49AE53' : '#2B62A3'") {{ `${data.formType} Form`}}
+      v-icon.ml-2(v-if="data.defaultPage" color="info") mdi-check-decagram
       v-spacer
-      v-btn.delete-button(variant="text" icon="mdi-share" size="small" height="28" width="28" @click="openShare = true")
+      v-btn(variant="text" icon="mdi-share" size="small" height="28" width="28" @click="openShare = true")
     div.d-flex.flex-column(style="gap:4px")
       p.page-title {{ data.title }}
       p.page-description {{ data.description }}
@@ -29,7 +30,7 @@ v-card.page-card.h-100
 
     p.font-italic(style="font-size:10px; color:#ababab") Last update: {{ fTime(data.updated_at) }}
 
-sites-edit-form-dialog(v-model="dialogEdit" :data="data" :products="products")
+sites-edit-form-dialog(v-model="dialogEdit" :data="data" :products="products" @update="$emit('update')")
 
 general-dialog-type-a(v-model="openShare")
   template(v-slot:title)
@@ -53,7 +54,7 @@ v-dialog(v-model="dialogDelete" scrollable persistent max-width="300px")
 const dialogDelete = ref(false)
 const dialogEdit = ref(false)
 const props = defineProps(['data', 'products'])
-const emit = defineEmits(['delete'])
+const emit = defineEmits(['delete', 'update'])
 const openShare = ref(false)
 
 const getProduct = (id) => {
