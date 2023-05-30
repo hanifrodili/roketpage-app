@@ -2,7 +2,8 @@
 div.d-flex.justify-center.align-center(style="min-height:100vh; background-color:#dfede8;")
   div(style="max-width:600px; width:100%;")
     v-card.general-card(density="compact")
-      v-card-text.pa-md-8.pa-2
+      general-lottie-loading(v-if="gettingData")
+      v-card-text.pa-md-8.pa-2(v-else)
         v-row 
           v-col.text-left(cols="12" md="8")
             div.mb-4
@@ -87,6 +88,7 @@ const subTotal = ref(0)
 const total = ref(0)
 const paymentChannel = ref([])
 const mainOrder = ref(null)
+const company_slug = ref('')
 
 const paymentOptions = ref([
   {
@@ -107,11 +109,9 @@ const paymentOptions = ref([
   }
 ])
 
-definePageMeta({
-  layout: "nonav",
-})
-
 onMounted(async () => {
+  const host = window.location.host
+  company_slug.value = host.split('.')[0]
   orderID.value = route.params.id;
   await getOrder()
 });
@@ -120,11 +120,12 @@ const getOrder = async () => {
   // gettingData.value = true
   let { data: order, error } = await supabase
     .from('order')
-    .select('*, customers(*, pages(paymentOptions, shippingOptions)), company(*)')
+    .select('*, customers(*, pages(paymentOptions, shippingOptions)), company!inner(*)')
     .eq('order_id', orderID.value)
+    .eq('company.subdomain', company_slug.value)
     .single()
 
-  console.log(order);
+  // console.log(order);
   mainOrder.value = order
 
   for (let index = 0; index < paymentOptions.value.length; index++) {

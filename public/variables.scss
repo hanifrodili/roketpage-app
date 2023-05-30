@@ -5,6 +5,7 @@
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-VariableFont_wght.ttf");
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/OpenSans-VariableFont_wdth,wght.ttf");
@@ -60,26 +61,33 @@ h6 {
 .font-narrow {
   letter-spacing: -0.025em !important;
 }
+
 .font-wide {
   letter-spacing: 0.1em !important;
 }
+
 .fixed-width {
   max-width: 1024px;
 }
+
 .low-height {
   line-height: 1 !important;
 }
+
 .wrap {
   white-space: pre-line;
 }
+
 .min-height {
   min-height: 100vh;
 }
+
 .center {
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
+
 .text-shadow {
   text-shadow: 1.5px 1.5px 2px #212121;
 }

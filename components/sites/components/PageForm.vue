@@ -77,7 +77,7 @@ onMounted(async () => {
       )
     }
   });
-  console.log(selectedProducts.value);
+  // console.log(selectedProducts.value);
   await getProducts()
   setTimeout(() => {
     sortInput()
