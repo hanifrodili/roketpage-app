@@ -4,8 +4,12 @@
   general-lottie-loading(v-if="loading")
   div(v-else)
     v-row(dense v-if="userPages.length")
-      v-col(cols="12" sm="6" md="4", v-for="page in userPages", :key="page.id")
-        sites-page-form-card(:data="page" :products="products" @delete="deletePage")
+      template(v-for="page in userPages", :key="page.id")
+        v-col(cols="12" sm="6" md="4" v-if="page.defaultPage" )
+          sites-page-form-card(:data="page" :products="products" :subdomain="company_subdomain" @delete="deletePage" @update="getPages()")
+      template(v-for="page in userPages", :key="page.id")
+        v-col(cols="12" sm="6" md="4" v-if="!page.defaultPage")
+          sites-page-form-card(:data="page" :products="products" :subdomain="company_subdomain" @delete="deletePage" @update="getPages()")
     v-row.mt-10(v-else)
       v-col(cols="12")
         .d-flex.flex-row.align-center.justify-center(style="gap:4px; height:40px")
@@ -25,6 +29,7 @@ const router = useRouter()
 const userPages = ref([])
 const products = ref([])
 const company_id = ref('')
+const company_subdomain = ref('')
 const loading =  ref(true)
 
 definePageMeta({
@@ -33,8 +38,9 @@ definePageMeta({
 })
 
 onMounted(async () => {
-  userStore.getUser()
+  await userStore.getUser()
   company_id.value = userStore.user.current_company.id
+  company_subdomain.value = userStore.user.current_company.company.subdomain
   await getProducts()
   await getPages()
 })

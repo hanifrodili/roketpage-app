@@ -126,6 +126,7 @@ export default defineNuxtConfig({
     public: {
       domain: process.env.DOMAIN,
       baseUrl: process.env.BASE_URL,
+      publicUrl: process.env.PUBLIC_URL,
       apiUrl: process.env.API_URL,
       supabaseID: process.env.SUPABASE_ID,
       supabaseURL: process.env.SUPABASE_URL,

@@ -134,7 +134,7 @@ const getOrders = async () => {
   const endDateString = currentDate.toISOString().slice(0, 19).replace('T', ' ');
 
   let query = await supabase
-    .from('order')
+    .from('orders')
     .select('created_at, payment', { count: "exact" })
     .eq('company_id', company_id.value)
     .gte('created_at', startDateString)

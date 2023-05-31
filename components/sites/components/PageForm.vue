@@ -77,7 +77,7 @@ onMounted(async () => {
       )
     }
   });
-  console.log(selectedProducts.value);
+  // console.log(selectedProducts.value);
   await getProducts()
   setTimeout(() => {
     sortInput()
@@ -190,7 +190,7 @@ const submit = async () => {
     if (props.type === 'Payment') {
       const orderID = randID(7)
       await supabase
-        .from('order')
+        .from('orders')
         .insert([
           {
             created_at: 'now()',
@@ -274,6 +274,19 @@ const whatsappMerch = async () => {
           ])
       }
     })
+    if (props.type === 'Payment') {
+      const orderID = randID(7)
+      await supabase
+        .from('orders')
+        .insert([
+          {
+            created_at: 'now()',
+            customer_id: resp.data[0].id,
+            company_id: company_id.value,
+            order_id: orderID
+          },
+        ])
+    }
   }
 
   form.value.reset()

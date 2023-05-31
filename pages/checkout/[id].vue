@@ -216,6 +216,7 @@ const paymentChannel = ref([])
 const mainOrder = ref(null)
 const selectedPayment = ref(null)
 const toyyibPay_details = ref(null)
+const company_slug = ref('')
 const rules = ref(
   {
     not_empty: [(val) => (val || '').length > 0 || 'This field is required']
@@ -263,10 +264,6 @@ const shippingForm = ref(
   }
 )
 
-definePageMeta({
-  layout: "nonav",
-})
-
 watch(
   () => shippingForm.value.state,
   async (state) => {
@@ -283,6 +280,9 @@ watch(
 )
 
 onMounted(async () => {
+  console.log(window.location);
+  const host = window.location.host
+  company_slug.value = host.split('.')[0]
   orderID.value = route.params.id;
   await getOrder()
   stateList.value = postcode.getStates()
@@ -291,7 +291,7 @@ onMounted(async () => {
 const getOrder = async () => {
   // gettingData.value = true
   let { data: order, error } = await supabase
-    .from('order')
+    .from('orders')
     .select('*, customers(*, pages(paymentOptions, shippingOptions))')
     .eq('order_id', orderID.value)
     .single()
@@ -373,7 +373,7 @@ const submitRecipient = async () => {
 
 const submitShipping = async () => {
   const resp = await supabase
-    .from('order')
+    .from('orders')
     .update([
       {
         address_1: shippingForm.value.address_1,
@@ -384,6 +384,7 @@ const submitShipping = async () => {
         country: shippingForm.value.country,
         courier: shippingForm.value.courier,
         shipping_fee: shippingForm.value.shipping_fee,
+        payment: subTotal.value + shippingForm.value.shipping_fee
       }
     ])
     .eq('order_id', orderID.value)
@@ -399,7 +400,7 @@ const submitShipping = async () => {
 const submitPaymentMethod = async () => {
   // console.log(customerForm.value); 
   const resp = await supabase
-    .from('order')
+    .from('orders')
     .update([
       {
         payment_method: selectedPayment.value,
@@ -436,7 +437,7 @@ const updateProduct = async (current) => {
           }
 
           const resp = await supabase
-            .from('order')
+            .from('orders')
             .update([
               {
                 shipping_fee: shippingForm.value.shipping_fee,
@@ -542,8 +543,8 @@ const proceedPayment = async () => {
     bodyContent += `&billPriceSetting=1`
     bodyContent += `&billPayorInfo=1`
     bodyContent += `&billAmount=${subTotal.value + shippingForm.value.shipping_fee}`
-    bodyContent += `&billReturnUrl=http://localhost:3000/payment_complete`
-    bodyContent += `&billCallbackUrl=http://localhost:3000/payment_complete`
+    bodyContent += `&billReturnUrl=${window.location.origin}/payment_complete`
+    bodyContent += `&billCallbackUrl=${window.location.origin}/payment_complete`
     bodyContent += `&billExternalReferenceNo=${customer_id.value}`
     bodyContent += `&billTo=${customerForm.value.name}`
     bodyContent += `&billEmail=${customerForm.value.email}`

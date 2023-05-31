@@ -9,7 +9,7 @@ v-card(flat)
         :color="status == item.label ? 'primary' : ''",
         :class="status == item.label ? 'bg-primary' : 'bg-grey-lighten-2'",
         @click="(status = item.label), $emit('filter', { field: 'status', value: item.value })")
-        b {{ item.label }}
+        span(style="font-weight:600") {{ item.label }}
   .d-flex.flex-row(style="gap: 8px")
     v-text-field(
       v-model="searchInput",
@@ -42,7 +42,7 @@ v-card(flat)
           template(v-slot:append)
             v-icon.mr-1 {{ item.icon }}
           small {{ item.label }}
-    customer-create-customer(@add-customer="$emit('addCustomer')")
+    //- customer-create-customer(@add-customer="$emit('addCustomer')")
 </template>
 
 <script setup>

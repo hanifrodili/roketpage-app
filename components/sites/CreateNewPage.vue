@@ -13,6 +13,16 @@
       | {{ $t("createnewpage") }}
     template(#content)
       div
+        v-select.mb-5(
+          v-model="defaultPage",
+          label="Set as Main Page",
+          variant="outlined",
+          hide-details="auto",
+          density="compact"
+          :items="boolOption"
+          item-title="label"
+          item-value="value"
+          )
         v-text-field.mb-5(
           v-model="newPageID",
           label="Site Url",
@@ -105,6 +115,7 @@ const router = useRouter()
 const company_id = ref('')
 const dialogAdd = ref(false)
 const newPageID = ref('')
+const defaultPage = ref(false)
 const newPageTitle = ref('')
 const newPageDescription = ref('')
 const pageProducts = ref([])
@@ -133,6 +144,16 @@ const paymentOptions = ref([
     id: 4,
     name: "Cash on Delivery",
   }
+])
+const boolOption = ref([
+  {
+    label: "No",
+    value: false,
+  },
+  {
+    label: "Yes",
+    value: true,
+  },
 ])
 const shippingOptions = ref([])
 const defaultFormFields = ref([
@@ -395,7 +416,16 @@ const createNewPage = async () => {
     }
   ]
 
-  // console.log(formFields.value);
+  if (defaultPage.value) {
+    await supabase
+      .from('pages')
+      .update(
+        {
+          defaultPage: false
+        },
+      )
+      .eq('company_id', company_id.value)
+  }
 
   const resp = await supabase
     .from('pages')
@@ -409,7 +439,8 @@ const createNewPage = async () => {
         products: products,
         paymentOptions: pagePayments.value,
         shippingOptions: pageShipping.value,
-        components: defaultComponent
+        components: defaultComponent,
+        defaultPage: defaultPage.value
       },
     ])
 

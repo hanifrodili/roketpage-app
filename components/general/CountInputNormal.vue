@@ -13,6 +13,7 @@
       :max="maxInput"
       :step="stepInput"
       style="width: 60px"
+      @keyup="number = parseFloat(number)"
     )
   div
     v-icon(@click="increase") mdi-plus

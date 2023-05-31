@@ -4,8 +4,8 @@ div
     div.d-flex.flex-row()
       div.d-flex.flex-column.w-100
         div.d-flex.flex-row.mb-2(style="" )
-          p
-            span.text-decoration-none(style="color:#767676") {{ `#${order.id}` }}
+          p.cursor-pointer(@click="openMore = true")
+            span.text-decoration-none(style="color:#767676") {{ `#${order.customer_id}` }}
             |  
             span.text-decoration-underline.font-weight-bold {{ order.customers.name }}
           v-spacer
@@ -26,16 +26,10 @@ div
                 p {{ itemsLength }} {{ itemsLength > 1 ? 'items' : 'item' }} for
                 p.font-weight-bold {{ fCurrency(totalPrice) }}
             div.d-flex.flex-row.justify-end(style="margin-top: -38px;")
+              v-btn(icon="mdi-trash-can" variant="text" size="small" color="#ec3a3a" @click="dialogCancel=true")
               a(:href="`https://wa.me/+60${removePhonePrefix(order.customers.phone)}`" target="_blank") 
                 v-btn(icon="mdi-whatsapp" variant="text" size="small" color="#25d366")
-              v-menu()
-                template(v-slot:activator="{ props }")
-                  v-btn(icon="mdi-dots-vertical" variant="text" size="small" v-bind="props")
-                v-list(density="compact")
-                  v-list-item
-                    v-list-item-title( style="font-size:14px") Edit customer
-                  v-list-item(@click="dialogCancel=true")
-                    v-list-item-title( style="font-size:14px; color:#ec3a3a") Cancel order
+              order-edit-order(:order="order" :productList="productList" @updateOrder="$emit('update')")
             v-expansion-panel-text.rounded-lg(style="background-color: #ececec; font-size:12px")
               p {{ products.length > 1 ? 'Items' : 'Item' }}
               template(v-for="(item, index) in products" :key="index")
@@ -50,8 +44,76 @@ div
               div.d-flex.flex-row.justify-space-between.w-100
                 p.font-weight-medium {{ $t('deliveryfee') }}
                 p.font-weight-medium {{ fCurrency(order.shipping_fee) }}
-  general-dialog-cancel(v-model="dialogCancel" @cancel="$emit('cancel',order.id)")
+  
   v-divider 
+
+  general-dialog-cancel(v-model="dialogCancel" @cancel="$emit('cancel',order.id)")
+  general-dialog-type-b(v-model="openMore" :persistent="false" :fullscreen="false" :scrim="true")
+    template(#title)
+      .d-flex.flex-row.w-100.align-center
+        p.font-weight-regular(style="color:#767676") {{ `#${order.customer_id}` }}
+        v-spacer
+        v-chip.text-capitalize(
+          style="max-width: fit-content; width:100%; height: 20px; font-weight: bold; font-size: 10px",
+          :ripple="false",
+          :color="statusColor(order.status)") {{ order.status }}
+    template(#content)
+      p(style="font-size:12px; color:#767676") Order items:
+      div.pa-4(style="background-color: #ececec; font-size:12px")
+        template(v-for="(item, index) in order.customers.products" :key="index")
+          v-row(no-gutters)
+            v-col(cols="7")
+              p.font-weight-medium {{ getProduct(item.id).name }}
+            v-col.text-right(cols="2")
+              p x{{ item.quantity }}
+            v-col.text-right(cols="3")
+              p.font-weight-medium {{ fCurrency(getProduct(item.id).base_price) }}
+        v-divider.my-2
+        v-row(no-gutters)
+          v-col(cols="7")
+          v-col.text-right(cols="2")
+            p(style="color:#767676") Subtotal
+          v-col.text-right(cols="3")
+            p.font-weight-medium {{ fCurrency(order.payment - order.shipping_fee) }}
+        v-row(no-gutters)
+          v-col(cols="7")
+          v-col.text-right(cols="2")
+            p(style="color:#767676") Shipping
+          v-col.text-right(cols="3")
+            p.font-weight-medium {{ fCurrency(order.shipping_fee) }}
+        v-row(no-gutters)
+          v-col(cols="7")
+          v-col.text-right(cols="2")
+            p.font-weight-bold(style="color:#767676") Total
+          v-col.text-right(cols="3")
+            p.font-weight-bold {{ fCurrency(order.payment) }}
+      div.my-3(style="font-size:14px")
+        p 
+          span(style="color:#767676") Name:
+          | 
+          span {{ order.customers.name }}
+        p 
+          span(style="color:#767676") Phone:
+          | 
+          span {{ order.customers.phone }}
+        p 
+          span(style="color:#767676") Email:
+          | 
+          span {{ order.customers.email }}
+      div.my-3(style="font-size:14px")
+        p(style="color:#767676") Shipping address:
+        p {{ order.address_1 }}
+          br(v-if="order.address_2" )
+          |{{ order.address_2 }}
+          br
+          |{{ order.postcode }}, {{ order.city }}
+          br
+          |{{ order.state }}, {{ order.country }}
+      div.my-3(style="font-size:14px")
+        p
+          span(style="color:#767676") Courier:
+          | 
+          span  {{ order.courier }}
 </template>
 
 <script setup>
@@ -63,6 +125,7 @@ const itemsLength = ref(1)
 const products = ref([])
 const totalPrice = ref(0)
 const dialogCancel = ref(false)
+const openMore =ref(false)
 
 onMounted(() => {
   products.value = props.order.customers.products

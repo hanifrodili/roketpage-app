@@ -19,9 +19,11 @@ export const useStoreUser = defineStore('storeUser', () => {
           .eq('user_id', user.value.id)
           .eq('company_id', user.value.current_company.id)
           .single()
+        // console.log(resp.data.company);
         user.value.current_company.company = resp.data.company
         user.value.current_company.role = resp.data.company_team_role
         user.value.profile = resp.data.profiles
+        console.log(user.value);
       }
     }else {
       user.value = {}

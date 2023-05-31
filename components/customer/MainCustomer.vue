@@ -10,7 +10,7 @@
     v-card-text.d-flex.flex-column.pa-0
       general-lottie-empty(v-if="customers.length === 0")
       template(v-for="(customer, index) in customers", :key="customer.id")
-        customer-item-customer(:customer="customer" :productList="productList" @delete="deleteCutomer" @update="getData()")
+        customer-item-customer(:customer="customer" :productList="productList" :subdomain="company_subdomain" @delete="deleteCutomer" @update="getData()")
       v-spacer
       general-pagination.mt-5(
         v-model="page",
@@ -38,11 +38,13 @@ const sortCustomer = ref({
 const customerfilter = ref(null)
 const sticky = ref(0);
 const company_id = ref('')
+const company_subdomain = ref('')
 const productList = ref([])
 
 onMounted(async () => {
-  userStore.getUser()
+  await userStore.getUser()
   company_id.value = userStore.user.current_company.id
+  company_subdomain.value = userStore.user.current_company.company.subdomain
   await getData()
   await getProducts()
   customerfilter.value = document.getElementById("customer-filter");
@@ -75,7 +77,7 @@ const getData =  async () => {
   const to = page.value * (queryLimit.value - 2)
   let query = supabase
     .from('customers')
-    .select('*, customers_extra_field(*), pages(title)', { count: "exact" })
+    .select('*, customers_extra_field(*), pages(title, formType)', { count: "exact" })
     .order(sortCustomer.value.column, { ascending: sortCustomer.value.ascending })
     .eq('company_id', company_id.value)
 

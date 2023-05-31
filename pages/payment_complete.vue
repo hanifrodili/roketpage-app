@@ -32,34 +32,39 @@ v-layout.lighten-4.min-height
 
 <script setup>
 const route = useRoute()
+const supabase = useSupabaseAuthClient()
 definePageMeta({
   layout: "nonav",
 })
 
 const query = ref(route.query)
+onMounted(async() => {
+  await updatePayment()
+})
 
 const updatePayment = async () => {
-  if (query.status_id === "1") {
+  console.log(query.value.status_id);
+  if (query.value.status_id === 1) {
     const resp = await supabase
       .from('customers')
       .update([
         {
           paid: true,
-          tx_id: query.transaction_id,
+          tx_id: query.value.transaction_id,
           status: 'closed'
         }
       ])
-      .eq('id', query.order_id)
+      .eq('id', query.value.order_id)
     
     if (resp.status === 204) {
       await supabase
-        .from('order')
+        .from('orders')
         .update([
           {
             status: 'new'
           }
         ])
-        .eq('customer_id', query.order_id)
+        .eq('customer_id', query.value.order_id)
     }
   }
 }

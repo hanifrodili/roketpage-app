@@ -1,33 +1,30 @@
 <template lang="pug">
 div.d-flex.flex-column(style="gap:10px")
   v-btn.text-caption.text-capitalize(
-    rounded,
-    small,
-    depressed,
-    block,
+    variant="tonal"
+    rounded="xl"
     color='secondary',
     @click='copy'
     append-icon="mdi-content-copy"
+    style="border:1px solid "
   ) 
     b Copy Link
   v-btn.text-caption.text-capitalize(
-    rounded,
-    small,
-    depressed,
-    block,
-    color='success',
+    variant="tonal"
+    rounded="xl"
+    color='#25d366',
     @click='whatsapp'
     append-icon="mdi-whatsapp"
+    style="border:1px solid #25d366"
   ) 
     b WhatsApp
   v-btn.text-caption.text-capitalize(
-    rounded,
-    small,
-    depressed,
-    block,
-    color='info',
+    variant="tonal"
+    rounded="xl"
+    color='#0088cc',
     @click='telegram'
     append-icon="mdi-send-variant"
+    style="border:1px solid #0088cc"
   ) 
     b Telegram
 </template>
@@ -43,7 +40,7 @@ const close = () => {
   emit('close')
 }
 const copy = () => {
-  navigator.clipboard.writeText(this.url)
+  navigator.clipboard.writeText(props.url)
   snackbar.add({
     type: 'info',
     text: 'Link copied!'
@@ -51,42 +48,14 @@ const copy = () => {
   close()
 }
 const whatsapp = () => {
-  const url = `https://wa.me/send?&text=${this.msg}${this.url}`
+  const url = `https://wa.me/send?text=${props.url}`
   window.open(url, '_blank')
   close()
 }
 const telegram = () => {
-  const msg = this.msg ? `&text=${this.msg}` : ''
-  const url = `https://t.me/share/url?url=${this.url}${msg}`
+  const url = `https://t.me/share/url?url=${props.url}`
   window.open(url, '_blank')
-  this.close()
-}
-</script>
-  
-  <script>
-export default {
-  computed: {},
-  methods: {
-    close() {
-      this.$emit('close')
-    },
-    copy() {
-      navigator.clipboard.writeText(this.url)
-      this.$snackbar.show('Link copied!')
-      this.close()
-    },
-    whatsapp() {
-      const url = `https://wa.me/send?&text=${this.msg}${this.url}`
-      window.open(url, '_blank')
-      this.close()
-    },
-    telegram() {
-      const msg = this.msg ? `&text=${this.msg}` : ''
-      const url = `https://t.me/share/url?url=${this.url}${msg}`
-      window.open(url, '_blank')
-      this.close()
-    },
-  },
+  close()
 }
 </script>
   

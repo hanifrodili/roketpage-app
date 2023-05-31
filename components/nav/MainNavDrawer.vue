@@ -145,7 +145,7 @@ const navList = ref([
     name: "order",
     mdi: "inbox-arrow-down",
     i18n_key: "order",
-    notification: 20,
+    notification: 0,
   },
   {
     path: "/admin/customer",
