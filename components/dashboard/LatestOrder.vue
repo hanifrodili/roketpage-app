@@ -27,7 +27,7 @@ onMounted(async () => {
 
 async function getData() {
   let query = await supabase
-    .from('order')
+    .from('orders')
     .select('*, customers(name,phone,email,products)', { count: "exact" })
     .order('id', { ascending: false })
     .eq('company_id', company_id.value)

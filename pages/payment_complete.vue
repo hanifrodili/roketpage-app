@@ -58,7 +58,7 @@ const updatePayment = async () => {
     
     if (resp.status === 204) {
       await supabase
-        .from('order')
+        .from('orders')
         .update([
           {
             status: 'new'

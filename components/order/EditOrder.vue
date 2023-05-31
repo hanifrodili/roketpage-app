@@ -105,7 +105,7 @@ const updateOrder = async () => {
   console.log(orderForm.value);
 
   const resp = await supabase
-    .from('order')
+    .from('orders')
     .update([
       {
         // name: '',

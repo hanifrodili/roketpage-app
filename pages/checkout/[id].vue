@@ -291,7 +291,7 @@ onMounted(async () => {
 const getOrder = async () => {
   // gettingData.value = true
   let { data: order, error } = await supabase
-    .from('order')
+    .from('orders')
     .select('*, customers(*, pages(paymentOptions, shippingOptions))')
     .eq('order_id', orderID.value)
     .single()
@@ -373,7 +373,7 @@ const submitRecipient = async () => {
 
 const submitShipping = async () => {
   const resp = await supabase
-    .from('order')
+    .from('orders')
     .update([
       {
         address_1: shippingForm.value.address_1,
@@ -400,7 +400,7 @@ const submitShipping = async () => {
 const submitPaymentMethod = async () => {
   // console.log(customerForm.value); 
   const resp = await supabase
-    .from('order')
+    .from('orders')
     .update([
       {
         payment_method: selectedPayment.value,
@@ -437,7 +437,7 @@ const updateProduct = async (current) => {
           }
 
           const resp = await supabase
-            .from('order')
+            .from('orders')
             .update([
               {
                 shipping_fee: shippingForm.value.shipping_fee,

@@ -66,7 +66,7 @@ async function getData() {
   const from = (page.value - 1) * queryLimit.value
   const to = page.value * (queryLimit.value - 2)
   let query = supabase
-    .from('order')
+    .from('orders')
     .select('customers!inner(*, customers_extra_field(*), pages(title)), *', { count: "exact" })
     .order(sortOrder.value.column, { ascending: sortOrder.value.ascending })
     .eq('company_id', company_id.value)
@@ -111,7 +111,7 @@ const cancelOrder = async (id) => {
   // console.log(id);
 
   const { status, error } = await supabase
-    .from('order')
+    .from('orders')
     .update(
       {
         status: "cancelled"

@@ -118,7 +118,7 @@ const getProduct = (id) => {
 
 const getOrder = async () => {
   let query = await supabase
-    .from('order')
+    .from('orders')
     .select('*')
     .eq('customer_id', props.customer.id)
     .single()

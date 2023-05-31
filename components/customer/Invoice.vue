@@ -113,7 +113,7 @@ onMounted(async () => {
 const getOrder = async () => {
   // gettingData.value = true
   let { data: order, error } = await supabase
-    .from('order')
+    .from('orders')
     .select('*, customers(*, pages(paymentOptions, shippingOptions)), company(*)')
     .eq('order_id', orderID.value)
     .single()

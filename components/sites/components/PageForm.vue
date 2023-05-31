@@ -190,7 +190,7 @@ const submit = async () => {
     if (props.type === 'Payment') {
       const orderID = randID(7)
       await supabase
-        .from('order')
+        .from('orders')
         .insert([
           {
             created_at: 'now()',
@@ -277,7 +277,7 @@ const whatsappMerch = async () => {
     if (props.type === 'Payment') {
       const orderID = randID(7)
       await supabase
-        .from('order')
+        .from('orders')
         .insert([
           {
             created_at: 'now()',
