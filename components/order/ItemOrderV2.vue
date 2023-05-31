@@ -26,7 +26,7 @@ div
                 p {{ itemsLength }} {{ itemsLength > 1 ? 'items' : 'item' }} for
                 p.font-weight-bold {{ fCurrency(totalPrice) }}
             div.d-flex.flex-row.justify-end(style="margin-top: -38px;")
-              v-btn(icon="mdi-trash-can" variant="text" size="small" color="#ec3a3a")
+              v-btn(icon="mdi-trash-can" variant="text" size="small" color="#ec3a3a" @click="dialogCancel=true")
               a(:href="`https://wa.me/+60${removePhonePrefix(order.customers.phone)}`" target="_blank") 
                 v-btn(icon="mdi-whatsapp" variant="text" size="small" color="#25d366")
               order-edit-order(:order="order" :productList="productList" @updateOrder="$emit('update')")

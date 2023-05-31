@@ -6,6 +6,10 @@
         span.text-decoration-none(style="color:#767676") {{ `#${customer.id}` }}
         |  
         span.text-decoration-underline.font-weight-bold {{ customer.name }}
+      
+      v-btn.ml-1(v-if="customer.status === 'new' && customer.thruWhatsapp" color="#25d366" size="x-small" variant="text" :ripple="false")
+        v-icon mdi-message-badge
+        v-tooltip(activator="parent" location="top") Customer contact thru WhatsApp
       v-spacer
       v-chip.text-capitalize(
         style="max-width: fit-content; width:100%; height: 20px; font-weight: bold; font-size: 10px",
@@ -80,14 +84,18 @@
       p Invoice
     template(#content)
       customer-invoice(:orderid="orderID")
-      
+    template(#action)
+      v-btn.text-capitalize( @click="copyUrl" variant="outlined" append-icon="mdi-content-copy") Copy url
+      v-btn.text-capitalize( @click="sendToCustomer" variant="outlined" append-icon="mdi-whatsapp") Send to customer
 </template>
 
 <script setup>
-const props = defineProps(["customer","productList"]);
+const props = defineProps(["customer","productList","subdomain"]);
 const emit = defineEmits(['delete', 'update'])
 
 const supabase = useSupabaseAuthClient();
+const config = useRuntimeConfig();
+const snackbar = useSnackbar()
 
 const itemsToShow = ref(2);
 const itemsLength = ref(1);
@@ -99,7 +107,6 @@ const dialogDelete = ref(false)
 const orderID = ref('')
 
 onMounted(async() => {
-  // console.log(props.customer);
   products.value = props.customer.products;
   itemsLength.value = products.value.length;
   products.value.forEach((item) => {
@@ -117,17 +124,20 @@ const getProduct = (id) => {
 }
 
 const getOrder = async () => {
+  if (props.customer.pages.formType === "Leads") {
+    return
+  }
   let query = await supabase
     .from('orders')
     .select('*')
     .eq('customer_id', props.customer.id)
     .single()
 
-  // console.log(query);
+  console.log(query);
   orderID.value = query.data?.order_id
 }
 
-function fDate(datetime) {
+const fDate = (datetime) => {
   const date = new Date(datetime);
   const options = {
     timeZone: "Asia/Kuala_Lumpur",
@@ -140,7 +150,7 @@ function fDate(datetime) {
   return formattedDate;
 }
 
-function fTime(datetime) {
+const fTime = (datetime) => {
   const date = new Date(datetime);
   const options = {
     timeZone: "Asia/Kuala_Lumpur",
@@ -151,6 +161,20 @@ function fTime(datetime) {
   const formattedTime = date.toLocaleTimeString("en-US", options);
 
   return formattedTime;
+}
+
+const copyUrl = () => {
+  navigator.clipboard.writeText(`${props.subdomain}.${config.public.publicUrl}/invoice/${orderID.value}`);
+
+  snackbar.add({
+    type: 'info',
+    text: 'URL copied!'
+  }) 
+}
+
+const sendToCustomer = () => {
+  const url = `http://wa.me/${props.customer.phone}?text=Ini saya sertakan link invoice anda ${props.subdomain}.${config.public.publicUrl}/invoice/${orderID.value}.`
+  window.open(url, '_blank'); 
 }
 
 const statusColor = (value) => {

@@ -32,7 +32,7 @@ const company_id = ref('')
 const productList = ref([])
 
 onMounted(async () => {
-  userStore.getUser()
+  await userStore.getUser()
   company_id.value = userStore.user.current_company.id
   await getData()
   await getProducts()

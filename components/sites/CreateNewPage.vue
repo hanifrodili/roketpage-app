@@ -416,7 +416,16 @@ const createNewPage = async () => {
     }
   ]
 
-  // console.log(formFields.value);
+  if (defaultPage.value) {
+    await supabase
+      .from('pages')
+      .update(
+        {
+          defaultPage: false
+        },
+      )
+      .eq('company_id', company_id.value)
+  }
 
   const resp = await supabase
     .from('pages')

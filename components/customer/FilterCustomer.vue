@@ -42,7 +42,7 @@ v-card(flat)
           template(v-slot:append)
             v-icon.mr-1 {{ item.icon }}
           small {{ item.label }}
-    customer-create-customer(@add-customer="$emit('addCustomer')")
+    //- customer-create-customer(@add-customer="$emit('addCustomer')")
 </template>
 
 <script setup>

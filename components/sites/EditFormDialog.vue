@@ -236,16 +236,16 @@ const getFormField = async () => {
 }
 
 const updateForm = async () => {
-  await supabase
-    .from('pages')
-    .update(
-      {
-        defaultPage: false
-      },
-    )
-    .eq('company_id', props.data.company_id)
-
-  console.log(props.data.id);
+  if (pageForm.value.defaultPage) {
+    await supabase
+      .from('pages')
+      .update(
+        {
+          defaultPage: false
+        },
+      )
+      .eq('company_id', props.data.company_id)
+  }
   const resp = await supabase
     .from('pages')
     .update(
