@@ -8,7 +8,7 @@ div()
     v-card.w-100.py-2.px-3(style="")
       v-card-title.pa-0.d-flex.flex-row.align-center.font-weight-bold(
       style="font-size: 18px")
-        p Customize {{ getBlockTitle(comp?.childBlock[0]._uid) }} {{ display.mdAndUp }}
+        p Customize {{ getBlockTitle(comp?.childBlock[0]._uid) }}
         v-spacer
         v-icon.cursor-pointer.ml-auto.mr-4(@click="dialogDelete = true" size="x-small" color="red") mdi-trash-can-outline
         v-icon.cursor-pointer.ml-auto(@click="$emit('update:modelValue', false)") mdi-close-circle-outline
