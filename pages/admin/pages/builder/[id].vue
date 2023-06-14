@@ -3,17 +3,17 @@
   sites-builder-menu-bar(@import="importData" :pageID="pageID" :pageData="userComponents" :pageTitle="pageTitle" @toggleAdd="toggleAdd" style="width:100%;")
   div(style="height:100vh" v-if="loading")
     general-lottie-loading
-  div.pb-3.ignored(v-else id="builder" style="height:calc(100vh - 64px - 48px); overflow-y:scroll")
+  div.pb-3.ignored(v-else id="builder" style="height:calc(100vh - 64px - 40px); overflow-y:scroll")
     template(v-for="(component, index) in userComponents" :key="component._uid")
-      component(:is="component.component" :data="component" :pageId="pageID" :editMode="editMode" @updateContent="updateBlockContent" @addChild="updateLayout")
-      .add-block.ignored(v-if="showAdd")
+      component(:is="component.component" :data="component" :pageId="pageID" :editMode="editMode" @updateContent="updateBlockContent" @addChild="updateLayout" @deleteBlock="deleteBlock")
+      .add-block.ignored(v-if="showAdd" style="margin: -12px 0;")
         v-btn.btn-add.ignored(@click="addBlock(index + 1, 'OneColumn')" variant="text" icon="mdi-plus-circle-outline")
     .pt-10.ignored(v-if="userComponents.length === 0")
       .d-flex.flex-column.align-center.justify-center.ignored(
         style="height: 100px; border: 0.5px dashed #d0d0d0;")
         .add-block()
           v-btn.btn-add.ignored(@click="addBlock(0, 'OneColumn')" variant="text" icon="mdi-plus-circle-outline")
-  sites-builder-edit-module(v-model="openEdit" :data="onEditComponent" @updateCSS="updateLayout" @deleteBlock="deleteBlock")
+  sites-builder-edit-module(v-model="openEdit" :data="onEditComponent" @updateCSS="updateLayout" @updateImage="updateBlockContent" @deleteBlock="deleteBlock")
 </template>
 <script setup>
 import { useDisplay } from "vuetify";
@@ -118,6 +118,7 @@ const getPage = async () => {
     .eq('slug', pageID.value)
     .single()
   userComponents.value = page.components;
+  console.log(userComponents.value);
   pageTitle.value = page.title;
   loading.value = false
 }
@@ -129,17 +130,18 @@ const removeDuplicateBlock = (e) => {
   return uniqueBlock;
 };
 
-const removeBlock = (id) => {
+const deleteBlock = async (id) => {
   userComponents.value = userComponents.value.filter((x) => x._uid !== id);
-  userPages.value.forEach((item) => {
-    if (item.id === pageID.value) {
-      item.components = userComponents.value;
-    }
-  });
-  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
+
+  const { data, error } = await supabase
+    .from('pages')
+    .update({ components: userComponents.value, updated_at: 'now()' })
+    .eq('company_id', company_id.value)
+    .eq('slug', pageID.value)
 };
 
 const updateBlockContent = async (e) => {
+  console.log(e);
   userComponents.value.forEach((component, index) => {
     if (component._uid === e.parentId) {
       const comps = userComponents.value[index].childBlock
@@ -151,7 +153,7 @@ const updateBlockContent = async (e) => {
     }
   });
   // console.log(userComponents.value);
-  
+
   const { data, error } = await supabase
     .from('pages')
     .update({ components: userComponents.value, updated_at: 'now()' })
@@ -177,7 +179,7 @@ const toggleAdd = (e) => {
   showAdd.value = e
 }
 
-const addBlock = (pos, block) => {
+const addBlock = async (pos, block) => {
   const name = block.replace(" ", "");
   const newBlockID = randID(10);
   let newBlock = {
@@ -197,21 +199,13 @@ const addBlock = (pos, block) => {
     childBlock: [],
   };
   userComponents.value.splice(pos, 0, newBlock);
-};
 
-const deleteBlock = (id) => {
-  openEdit.value = false
-  const removeIndex = userComponents.value.map(item => item._uid).indexOf(id);
-  if(removeIndex >= 0) {
-    userComponents.value.splice(removeIndex, 1);
-  }
-  userPages.value.forEach((item) => {
-    if (item.id === pageID.value) {
-      item.components = userComponents.value;
-    }
-  });
-  window.localStorage.setItem("userPages", JSON.stringify(userPages.value));
-}
+  const { data, error } = await supabase
+    .from('pages')
+    .update({ components: userComponents.value, updated_at: 'now()' })
+    .eq('company_id', company_id.value)
+    .eq('slug', pageID.value)
+};
 
 // const moveBlockUp = (id, index) => {
 //   if (index === 0) {
@@ -297,12 +291,13 @@ export default {
   position: relative;
 }
 
-.add-block{
+.add-block {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.btn-add{
+
+.btn-add {
   // display: block;
   // position: absolute;
   // transform: translateY(-50%) translateX(-50%);\
@@ -310,11 +305,14 @@ export default {
   width: 24px;
   z-index: 2;
   opacity: 1;
-  color: #acacac;
+  color: #727272;
+  background-color: hsla(0, 0%, 100%, 0.8);
   transform: rotate(0deg);
   font-size: inherit;
 }
-.btn-add:hover,.btn-add--active{
+
+.btn-add:hover,
+.btn-add--active {
   transform: rotate(45deg) scale(1.2);
   color: rgb(48, 168, 48);
 }

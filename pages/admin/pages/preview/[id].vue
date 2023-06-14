@@ -4,8 +4,8 @@ div
     general-lottie-loading
   div(v-else)
     template(v-for="(component, index) in userComponents" :key="component._uid")
-        component(:is="component.component" :data="component" :pageId="pageID" :editMode="editMode")
-    sites-components-page-form(:form="pageForm" :products="pageProducts" :company="company_id" :type="formType" style="pointer-events:none")
+      component(:is="component.component" :data="component" :pageId="pageID" :editMode="editMode")
+    sites-components-page-form(id="order_form" :form="pageForm" :products="pageProducts" :company="company_id" :type="formType" style="pointer-events:none")
     .d-flex.flex-column(style="position:fixed; bottom:15px; right:15px; gap:10px")
       a(@click="$router.push(`/admin/pages/builder/${pageID}`)")
         v-btn(style="background-color: rgb(255,255,255, 30%); backdrop-filter: blur(4px);" @click="" variant="outlined" icon="mdi-pencil" size="x-small")
@@ -33,6 +33,7 @@ const loading = ref(true)
 
 definePageMeta({
   middleware: 'auth',
+  layout: 'nonav',
   name: 'preview'
 })
 

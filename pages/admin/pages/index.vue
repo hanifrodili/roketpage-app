@@ -30,7 +30,7 @@ const userPages = ref([])
 const products = ref([])
 const company_id = ref('')
 const company_subdomain = ref('')
-const loading =  ref(true)
+const loading = ref(true)
 
 definePageMeta({
   middleware: 'auth',
@@ -50,7 +50,7 @@ const getPages = async () => {
     .from('pages')
     .select('*', { count: "exact" })
     .eq('company_id', company_id.value)
-    // .eq('published', true)
+  // .eq('published', true)
   userPages.value = pages
   loading.value = false
 }
@@ -63,6 +63,7 @@ const getProducts = async () => {
     .eq('published', true)
 
   products.value = product
+  console.log(products.value);
 }
 
 const deletePage = async (id) => {
@@ -78,7 +79,7 @@ const deletePage = async (id) => {
       text: `Page deleted !`
     })
     getPages()
-  }else{
+  } else {
     snackbar.add({
       type: 'error',
       text: `${resp}`
