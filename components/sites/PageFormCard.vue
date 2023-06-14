@@ -19,7 +19,7 @@ v-card.page-card.h-100
         div.d-flex.flex-column.product-info
           p.title {{ getProduct(prod)?.name }}
           p.description {{ getProduct(prod)?.description }}
-      
+
     div.d-flex.flex-row.align-center(style="gap:10px; padding-top:10px")
       v-btn.delete-button(variant="text" icon="mdi-trash-can-outline" color="#DA4453" size="small" height="28" width="28" @click="dialogDelete=true")
       //- v-btn.delete-button(variant="text" icon="mdi-share-variant" size="small" height="28" width="28")
@@ -34,9 +34,9 @@ sites-edit-form-dialog(v-model="dialogEdit" :data="data" :products="products" @u
 
 general-dialog-type-a(v-model="openShare")
   template(v-slot:title)
-      p Share
+    p Share
   template(v-slot:content)
-    general-share-dialog(:url="`${subdomain}.${config.public.publicUrl}/${data.slug}`" @close="openShare=false")
+    general-share-dialog(:url="`https://${subdomain}.${config.public.publicUrl}/${data.slug}`" @close="openShare=false")
 
 v-dialog(v-model="dialogDelete" scrollable persistent max-width="300px")
   v-card()
@@ -59,7 +59,7 @@ const emit = defineEmits(['delete', 'update'])
 const openShare = ref(false)
 
 const getProduct = (id) => {
-  return props.products.find(x => x.id === id)
+  return props.products.find(x => x.id === parseInt(id))
 }
 
 function fTime(datetime) {
@@ -72,7 +72,7 @@ function fTime(datetime) {
 </script>
 
 <style lang="scss" scoped>
-.page-card{
+.page-card {
   border: 1px solid #ababab !important;
   /* background-color: transparent; */
   box-shadow: none !important;
@@ -80,54 +80,54 @@ function fTime(datetime) {
   height: 100%;
 }
 
-.page-title{
+.page-title {
   font-size: 14px;
   font-weight: 700;
   line-height: normal;
 }
 
-.page-description{
+.page-description {
   font-size: 14px;
   font-weight: 400;
   line-height: normal;
 }
 
-.sub-label{
+.sub-label {
   font-size: 12px;
   font-weight: 600;
   line-height: normal;
 }
 
-.product-card{
-  border: 1px solid rgba(171,171,171, 0.5);
+.product-card {
+  border: 1px solid rgba(171, 171, 171, 0.5);
   border-radius: 8px;
   overflow: hidden;
   gap: 0px;
   height: 100px;
 }
 
-.product-info{
+.product-info {
   padding: 10px;
-  gap:4px;
+  gap: 4px;
 
-  .title{
+  .title {
     font-size: 12px;
     font-weight: 600;
     line-height: normal;
     display: -webkit-box;
     -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;  
+    -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
-  .description{
+  .description {
     font-size: 10px;
     font-weight: 400;
     line-height: normal;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;  
+    -webkit-box-orient: vertical;
     overflow: hidden;
   }
 }

@@ -3,6 +3,7 @@ div.main-product
   product-filter-product.mb-2(id="product-filter" @search="search" @filter="filter" @sort="sort" @add-product="getProducts()")
   v-card.general-card
     v-card-text.d-flex.flex-column.justify-space-between.pa-0
+      general-lottie-empty(v-if="products.length === 0")
       template(v-for="(product, index) in products" :key="product.id")
         product-item-product(:product="product" @update-publish="updatePublish" @delete="deleteProduct" @update="getProducts()")
       general-pagination.mt-5(v-model="page" @limit="limit" :limit="queryLimit" :maxPage="maxPage")
@@ -64,7 +65,7 @@ async function getProducts() {
     .select('*', { count: "exact" })
     .order(sortProduct.value.column, { ascending: sortProduct.value.ascending })
     .eq('company_id', company_id.value)
-    
+
   // console.log(filters.value.length);
   if (filters.value.length) {
     filters.value.forEach(filter => {
@@ -147,14 +148,14 @@ async function sort(e) {
   await getProducts()
 }
 
-function addProduct(e){
+function addProduct(e) {
   e.status = 'true'
   // console.log(e);
   products.value.push(e)
 }
 
 async function updatePublish(e) {
-  
+
   const { data, error, status } = await supabase
     .from('product')
     .update({ published: e.value })
@@ -169,11 +170,11 @@ async function updatePublish(e) {
   } else {
     text = 'changed to draft'
   }
-  
-  if(status === 200 ) {
+
+  if (status === 200) {
     snackbar.add({
       type: 'success',
-      text:`${data[0].name} ${text}.`
+      text: `${data[0].name} ${text}.`
     })
   }
 

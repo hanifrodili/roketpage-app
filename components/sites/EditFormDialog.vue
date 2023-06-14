@@ -107,7 +107,7 @@ const props = defineProps({
   data: Object,
   products: Array
 });
-const emit = defineEmits(["update:modelValue","update"]);
+const emit = defineEmits(["update:modelValue", "update"]);
 
 const dialog = computed({
   get() {
@@ -118,7 +118,7 @@ const dialog = computed({
   },
 });
 
-onMounted( async () => {
+onMounted(async () => {
   await getShippings()
   await getFormField()
   await getPaymentChannel()
@@ -170,11 +170,12 @@ const getShippings = async () => {
     .eq('company_id', props.data.company_id)
 
   shippingList.value = shipping_details
+  console.log(shippingList.value);
 }
 
 const getPaymentChannel = async () => {
 
-  let { data:toyyibpay } = await supabase
+  let { data: toyyibpay } = await supabase
     .from('toyyibpay_gateway')
     .select('enabled')
     .eq('company_id', props.data.company_id)
@@ -193,7 +194,7 @@ const getPaymentChannel = async () => {
     .from('bank_details')
     .select('enabled')
     .eq('company_id', props.data.company_id)
-  
+
   if (banks.length) {
     paymentOptions.value.push(
       {
@@ -206,7 +207,7 @@ const getPaymentChannel = async () => {
   paymentOptions.value.push(
     {
       id: 4,
-        name: "Cash on Delivery",
+      name: "Cash on Delivery",
     }
   )
 
@@ -224,7 +225,7 @@ const getPaymentChannel = async () => {
 }
 
 const getFormField = async () => {
-  
+
   let { data: page_form, error } = await supabase
     .from('page_form')
     .select('*')

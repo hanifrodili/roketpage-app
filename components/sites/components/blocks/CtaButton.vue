@@ -1,5 +1,5 @@
 <template lang="pug">
-button.mx-auto.py-2.px-4(:id="data._uid" title="button" :style="{fontFamily:css?.font.family, fontSize:css?.font.size,fontWeight:css?.font.weight, color:css?.font.color}")
+button.mx-auto(:id="data._uid" title="button" :style="{fontFamily:css?.font.family, fontSize:css?.font.size,fontWeight:css?.font.weight, color:css?.font.color, paddingTop:`${css?.padding.top}px`, paddingRight:`${css?.padding.right}px`, paddingBottom:`${css?.padding.bottom}px`, paddingLeft:`${css?.padding.left}px`, backgroundColor:css?.backgroundColor, width:`${css?.width}px`, height:`${css?.height}px` }" @click="goTo()")
   span(:contenteditable="editable" spellcheck="false") {{ content }}
 </template>
 
@@ -26,10 +26,17 @@ onMounted(() => {
     css.value = props.data.config.css
   }
 })
+
+const goTo = () => {
+  if (props.editable) {
+    return
+  }
+  window.location.href = '#order_form'
+}
 </script>
 
 <style lang="scss" scoped>
-button{
+button {
   min-width: 80px;
   min-height: 35px;
   background-color: rgb(var(--v-theme-primary));

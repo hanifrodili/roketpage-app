@@ -1,5 +1,5 @@
 <template lang="pug">
-img.mx-auto(title="image" :src="content" :id="data._uid" style="min-height:300px; min-width:300px; display:flex; justify-content:center")
+img.mx-auto(title="image" :src="data.config.content || content" :id="data._uid" style="min-width:300px; width:100%; height:100%; display:flex; justify-content:center" :style="{maxWidth: `${css?.width}px`, borderRadius: `${css?.borderRadius}px`}")
 </template>
 
 <script setup>
@@ -16,9 +16,11 @@ const props = defineProps({
 
 const content = ref('/img/your-image.svg')
 
+const css = ref(null)
+
 onMounted(() => {
-  if (props.data.config.content && props.data.config.content !== '') {
-    content.value = props.data.config.content
+  if (props.data.config.css) {
+    css.value = props.data.config.css
   }
 })
 </script>

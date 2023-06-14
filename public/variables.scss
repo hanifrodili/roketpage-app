@@ -11,6 +11,10 @@
   src: url("/fonts/OpenSans-VariableFont_wdth,wght.ttf");
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Poppins";
   color: rgb(var(--v-theme-neutral));
@@ -145,8 +149,9 @@ h6 {
 }
 
 .v-text-field {
+
   .v-select__selection-text,
-  .v-label{
+  .v-label {
     font-size: unset !important;
   }
 }

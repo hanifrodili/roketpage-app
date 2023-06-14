@@ -127,24 +127,7 @@ const formTypeList = ref([
   'Payment',
   'Leads',
 ])
-const paymentOptions = ref([
-  {
-    id: 1,
-    name: "FPX",
-  },
-  {
-    id: 2,
-    name: "Card",
-  },
-  {
-    id: 3,
-    name: "Bank Transfer",
-  },
-  {
-    id: 4,
-    name: "Cash on Delivery",
-  }
-])
+const paymentOptions = ref([])
 const boolOption = ref([
   {
     label: "No",
@@ -183,6 +166,7 @@ onMounted(async () => {
   company_id.value = userStore.user.current_company.id
   await getProducts()
   await getShippings()
+  await getPaymentChannel()
 })
 
 const getShippings = async () => {
@@ -194,6 +178,57 @@ const getShippings = async () => {
     .eq('company_id', company_id.value)
 
   shippingOptions.value = shipping_details
+}
+
+const getPaymentChannel = async () => {
+
+  let { data: toyyibpay } = await supabase
+    .from('toyyibpay_gateway')
+    .select('enabled')
+    .eq('company_id', company_id.value)
+    .single()
+
+  if (toyyibpay.enabled) {
+    paymentOptions.value.push(
+      {
+        id: 1,
+        name: 'toyyibPay'
+      }
+    )
+  }
+
+  let { data: banks } = await supabase
+    .from('bank_details')
+    .select('enabled')
+    .eq('company_id', company_id.value)
+
+  if (banks.length) {
+    paymentOptions.value.push(
+      {
+        id: 3,
+        name: 'Bank Transfer'
+      }
+    )
+  }
+
+  paymentOptions.value.push(
+    {
+      id: 4,
+      name: "Cash on Delivery",
+    }
+  )
+
+
+  // {
+  //   id: 3,
+  //     name: "Bank Transfer",
+  //       enabled: true
+  // },
+  // {
+  //   id: 4,
+  //     name: "Cash on Delivery",
+  //       enabled: true
+  // }
 }
 
 const getProducts = async () => {
@@ -246,8 +281,8 @@ const createNewPage = async () => {
               "font": {
                 "family": "Open Sans",
                 "size": "32px",
-                "weight": "revert",
-                "color": "black",
+                "weight": "600",
+                "color": "#000000",
               }
             }
           }
@@ -286,8 +321,8 @@ const createNewPage = async () => {
               "font": {
                 "family": "Open Sans",
                 "size": "16px",
-                "weight": "revert",
-                "color": "black",
+                "weight": "400",
+                "color": "#000000",
               }
             }
           }
@@ -317,18 +352,8 @@ const createNewPage = async () => {
           "config": {
             "content": "/img/your-image.svg",
             "css": {
-              "padding": {
-                "top": 0,
-                "right": 0,
-                "bottom": 0,
-                "left": 0
-              },
-              "font": {
-                "family": "Open Sans",
-                "size": "16px",
-                "weight": "revert",
-                "color": "black",
-              }
+              "width": 800,
+              "borderRadius": 10
             }
           }
         }
@@ -363,11 +388,12 @@ const createNewPage = async () => {
                 "bottom": 0,
                 "left": 0
               },
+              "backgroundColor": "#1798bc",
               "font": {
                 "family": "Open Sans",
                 "size": "16px",
-                "weight": "revert",
-                "color": "black",
+                "weight": "500",
+                "color": "#ffffff",
               }
             }
           }
@@ -406,7 +432,7 @@ const createNewPage = async () => {
               "font": {
                 "family": "Open Sans",
                 "size": "16px",
-                "weight": "revert",
+                "weight": "400",
                 "color": "black",
               }
             }
@@ -518,7 +544,7 @@ function deleteField(index) {
 </script>
 
 <style lang="scss" scoped>
-.new-card{
+.new-card {
   border: 1px solid rgb(var(--v-theme-secondary)) !important;
   /* background-color: transparent; */
   box-shadow: none !important;
@@ -527,6 +553,6 @@ function deleteField(index) {
 }
 
 .new-card:hover {
-  background-color: rgba(var(--v-theme-primary),0.2);
+  background-color: rgba(var(--v-theme-primary), 0.2);
 }
 </style>

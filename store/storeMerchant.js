@@ -23,7 +23,7 @@ export const useStoreUser = defineStore('storeUser', () => {
         user.value.current_company.company = resp.data.company
         user.value.current_company.role = resp.data.company_team_role
         user.value.profile = resp.data.profiles
-        console.log(user.value);
+        // console.log(user.value);
       }
     }else {
       user.value = {}
